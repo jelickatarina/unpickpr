@@ -284,7 +284,7 @@ function Boje({onDone}){
 }
 
 function SOS({onZatvori}){
-  const [faza,setFaza]=useState("int");const [int,setInt]=useState(5);const [alat,setAlat]=useState(null);
+  const [faza,setFaza]=useState("izb");const [alat,setAlat]=useState(null);
   const [ishod,setIshod]=useState(null);const [dk,setDk]=useState(0);const [tajmer,setTajmer]=useState(300);const [tAkt,setTAkt]=useState(false);
   const ref=useRef(null);
   useEffect(()=>{if(tAkt&&tajmer>0){ref.current=setInterval(()=>setTajmer(t=>t-1),1000)}return()=>clearInterval(ref.current)},[tAkt,tajmer]);
@@ -293,27 +293,9 @@ function SOS({onZatvori}){
   const XBtn=()=><div style={{display:"flex",justifyContent:"flex-end",marginBottom:24}}><button style={{background:C.bgMuted,border:"none",borderRadius:50,width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}} onClick={onZatvori}><Ico d={I.x} size={16} stroke={C.textMid} sw={2}/></button></div>;
   const ALATI=[{id:"dis",icon:"🫁",l:"Vežba disanja",op:"4-7-8 tehnika"},{id:"taj",icon:"⏱️",l:"Čekaj 5 minuta",op:"Impulsi prolaze"},{id:"ruke",icon:"🤲",l:"Zaposli ruke",op:"Alternativne aktivnosti"},{id:"uzem",icon:"🌿",l:"Uzemljenje",op:"5-4-3-2-1 tehnika"},{id:"meh",icon:"🫧",l:"Prsni mehuriće",op:"Igrica"},{id:"boj",icon:"🎨",l:"Igra boja",op:"Igrica"}];
 
-  if(faza==="int") return(
-    <div style={{minHeight:"100vh",padding:"32px 24px 48px",background:C.bg}} className="fi">
-      <div style={{display:"flex",justifyContent:"flex-end",marginBottom:24}}><button style={{background:C.bgMuted,border:"none",borderRadius:50,width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}} onClick={onZatvori}><Ico d={I.x} size={16} stroke={C.textMid} sw={2}/></button></div>
-      <div style={{textAlign:"center",marginBottom:32}}>
-        <div style={{width:80,height:80,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}><Ico d={I.shield} size={38} stroke={C.primary} sw={1.8}/></div>
-        <h2 className="serif" style={{fontSize:30,lineHeight:1.2,marginBottom:10,letterSpacing:-0.3}}>Potražio si pomoć.<br/><span className="italic" style={{color:C.primary}}>To je hrabro.</span></h2>
-        <p style={{color:C.textMid,fontSize:15,fontWeight:500}}>Hajde zajedno kroz ovo.</p>
-      </div>
-      <div className="card" style={{textAlign:"center",marginBottom:24}}>
-        <span className="lbl">Koliko je jak impuls sada?</span>
-        <div style={{fontSize:64,fontWeight:400,color:C.primary,marginBottom:16,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{int}</div>
-        <input type="range" min={1} max={10} value={int} onChange={e=>setInt(+e.target.value)} style={{width:"100%",accentColor:C.primary}}/>
-        <div style={{display:"flex",justifyContent:"space-between",fontSize:12,color:C.textLight,marginTop:8,fontWeight:600}}><span>Slab</span><span>Jak</span></div>
-      </div>
-      <button className="btn-p" onClick={()=>setFaza("izb")}>Izaberi tehniku →</button>
-    </div>
-  );
-
   if(faza==="izb") return(
     <div style={{minHeight:"100vh",padding:"32px 24px 48px",background:C.bg}} className="fi">
-      <button className="btn-g" style={{marginBottom:22}} onClick={()=>setFaza("int")}><Ico d={I.back} size={16} stroke={C.textMid}/> Nazad</button>
+      <div style={{display:"flex",justifyContent:"flex-end",marginBottom:24}}><button style={{background:C.bgMuted,border:"none",borderRadius:50,width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}} onClick={onZatvori}><Ico d={I.x} size={16} stroke={C.textMid} sw={2}/></button></div>
       <h2 className="serif" style={{fontSize:26,marginBottom:4,letterSpacing:-0.3}}>Šta danas probamo?</h2>
       <p style={{fontSize:14,color:C.textMid,marginBottom:20,fontWeight:500}}>Tehnika smirenja ili igrica za distrakciju</p>
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
