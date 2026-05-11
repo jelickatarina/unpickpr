@@ -287,7 +287,7 @@ function Boje({onDone}){
 
 function SOS({onZatvori}){
   const [faza,setFaza]=useState("izb");const [alat,setAlat]=useState(null);
-  const [ishod,setIshod]=useState(null);const [dk,setDk]=useState(0);const [tajmer,setTajmer]=useState(7);const [tAkt,setTAkt]=useState(false);
+  const [ishod,setIshod]=useState(null);const [dk,setDk]=useState(0);const [tajmer,setTajmer]=useState(300);const [tAkt,setTAkt]=useState(false);
   const [disSek,setDisSek]=useState(4);
   const ref=useRef(null);const acRef=useRef(null);
   async function playBeep(freq,dur,vol){
@@ -312,7 +312,7 @@ function SOS({onZatvori}){
     return()=>clearInterval(ref.current);
   },[tAkt,tajmer]);
   useEffect(()=>{
-    if(!tAkt||tajmer<=0||tajmer>3)return;
+    if(!tAkt||tajmer<=0||tajmer>5)return;
     playBeep(660,0.08,0.2);
   },[tajmer]);
   useEffect(()=>{
@@ -368,12 +368,12 @@ function SOS({onZatvori}){
         {dk>=3&&<button className="btn-o" style={{width:"auto"}} onClick={()=>onZatvori()}>Osećam se bolje</button>}
       </div>
     );}
-    if(alat==="taj"){const TOTAL=7;const prog=tajmer/TOTAL;const r=80;const circ=2*Math.PI*r;const done=tAkt&&tajmer===0;return(
+    if(alat==="taj"){const TOTAL=300;const prog=tajmer/TOTAL;const r=80;const circ=2*Math.PI*r;const done=tAkt&&tajmer===0;return(
       <div style={{minHeight:"100vh",padding:"40px 24px 48px",background:C.bg,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:28}} className="fi">
         <BackBtn/>
         <div>
           <h3 className="serif" style={{fontSize:30,letterSpacing:-0.5,marginBottom:6}}>{done?"Uspela si! 🌸":"Čekaj malo"}</h3>
-          <p style={{color:C.textMid,fontSize:14,fontWeight:500}}>{done?"Impuls je prošao. Budi ponosna.":"Impulsi prolaze. Samo 30 sekundi."}</p>
+          <p style={{color:C.textMid,fontSize:14,fontWeight:500}}>{done?"Impuls je prošao. Budi ponosna.":"Impulsi prolaze. Samo 5 minuta."}</p>
         </div>
         <div style={{position:"relative",width:210,height:210}}>
           <svg width={210} height={210} style={{position:"absolute",top:0,left:0,transform:"rotate(-90deg)"}}>
