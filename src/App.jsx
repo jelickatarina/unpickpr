@@ -61,6 +61,8 @@ const I={
   library:["M4 19.5A2.5 2.5 0 016.5 17H20","M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"],
   chat:"M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z",
   heart:"M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z",
+  leaf:["M12 22V11","M12 11C12 11 5 9 5 3c4 0 7 3 7 8z","M12 11C12 11 19 9 19 3c-4 0-7 3-7 8z"],
+  shield:"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
   send:["M22 2L11 13","M22 2L15 22l-4-9-9-4 22-7z"],
   plus:["M12 5v14","M5 12h14"],
   back:"M19 12H5 M12 19l-7-7 7-7",
@@ -86,18 +88,35 @@ function Auth({onDone}){
 
   function reset(){setErrs({});setUspeh("");}
 
+  const AUTH={
+    dark:"#0E1117",darkCard:"rgba(255,255,255,.06)",darkBorder:"rgba(255,255,255,.1)",
+    accent:"#4A8C7A",accentLight:"rgba(74,140,122,.15)",
+    btnBg:"#4A8C7A",btnBgHov:"#3D7A6A",
+  };
+
   if(mode==="w") return(
-    <div className="fi" style={{minHeight:"100vh",background:"linear-gradient(160deg,#F0D8E8 0%,#EAE0F8 45%,"+C.bg+" 100%)",display:"flex",flexDirection:"column",justifyContent:"space-between",padding:"0 0 52px"}}>
+    <div className="fi" style={{minHeight:"100vh",background:AUTH.dark,display:"flex",flexDirection:"column",justifyContent:"space-between",padding:"0 0 52px"}}>
       <div style={{padding:"72px 32px 0"}}>
-        <div style={{width:60,height:60,borderRadius:20,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:32,boxShadow:"0 8px 28px rgba(168,81,106,.4)"}}>
-          <Ico d={I.heart} size={28} stroke="#fff" sw={2}/>
+        <div style={{display:"inline-flex",alignItems:"center",gap:10,marginBottom:52}}>
+          <div style={{width:38,height:38,borderRadius:12,background:AUTH.accentLight,border:`1px solid ${AUTH.accent}50`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <Ico d={I.leaf} size={20} stroke={AUTH.accent} sw={1.8}/>
+          </div>
+          <span style={{color:"rgba(255,255,255,.55)",fontSize:12,fontWeight:700,letterSpacing:2.5,textTransform:"uppercase"}}>Unpick</span>
         </div>
-        <h1 className="serif italic" style={{fontSize:56,lineHeight:1.05,marginBottom:14,letterSpacing:-1}}>Unpick</h1>
-        <p style={{fontSize:16,color:C.textMid,lineHeight:1.8,maxWidth:270,fontWeight:500}}>Nežni pratilac na tvom putu ka slobodi od čačkanja kože.</p>
+        <h1 className="serif" style={{fontSize:50,lineHeight:1.08,marginBottom:16,letterSpacing:-1.5,color:"#fff"}}>Sloboda od<br/><span className="italic">čačkanja kože.</span></h1>
+        <p style={{fontSize:15,color:"rgba(255,255,255,.4)",lineHeight:1.85,maxWidth:280,fontWeight:500}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima. Bez osude.</p>
+        <div style={{marginTop:40,display:"flex",flexDirection:"column",gap:16}}>
+          {[["📊","Praćenje epizoda i napretka"],["🆘","SOS alat za teške trenutke"],["🤖","AI podrška uvek dostupna"]].map(([e,t])=>(
+            <div key={t} style={{display:"flex",alignItems:"center",gap:14}}>
+              <div style={{width:36,height:36,borderRadius:10,background:AUTH.darkCard,border:`1px solid ${AUTH.darkBorder}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:16}}>{e}</div>
+              <span style={{fontSize:14,color:"rgba(255,255,255,.45)",fontWeight:500}}>{t}</span>
+            </div>
+          ))}
+        </div>
       </div>
-      <div style={{padding:"0 28px",display:"flex",flexDirection:"column",gap:12}}>
-        <button className="btn-p" onClick={()=>{setMode("r");reset();}}>Napravi nalog</button>
-        <button className="btn-o" onClick={()=>{setMode("l");reset();}}>Već imam nalog</button>
+      <div style={{padding:"0 28px",display:"flex",flexDirection:"column",gap:10}}>
+        <button onClick={()=>{setMode("r");reset();}} style={{background:AUTH.btnBg,color:"#fff",border:"none",borderRadius:16,padding:"17px 28px",fontSize:16,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:"pointer",width:"100%",boxShadow:`0 4px 24px ${AUTH.accent}55`}}>Napravi nalog</button>
+        <button onClick={()=>{setMode("l");reset();}} style={{background:"transparent",color:"rgba(255,255,255,.4)",border:`1px solid ${AUTH.darkBorder}`,borderRadius:16,padding:"15px 28px",fontSize:15,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:"pointer",width:"100%"}}>Već imam nalog</button>
       </div>
     </div>
   );
@@ -159,43 +178,57 @@ function Auth({onDone}){
     }finally{setLoading(false);}
   }
 
+  const inpStyle=(key)=>({borderColor:errs[key]?"#C0392B":undefined});
+  const BtnPrimary=({children,disabled,onClick})=>(
+    <button onClick={onClick} disabled={disabled} style={{background:disabled?"#aaa":AUTH.btnBg,color:"#fff",border:"none",borderRadius:16,padding:"17px 28px",fontSize:16,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:disabled?"default":"pointer",width:"100%",transition:"all .18s",boxShadow:disabled?"none":`0 4px 20px ${AUTH.accent}40`}}>
+      {children}
+    </button>
+  );
+
   return(
-    <div className="fi" style={{minHeight:"100vh",padding:"0 0 40px",background:C.bg}}>
-      <div style={{padding:"52px 28px 32px",background:"linear-gradient(160deg,#F0D8E8 0%,#EAE0F8 60%,"+C.bg+" 100%)"}}>
-        <button className="btn-g" style={{marginBottom:20,padding:0}} onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}}><Ico d={I.back} size={18} stroke={C.textMid}/> Nazad</button>
-        <h2 className="serif" style={{fontSize:36,marginBottom:6,letterSpacing:-0.5}}>{isL?"Dobrodošla nazad 👋":"Napravi nalog 🌸"}</h2>
-        <p style={{color:C.textMid,fontSize:14,fontWeight:500}}>{isL?"Drago nam je što si tu.":"Bez osude — samo podrška."}</p>
+    <div className="fi" style={{minHeight:"100vh",background:"#fff"}}>
+      <div style={{padding:"52px 28px 28px",background:AUTH.dark}}>
+        <button onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:8,color:"rgba(255,255,255,.45)",fontSize:14,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",marginBottom:28,padding:0}}>
+          <Ico d={I.back} size={16} stroke="rgba(255,255,255,.45)" sw={2}/> Nazad
+        </button>
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
+          <div style={{width:32,height:32,borderRadius:10,background:AUTH.accentLight,border:`1px solid ${AUTH.accent}50`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <Ico d={I.leaf} size={16} stroke={AUTH.accent} sw={1.8}/>
+          </div>
+          <span style={{color:"rgba(255,255,255,.3)",fontSize:11,fontWeight:700,letterSpacing:2,textTransform:"uppercase"}}>Unpick</span>
+        </div>
+        <h2 className="serif" style={{fontSize:34,letterSpacing:-0.5,color:"#fff",marginBottom:6}}>{isL?"Dobrodošao nazad":"Napravi nalog"}</h2>
+        <p style={{color:"rgba(255,255,255,.38)",fontSize:14,fontWeight:500}}>{isL?"Nastavi odakle si stao.":"Besplatno. Bez osude."}</p>
       </div>
-      <div style={{padding:"24px 28px 0",display:"flex",flexDirection:"column",gap:18}}>
+      <div style={{padding:"28px 28px 40px",display:"flex",flexDirection:"column",gap:18}}>
         {!isL&&<div>
-          <input className="inp" placeholder="Tvoje ime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={{borderColor:errs.ime?C.red:undefined}}/>
+          <input className="inp" placeholder="Ime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inpStyle("ime")}/>
           {prevErr("ime")}
         </div>}
         <div>
-          <input className="inp" placeholder="Email adresa" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" style={{borderColor:errs.em?C.red:undefined}}/>
+          <input className="inp" placeholder="Email adresa" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" style={inpStyle("em")}/>
           {prevErr("em")}
         </div>
         <div>
           <div style={{position:"relative"}}>
-            <input className="inp" type={showLoz?"text":"password"} placeholder="Lozinka" value={loz} onChange={e=>{setLoz(e.target.value);if(errs.loz)setErrs(v=>({...v,loz:""}));}} style={{paddingRight:44,borderColor:errs.loz?C.red:undefined}}/>
+            <input className="inp" type={showLoz?"text":"password"} placeholder="Lozinka" value={loz} onChange={e=>{setLoz(e.target.value);if(errs.loz)setErrs(v=>({...v,loz:""}));}} style={{paddingRight:44,...inpStyle("loz")}}/>
             <EyeBtn show={showLoz} toggle={()=>setShowLoz(v=>!v)}/>
           </div>
           {prevErr("loz",!isL?"Najmanje 6 karaktera":null)}
         </div>
         {!isL&&<div>
           <div style={{position:"relative"}}>
-            <input className="inp" type={showLoz2?"text":"password"} placeholder="Ponovi lozinku" value={loz2} onChange={e=>{setLoz2(e.target.value);if(errs.loz2)setErrs(v=>({...v,loz2:""}));}} style={{paddingRight:44,borderColor:errs.loz2?C.red:undefined}}/>
+            <input className="inp" type={showLoz2?"text":"password"} placeholder="Ponovi lozinku" value={loz2} onChange={e=>{setLoz2(e.target.value);if(errs.loz2)setErrs(v=>({...v,loz2:""}));}} style={{paddingRight:44,...inpStyle("loz2")}}/>
             <EyeBtn show={showLoz2} toggle={()=>setShowLoz2(v=>!v)}/>
           </div>
           {prevErr("loz2")}
         </div>}
-        {errs.general&&<div style={{background:"#FAEAEA",borderRadius:14,padding:"12px 16px",border:`1px solid ${C.red}20`}}><p style={{color:C.red,fontSize:13,fontWeight:600,textAlign:"center"}}>{errs.general}</p></div>}
-        {uspeh&&<div style={{background:C.greenLight,borderRadius:14,padding:"12px 16px",border:`1px solid ${C.green}30`}}><p style={{color:C.green,fontSize:13,fontWeight:600,textAlign:"center"}}>{uspeh}</p></div>}
-        <div style={{height:4}}/>
-        <button className="btn-p" onClick={handleSubmit} disabled={loading||!!uspeh} style={{opacity:(loading||!!uspeh)?0.7:1}}>
+        {errs.general&&<div style={{background:"#FEF2F2",borderRadius:14,padding:"12px 16px",border:"1px solid #FCA5A5"}}><p style={{color:"#991B1B",fontSize:13,fontWeight:600,textAlign:"center"}}>{errs.general}</p></div>}
+        {uspeh&&<div style={{background:"#F0FDF4",borderRadius:14,padding:"12px 16px",border:"1px solid #86EFAC"}}><p style={{color:"#166534",fontSize:13,fontWeight:600,textAlign:"center"}}>{uspeh}</p></div>}
+        <BtnPrimary onClick={handleSubmit} disabled={loading||!!uspeh}>
           {loading?"Molimo sačekajte...":(isL?"Prijavi se →":"Registruj se →")}
-        </button>
-        <button className="btn-g" style={{justifyContent:"center",marginTop:4}} onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");}}>
+        </BtnPrimary>
+        <button onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"6px 0",textAlign:"center"}}>
           {isL?"Nemaš nalog? Registruj se":"Već imaš nalog? Prijavi se"}
         </button>
       </div>
