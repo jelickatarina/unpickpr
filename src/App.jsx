@@ -747,10 +747,6 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
             </div>
             {otvoren===u.id&&(
               <div className="fi" style={{borderTop:`1px solid ${C.border}`,marginTop:14,paddingTop:14}}>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:u.bel?12:0}}>
-                  {u.epre&&<div style={{background:C.bgMuted,borderRadius:14,padding:"12px 14px"}}><span className="lbl" style={{marginBottom:4}}>PRE</span><p style={{fontSize:15,fontWeight:700,color:C.text}}>{u.epre}</p></div>}
-                  {u.epost&&<div style={{background:C.bgMuted,borderRadius:14,padding:"12px 14px"}}><span className="lbl" style={{marginBottom:4}}>POSLE</span><p style={{fontSize:15,fontWeight:700,color:C.text}}>{u.epost}</p></div>}
-                </div>
                 {u.bel&&<p style={{fontSize:13,color:C.textMid,lineHeight:1.7,fontWeight:500,marginBottom:12}}>{u.bel}</p>}
                 {u.slike?.length>0&&<div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>{u.slike.map((s,i)=><img key={i} src={s} alt="" style={{width:76,height:76,borderRadius:14,objectFit:"cover"}}/>)}</div>}
                 <div style={{display:"flex",gap:8,marginTop:14,paddingTop:14,borderTop:`1px solid ${C.border}`}}>
