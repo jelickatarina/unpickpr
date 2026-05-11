@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { supabase } from "./supabase";
 
 const C = {
   bg:"#F8F4FB",bgCard:"#FFFFFF",bgMuted:"#F0EAF5",
@@ -85,6 +86,8 @@ const OKI=["Stres","Umor","Ogledalo","Dosada","Ekrani","Tuga","Učenje","Jelo","
 function Auth({onDone}){
   const [mode,setMode]=useState("w");
   const [ime,setIme]=useState("");const [em,setEm]=useState("");const [loz,setLoz]=useState("");
+  const [err,setErr]=useState("");const [loading,setLoading]=useState(false);
+
   if(mode==="w") return(
     <div className="fi" style={{minHeight:"100vh",background:"linear-gradient(160deg,#F0D8E8 0%,#EAE0F8 45%,"+C.bg+" 100%)",display:"flex",flexDirection:"column",justifyContent:"space-between",padding:"0 0 52px"}}>
       <div style={{padding:"72px 32px 0"}}>
@@ -100,20 +103,45 @@ function Auth({onDone}){
       </div>
     </div>
   );
+
   const isL=mode==="l";
+
+  async function handleSubmit(){
+    setErr(""); setLoading(true);
+    try{
+      if(isL){
+        const {data,error}=await supabase.auth.signInWithPassword({email:em,password:loz});
+        if(error) throw error;
+        const profile=await supabase.from("profiles").select("name,onboarding_done").eq("id",data.user.id).single();
+        onDone({ime:profile.data?.name||data.user.user_metadata?.name||em,r:true,onb:profile.data?.onboarding_done});
+      }else{
+        if(!ime.trim()){setErr("Unesite vaše ime.");setLoading(false);return;}
+        if(loz.length<6){setErr("Lozinka mora imati najmanje 6 znakova.");setLoading(false);return;}
+        const {data,error}=await supabase.auth.signUp({email:em,password:loz,options:{data:{name:ime}}});
+        if(error) throw error;
+        onDone({ime,r:false});
+      }
+    }catch(e){
+      setErr(e.message||"Nešto nije pošlo po planu.");
+    }finally{setLoading(false);}
+  }
+
   return(
     <div className="fi" style={{minHeight:"100vh",padding:"0 28px 40px"}}>
       <div style={{paddingTop:64,marginBottom:32}}>
-        <button className="btn-g" style={{marginBottom:28,padding:0}} onClick={()=>setMode("w")}><Ico d={I.back} size={18} stroke={C.textMid}/> Nazad</button>
+        <button className="btn-g" style={{marginBottom:28,padding:0}} onClick={()=>{setMode("w");setErr("");}}><Ico d={I.back} size={18} stroke={C.textMid}/> Nazad</button>
         <h2 className="serif" style={{fontSize:36,marginBottom:8,letterSpacing:-0.5}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
         <p style={{color:C.textMid,fontSize:15,fontWeight:500}}>{isL?"Drago nam je što si tu.":"Bez osude — samo podrška."}</p>
       </div>
       <div style={{display:"flex",flexDirection:"column",gap:14}}>
         {!isL&&<input className="inp" placeholder="Tvoje ime" value={ime} onChange={e=>setIme(e.target.value)}/>}
-        <input className="inp" placeholder="Email" value={em} onChange={e=>setEm(e.target.value)}/>
+        <input className="inp" placeholder="Email" value={em} onChange={e=>setEm(e.target.value)} type="email"/>
         <input className="inp" type="password" placeholder="Lozinka" value={loz} onChange={e=>setLoz(e.target.value)}/>
-        <div style={{height:8}}/>
-        <button className="btn-p" onClick={()=>onDone({ime:ime||"Ana",r:isL})}>{isL?"Prijavi se":"Nastavi →"}</button>
+        {err&&<p style={{color:C.red,fontSize:13,fontWeight:600,textAlign:"center"}}>{err}</p>}
+        <div style={{height:4}}/>
+        <button className="btn-p" onClick={handleSubmit} disabled={loading} style={{opacity:loading?0.7:1}}>
+          {loading?"Molimo sačekajte...":(isL?"Prijavi se":"Nastavi →")}
+        </button>
       </div>
     </div>
   );
@@ -428,12 +456,15 @@ function AIChat(){
   );
 }
 
-function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos}){
+function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout}){
   const dani=["P","U","S","Č","P","S","N"],stat=["z","z","z","ž","c","z",null];
   return(
     <div style={{paddingBottom:24}}>
       <div style={{padding:"60px 24px 24px",background:"linear-gradient(160deg,#F0D8E8 0%,#EAE0F8 55%,"+C.bg+" 100%)"}}>
-        <p style={{fontSize:13,color:C.textMid,fontWeight:600,marginBottom:4}}>Dobro jutro,</p>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+          <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Dobro jutro,</p>
+          <button onClick={onLogout} style={{background:"none",border:"none",fontSize:12,color:C.textLight,fontWeight:600,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"4px 8px"}}>Odjavi se</button>
+        </div>
         <h1 className="serif italic" style={{fontSize:38,lineHeight:1.1,letterSpacing:-0.5,marginBottom:22}}>{ime} 🌸</h1>
         <div style={{background:"rgba(255,255,255,.72)",backdropFilter:"blur(12px)",borderRadius:24,padding:"18px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",border:"1px solid rgba(255,255,255,.9)",boxShadow:"0 4px 24px rgba(160,80,120,.1)"}}>
           <div><span className="lbl">TRENUTNI NIZ</span>
@@ -693,23 +724,87 @@ function Biblioteka(){
 const NAV=[{id:"poc",l:"Početna",ico:"home"},{id:"dnv",l:"Dnevnik",ico:"journal"},{id:"nap",l:"Napredak",ico:"chart"},{id:"bib",l:"Biblioteka",ico:"library"},{id:"chat",l:"Chat",ico:"chat"}];
 
 export default function App(){
-  const [faza,setFaza]=useState("auth");const [kor,setKor]=useState(null);const [ekran,setEkran]=useState("poc");
+  const [faza,setFaza]=useState("loading");const [kor,setKor]=useState(null);const [ekran,setEkran]=useState("poc");
   const [priSOS,setPriSOS]=useState(false);const [priUnos,setPriUnos]=useState(false);
   const [ras,setRas]=useState(null);const [noviUnosi,setNoviUnosi]=useState([]);
+
+  useEffect(()=>{
+    supabase.auth.getSession().then(({data:{session}})=>{
+      if(session) resolveSession(session);
+      else setFaza("auth");
+    });
+    const {data:{subscription}}=supabase.auth.onAuthStateChange((_,session)=>{
+      if(!session){setFaza("auth");setKor(null);}
+    });
+    return()=>subscription.unsubscribe();
+  },[]);
+
+  async function resolveSession(session){
+    const {data:profile}=await supabase.from("profiles").select("name,onboarding_done").eq("id",session.user.id).single();
+    const ime=profile?.name||session.user.user_metadata?.name||session.user.email;
+    setKor({ime,id:session.user.id});
+    setFaza(profile?.onboarding_done?"app":"onb");
+    if(profile?.onboarding_done) loadJournalEntries(session.user.id);
+  }
+
+  async function loadJournalEntries(userId){
+    const {data}=await supabase.from("journal_entries").select("*").eq("user_id",userId).order("created_at",{ascending:false});
+    if(data) setNoviUnosi(data.map(e=>({id:e.id,datum:new Date(e.created_at).toLocaleString("sr"),int:e.intensity,ok:e.trigger,lok:e.location,epre:e.emotion_before,epost:e.emotion_after,ish:e.outcome,bel:e.note,slike:e.images||[]})));
+  }
+
+  async function handleOnboardingDone(ans){
+    const {data:{session}}=await supabase.auth.getSession();
+    if(session){
+      await supabase.from("profiles").upsert({id:session.user.id,name:kor?.ime,onboarding_done:true,onboarding_answers:ans});
+      loadJournalEntries(session.user.id);
+    }
+    setFaza("app");
+  }
+
+  async function handleSacuvajUnos(u){
+    const {data:{session}}=await supabase.auth.getSession();
+    if(session){
+      const {data}=await supabase.from("journal_entries").insert({
+        user_id:session.user.id,intensity:u.int,trigger:u.ok,location:u.lok,
+        emotion_before:u.epre,emotion_after:u.epost,outcome:u.ish,note:u.bel,images:u.slike
+      }).select().single();
+      if(data) setNoviUnosi(v=>[{id:data.id,datum:"Upravo",int:u.int,ok:u.ok,lok:u.lok,epre:u.epre,epost:u.epost,ish:u.ish,bel:u.bel,slike:u.slike},...v]);
+    }else{
+      setNoviUnosi(v=>[{...u,id:Date.now(),datum:"Upravo"},...v]);
+    }
+    setPriUnos(false);setEkran("dnv");
+  }
+
+  async function handleLogout(){
+    await supabase.auth.signOut();
+  }
+
+  if(faza==="loading") return(
+    <><style>{fonts}{css}</style>
+    <div className="app" style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh"}}>
+      <div style={{textAlign:"center"}}>
+        <div style={{width:52,height:52,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px",boxShadow:"0 8px 28px rgba(168,81,106,.4)"}}>
+          <Ico d={I.heart} size={26} stroke="#fff" sw={2}/>
+        </div>
+        <p style={{color:C.textMid,fontWeight:600,fontSize:15}}>Učitava se...</p>
+      </div>
+    </div></>
+  );
+
   return(
     <><style>{fonts}{css}</style>
     <div className="app">
-      {faza==="auth"&&<Auth onDone={u=>{setKor(u);setFaza(u.r?"app":"onb")}}/>}
-      {faza==="onb"&&<Onboarding ime={kor?.ime||"tu"} onDone={()=>setFaza("app")}/>}
+      {faza==="auth"&&<Auth onDone={u=>{setKor(u);setFaza(u.onb?"app":(u.r?"app":"onb"));if(u.onb||u.r) supabase.auth.getSession().then(({data:{session}})=>{if(session)loadJournalEntries(session.user.id)});}}/>}
+      {faza==="onb"&&<Onboarding ime={kor?.ime||"tu"} onDone={handleOnboardingDone}/>}
       {faza==="app"&&(
         priSOS?(
           <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto"}} className="fi"><SOS onZatvori={()=>setPriSOS(false)}/></div>
         ):priUnos?(
-          <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto"}} className="fi"><NoviUnos onSacuvaj={u=>{setNoviUnosi(v=>[...v,u]);setPriUnos(false);setEkran("dnv")}} onOtkazi={()=>setPriUnos(false)}/></div>
+          <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto"}} className="fi"><NoviUnos onSacuvaj={handleSacuvajUnos} onOtkazi={()=>setPriUnos(false)}/></div>
         ):(
           <>
             <div style={{paddingBottom:ekran==="chat"?0:76,overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 72px)":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
-              {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={12} onSOS={()=>setPriSOS(true)} ras={ras} onRas={setRas} onNoviUnos={()=>setPriUnos(true)}/>}
+              {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={12} onSOS={()=>setPriSOS(true)} ras={ras} onRas={setRas} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)}/>}
               {ekran==="nap"&&<Napredak/>}
               {ekran==="bib"&&<Biblioteka/>}
