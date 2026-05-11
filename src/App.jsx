@@ -345,7 +345,7 @@ function SOS({onZatvori}){
         </div>
         <div style={{display:"flex",gap:8}}>{kor.map((_,i)=><div key={i} style={{width:8,height:8,borderRadius:"50%",background:i===dk%3?C.primary:C.border,transition:"all .3s"}}/>)}</div>
         <p style={{color:C.textMid,fontSize:13,fontWeight:500}}>Krug {Math.floor(dk/3)+1}</p>
-        {dk>=3&&<button className="btn-o" style={{width:"auto"}} onClick={()=>setFaza("ish")}>Osećam se bolje</button>}
+        {dk>=3&&<button className="btn-o" style={{width:"auto"}} onClick={()=>onZatvori()}>Osećam se bolje</button>}
       </div>
     );}
     if(alat==="taj"){const TOTAL=30;const prog=tajmer/TOTAL;const r=80;const circ=2*Math.PI*r;const done=tAkt&&tajmer===0;return(
@@ -372,7 +372,7 @@ function SOS({onZatvori}){
           </div>
         </div>
         {!tAkt&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();setTAkt(true);}} onClick={()=>setTAkt(true)} style={{width:"auto",padding:"15px 52px"}}>Pokreni ▶</button>}
-        {done&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();setFaza("ish");}} onClick={()=>setFaza("ish")} style={{width:"auto",padding:"15px 44px"}}>Nastavi →</button>}
+        {done&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();onZatvori();}} onClick={()=>onZatvori()} style={{width:"auto",padding:"15px 44px"}}>Nastavi →</button>}
         {tAkt&&!done&&<p style={{color:C.textLight,fontSize:13,fontWeight:500}}>Drži se 💛</p>}
       </div>
     );}
@@ -381,7 +381,7 @@ function SOS({onZatvori}){
         <BackBtn/>
         <h3 className="serif" style={{fontSize:26,marginBottom:20,letterSpacing:-0.3}}>Zaposli ruke</h3>
         {["🧴 Nanesite kremu za ruke","🧊 Držite kocku leda","🤲 Pritisnite nokte u dlan","🖊️ Klikćite hemijsku","🎯 Kuckajte prstima o sto","💆 Masirajte sopstvene ruke"].map(a=><div key={a} className="card" style={{marginBottom:10,fontSize:14,fontWeight:500}}>{a}</div>)}
-        <div style={{height:16}}/><button className="btn-p" onClick={()=>setFaza("ish")}>Probala sam →</button>
+        <div style={{height:16}}/><button className="btn-p" onClick={()=>onZatvori()}>Probala sam →</button>
       </div>
     );
     if(alat==="uzem") return(
@@ -395,11 +395,11 @@ function SOS({onZatvori}){
             <div><span style={{fontWeight:400,color:C.primary,fontSize:22,fontFamily:"'Instrument Serif',serif"}}>{n} </span><span style={{fontSize:13,color:C.textMid,fontWeight:500}}>{l}</span></div>
           </div>
         ))}
-        <div style={{height:16}}/><button className="btn-p" onClick={()=>setFaza("ish")}>Završila sam →</button>
+        <div style={{height:16}}/><button className="btn-p" onClick={()=>onZatvori()}>Završila sam →</button>
       </div>
     );
-    if(alat==="meh") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Prsni mehuriće! 🫧</h3><Mehurici onDone={()=>setFaza("ish")}/></div>);
-    if(alat==="boj") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Igra boja 🎨</h3><Boje onDone={()=>setFaza("ish")}/></div>);
+    if(alat==="meh") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Prsni mehuriće! 🫧</h3><Mehurici onDone={()=>onZatvori()}/></div>);
+    if(alat==="boj") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Igra boja 🎨</h3><Boje onDone={()=>onZatvori()}/></div>);
   }
 
   return(
