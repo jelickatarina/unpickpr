@@ -288,7 +288,13 @@ function SOS({onZatvori}){
   const [ishod,setIshod]=useState(null);const [dk,setDk]=useState(0);const [tajmer,setTajmer]=useState(30);const [tAkt,setTAkt]=useState(false);
   const [disSek,setDisSek]=useState(4);
   const ref=useRef(null);
-  useEffect(()=>{if(tAkt&&tajmer>0){ref.current=setInterval(()=>setTajmer(t=>t-1),1000)}return()=>clearInterval(ref.current)},[tAkt,tajmer]);
+  useEffect(()=>{
+    if(tAkt&&tajmer>0){ref.current=setInterval(()=>setTajmer(t=>t-1),1000);}
+    if(tAkt&&tajmer===0){
+      try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator();const g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.setValueAtTime(520,ctx.currentTime);o.frequency.setValueAtTime(660,ctx.currentTime+0.15);o.frequency.setValueAtTime(520,ctx.currentTime+0.3);g.gain.setValueAtTime(0.35,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.8);o.start();o.stop(ctx.currentTime+0.8);}catch{}
+    }
+    return()=>clearInterval(ref.current);
+  },[tAkt,tajmer]);
   useEffect(()=>{
     if(alat!=="dis"||faza!=="alat")return;
     const dur=[4,7,8][dk%3];setDisSek(dur);
@@ -342,19 +348,34 @@ function SOS({onZatvori}){
         {dk>=3&&<button className="btn-o" style={{width:"auto"}} onClick={()=>setFaza("ish")}>Osećam se bolje</button>}
       </div>
     );}
-    if(alat==="taj") return(
-      <div style={{minHeight:"100vh",padding:"40px 24px 48px",background:C.bg,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:22}} className="fi">
+    if(alat==="taj"){const TOTAL=30;const prog=tajmer/TOTAL;const r=80;const circ=2*Math.PI*r;const done=tAkt&&tajmer===0;return(
+      <div style={{minHeight:"100vh",padding:"40px 24px 48px",background:C.bg,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:28}} className="fi">
         <BackBtn/>
-        <h3 className="serif" style={{fontSize:26,letterSpacing:-0.3}}>Čekaj malo</h3>
-        <p style={{color:C.textMid,fontSize:15,maxWidth:260,fontWeight:500}}>Impulsi prolaze. Samo 30 sekundi.</p>
-        <div style={{width:176,height:176,borderRadius:"50%",background:tajmer>0?C.primaryLight:C.greenLight,border:`3px solid ${tajmer>0?C.primary:C.green}`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-          <span style={{fontSize:42,fontWeight:400,color:tajmer>0?C.primary:C.green,fontFamily:"'Instrument Serif',serif"}}>{fmt(tajmer)}</span>
-          <span style={{fontSize:12,color:C.textMid,marginTop:4,fontWeight:600}}>{tajmer>0?"preostalo":"Gotovo! 🎉"}</span>
+        <div>
+          <h3 className="serif" style={{fontSize:30,letterSpacing:-0.5,marginBottom:6}}>{done?"Uspela si! 🌸":"Čekaj malo"}</h3>
+          <p style={{color:C.textMid,fontSize:14,fontWeight:500}}>{done?"Impuls je prošao. Budi ponosna.":"Impulsi prolaze. Samo 30 sekundi."}</p>
         </div>
-        {!tAkt&&<button className="btn-p" onClick={()=>setTAkt(true)} style={{width:"auto",padding:"14px 44px"}}>Pokreni</button>}
-        {tAkt&&<button className="btn-o" style={{width:"auto"}} onClick={()=>setFaza("ish")}>Prošlo je →</button>}
+        <div style={{position:"relative",width:210,height:210}}>
+          <svg width={210} height={210} style={{position:"absolute",top:0,left:0,transform:"rotate(-90deg)"}}>
+            <circle cx={105} cy={105} r={r} fill="none" stroke={done?C.green+"33":C.primary+"22"} strokeWidth={8}/>
+            <circle cx={105} cy={105} r={r} fill="none" stroke={done?C.green:C.primary} strokeWidth={8} strokeLinecap="round"
+              strokeDasharray={circ} strokeDashoffset={circ*(1-prog)} style={{transition:"stroke-dashoffset 1s linear,stroke .5s"}}/>
+          </svg>
+          <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:4}}>
+            {done
+              ? <span style={{fontSize:52}}>✅</span>
+              : <>
+                  <span style={{fontSize:44,fontWeight:400,color:C.primary,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{tajmer}</span>
+                  <span style={{fontSize:12,color:C.textLight,fontWeight:600,letterSpacing:1}}>SEK</span>
+                </>
+            }
+          </div>
+        </div>
+        {!tAkt&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();setTAkt(true);}} onClick={()=>setTAkt(true)} style={{width:"auto",padding:"15px 52px"}}>Pokreni ▶</button>}
+        {done&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();setFaza("ish");}} onClick={()=>setFaza("ish")} style={{width:"auto",padding:"15px 44px"}}>Nastavi →</button>}
+        {tAkt&&!done&&<p style={{color:C.textLight,fontSize:13,fontWeight:500}}>Drži se 💛</p>}
       </div>
-    );
+    );}
     if(alat==="ruke") return(
       <div style={{minHeight:"100vh",padding:"32px 24px 48px",background:C.bg}} className="fi">
         <BackBtn/>
