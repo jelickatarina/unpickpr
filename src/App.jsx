@@ -320,8 +320,10 @@ function SOS({onZatvori}){
 
   if(faza==="alat"){
     const kor=[{l:"Udahni...",d:4,c:C.primary},{l:"Zadrži...",d:7,c:C.purple},{l:"Izdahni...",d:8,c:C.green}];
+    const BackBtn=()=><button className="btn-g" style={{alignSelf:"flex-start",marginBottom:8}} onClick={()=>setFaza("izb")}><Ico d={I.back} size={16} stroke={C.textMid}/> Nazad</button>;
     if(alat==="dis"){const cur=kor[dk%3];const prog=1-(disSek/cur.d);const r=80;const circ=2*Math.PI*r;return(
       <div style={{minHeight:"100vh",padding:"40px 24px 48px",background:C.bg,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:24}} className="fi">
+        <BackBtn/>
         <h3 className="serif" style={{fontSize:26,letterSpacing:-0.3}}>4 · 7 · 8 Disanje</h3>
         <div style={{position:"relative",width:196,height:196}}>
           <svg width={196} height={196} style={{position:"absolute",top:0,left:0,transform:"rotate(-90deg)"}}>
@@ -342,6 +344,7 @@ function SOS({onZatvori}){
     );}
     if(alat==="taj") return(
       <div style={{minHeight:"100vh",padding:"40px 24px 48px",background:C.bg,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:22}} className="fi">
+        <BackBtn/>
         <h3 className="serif" style={{fontSize:26,letterSpacing:-0.3}}>Čekaj malo</h3>
         <p style={{color:C.textMid,fontSize:15,maxWidth:260,fontWeight:500}}>Impulsi prolaze. Samo 5 minuta.</p>
         <div style={{width:176,height:176,borderRadius:"50%",background:tajmer>0?C.primaryLight:C.greenLight,border:`3px solid ${tajmer>0?C.primary:C.green}`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
@@ -354,6 +357,7 @@ function SOS({onZatvori}){
     );
     if(alat==="ruke") return(
       <div style={{minHeight:"100vh",padding:"32px 24px 48px",background:C.bg}} className="fi">
+        <BackBtn/>
         <h3 className="serif" style={{fontSize:26,marginBottom:20,letterSpacing:-0.3}}>Zaposli ruke</h3>
         {["🧴 Nanesite kremu za ruke","🧊 Držite kocku leda","🤲 Pritisnite nokte u dlan","🖊️ Klikćite hemijsku","🎯 Kuckajte prstima o sto","💆 Masirajte sopstvene ruke"].map(a=><div key={a} className="card" style={{marginBottom:10,fontSize:14,fontWeight:500}}>{a}</div>)}
         <div style={{height:16}}/><button className="btn-p" onClick={()=>setFaza("ish")}>Probala sam →</button>
@@ -361,6 +365,7 @@ function SOS({onZatvori}){
     );
     if(alat==="uzem") return(
       <div style={{minHeight:"100vh",padding:"32px 24px 48px",background:C.bg}} className="fi">
+        <BackBtn/>
         <h3 className="serif" style={{fontSize:26,marginBottom:6,letterSpacing:-0.3}}>5-4-3-2-1 Uzemljenje</h3>
         <p style={{color:C.textMid,fontSize:14,marginBottom:22,fontWeight:500}}>Primeti šta je oko tebe, upravo sada.</p>
         {[["👀","5","stvari koje VIDIŠ"],["🤚","4","stvari koje DODIRUJEŠ"],["👂","3","zvuka koje ČUJEŠ"],["👃","2","mirisa koje OSEĆAŠ"],["👅","1","ukus koji OSETIŠ"]].map(([e,n,l])=>(
@@ -372,8 +377,8 @@ function SOS({onZatvori}){
         <div style={{height:16}}/><button className="btn-p" onClick={()=>setFaza("ish")}>Završila sam →</button>
       </div>
     );
-    if(alat==="meh") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Prsni mehuriće! 🫧</h3><Mehurici onDone={()=>setFaza("ish")}/></div>);
-    if(alat==="boj") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Igra boja 🎨</h3><Boje onDone={()=>setFaza("ish")}/></div>);
+    if(alat==="meh") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Prsni mehuriće! 🫧</h3><Mehurici onDone={()=>setFaza("ish")}/></div>);
+    if(alat==="boj") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Igra boja 🎨</h3><Boje onDone={()=>setFaza("ish")}/></div>);
   }
 
   return(
