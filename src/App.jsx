@@ -285,7 +285,7 @@ function Boje({onDone}){
 
 function SOS({onZatvori}){
   const [faza,setFaza]=useState("izb");const [alat,setAlat]=useState(null);
-  const [ishod,setIshod]=useState(null);const [dk,setDk]=useState(0);const [tajmer,setTajmer]=useState(300);const [tAkt,setTAkt]=useState(false);
+  const [ishod,setIshod]=useState(null);const [dk,setDk]=useState(0);const [tajmer,setTajmer]=useState(30);const [tAkt,setTAkt]=useState(false);
   const [disSek,setDisSek]=useState(4);
   const ref=useRef(null);
   useEffect(()=>{if(tAkt&&tajmer>0){ref.current=setInterval(()=>setTajmer(t=>t-1),1000)}return()=>clearInterval(ref.current)},[tAkt,tajmer]);
@@ -346,7 +346,7 @@ function SOS({onZatvori}){
       <div style={{minHeight:"100vh",padding:"40px 24px 48px",background:C.bg,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:22}} className="fi">
         <BackBtn/>
         <h3 className="serif" style={{fontSize:26,letterSpacing:-0.3}}>Čekaj malo</h3>
-        <p style={{color:C.textMid,fontSize:15,maxWidth:260,fontWeight:500}}>Impulsi prolaze. Samo 5 minuta.</p>
+        <p style={{color:C.textMid,fontSize:15,maxWidth:260,fontWeight:500}}>Impulsi prolaze. Samo 30 sekundi.</p>
         <div style={{width:176,height:176,borderRadius:"50%",background:tajmer>0?C.primaryLight:C.greenLight,border:`3px solid ${tajmer>0?C.primary:C.green}`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
           <span style={{fontSize:42,fontWeight:400,color:tajmer>0?C.primary:C.green,fontFamily:"'Instrument Serif',serif"}}>{fmt(tajmer)}</span>
           <span style={{fontSize:12,color:C.textMid,marginTop:4,fontWeight:600}}>{tajmer>0?"preostalo":"Gotovo! 🎉"}</span>
