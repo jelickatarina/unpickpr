@@ -501,7 +501,7 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
             <div key={kk} style={{display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:7}}><span style={{color:C.textLight,fontWeight:600}}>{kk}</span><span style={{fontWeight:700,color:C.textMid,textAlign:"right",maxWidth:"60%"}}>{vv}</span></div>
           ))}
         </div>
-        <button className="btn-p" onClick={()=>onSacuvaj(u)}>{editData?"Sačuvaj izmene ✓":"Sačuvaj unos 🌸"}</button>
+        <button className="btn-p" onTouchStart={e=>{e.preventDefault();onSacuvaj(u);}} onClick={()=>onSacuvaj(u)}>{editData?"Sačuvaj izmene ✓":"Sačuvaj unos 🌸"}</button>
       </>}
     </div>
   );
