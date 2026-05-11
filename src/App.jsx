@@ -77,7 +77,7 @@ const EMOCIJE=[["😰","Anksiozna"],["😢","Tužna"],["😤","Ljuta"],["😶","
 const LOK=["🛋️ Dnevna","🛁 Kupatilo","🍳 Kuhinja","🛏️ Spavaća","💼 Posao","🚗 Auto","🌳 Napolju","📱 Krevet"];
 const OKI=["Stres","Umor","Ogledalo","Dosada","Ekrani","Tuga","Učenje","Jelo","Ostalo"];
 
-function validEmail(e){return/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
+function safeParseOk(v){if(!v)return[];try{const p=JSON.parse(v);return Array.isArray(p)?p:[v];}catch{return v?[v]:[];}}
 
 function calcStreak(entries, registeredAt){
   const refTs=registeredAt?new Date(registeredAt).getTime():Date.now();
@@ -391,7 +391,7 @@ function SOS({onZatvori}){
 }
 
 function NoviUnos({onSacuvaj,onOtkazi}){
-  const [k,setK]=useState(1);const [u,setU]=useState({int:5,ok:"",lok:"",epre:"",epost:"",ish:"",bel:"",slike:[]});const N=5;
+  const [k,setK]=useState(1);const [u,setU]=useState({int:5,ok:[],lok:"",epre:"",epost:"",ish:"",bel:"",slike:[]});const N=5;
   const Hdr=({title})=>(
     <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:24}}>
       <button className="btn-g" onClick={k>1?()=>setK(v=>v-1):onOtkazi} style={{padding:0}}><Ico d={I.back} size={20} stroke={C.textMid}/></button>
@@ -401,18 +401,20 @@ function NoviUnos({onSacuvaj,onOtkazi}){
       </div>
     </div>
   );
+  function toggleOk(o){setU(v=>({...v,ok:v.ok.includes(o)?v.ok.filter(x=>x!==o):[...v.ok,o]}));}
   return(
     <div style={{padding:"56px 24px 40px",minHeight:"100vh"}} className="fi">
       {k===1&&<><Hdr title="Novi unos"/>
         <h3 className="serif" style={{fontSize:26,marginBottom:20,letterSpacing:-0.3}}>Šta se desilo?</h3>
-        <span className="lbl">INTENZITET</span>
-        <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:24}}>
+        <span className="lbl">JAK IMPULS</span>
+        <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:8}}>
           <input type="range" min={1} max={10} value={u.int} onChange={e=>setU(v=>({...v,int:+e.target.value}))} style={{flex:1,accentColor:C.primary}}/>
           <span style={{fontSize:30,fontWeight:400,color:C.primary,minWidth:32,fontFamily:"'Instrument Serif',serif"}}>{u.int}</span>
         </div>
-        <span className="lbl">OKIDAČ</span>
+        <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:C.textLight,fontWeight:600,marginBottom:24}}><span>Jedva primetio</span><span>Nepodnošljiv</span></div>
+        <span className="lbl">OKIDAČI <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(može više)</span></span>
         <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:20}}>
-          {OKI.map(o=><button key={o} className={`chip${u.ok===o?" on":""}`} onClick={()=>setU(v=>({...v,ok:o}))} style={{padding:"8px 14px"}}>{o}</button>)}
+          {OKI.map(o=><button key={o} className={`chip${u.ok.includes(o)?" on":""}`} onClick={()=>toggleOk(o)} style={{padding:"8px 14px"}}>{o}</button>)}
         </div>
         <span className="lbl">LOKACIJA</span>
         <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:28}}>
@@ -456,8 +458,8 @@ function NoviUnos({onSacuvaj,onOtkazi}){
         <textarea className="inp" placeholder="Piši slobodno..." value={u.bel} onChange={e=>setU(v=>({...v,bel:e.target.value}))} style={{marginBottom:18}}/>
         <div className="card" style={{background:C.bgMuted,boxShadow:"none",marginBottom:20}}>
           <span className="lbl">PREGLED</span>
-          {[["Intenzitet",`${u.int}/10`],["Okidač",u.ok||"—"],["Lokacija",u.lok||"—"],["Pre",u.epre||"—"],["Posle",u.epost||"—"]].map(([kk,vv])=>(
-            <div key={kk} style={{display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:7}}><span style={{color:C.textLight,fontWeight:600}}>{kk}</span><span style={{fontWeight:700,color:C.textMid}}>{vv}</span></div>
+          {[["Impuls",`${u.int}/10`],["Okidači",u.ok.length?u.ok.join(", "):"—"],["Lokacija",u.lok||"—"],["Pre",u.epre||"—"],["Posle",u.epost||"—"]].map(([kk,vv])=>(
+            <div key={kk} style={{display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:7}}><span style={{color:C.textLight,fontWeight:600}}>{kk}</span><span style={{fontWeight:700,color:C.textMid,textAlign:"right",maxWidth:"60%"}}>{vv}</span></div>
           ))}
         </div>
         <button className="btn-p" onClick={()=>onSacuvaj({...u,id:Date.now(),datum:"Upravo"})}>Sačuvaj unos 🌸</button>
@@ -524,11 +526,24 @@ function AIChat(){
   );
 }
 
-function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout}){
-  const dani=["P","U","S","Č","P","S","N"],stat=["z","z","z","ž","c","z",null];
+function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
   const h=new Date().getHours();
   const pozdrav=h<12?"Dobro jutro":h<18?"Dobar dan":"Dobro veče";
   const prikazIme=ime?.includes("@")?ime.split("@")[0]:ime;
+  const dani=["Pon","Uto","Sre","Čet","Pet","Sub","Ned"];
+  const danas=new Date();
+  const dow=danas.getDay();
+  const ponedeljak=new Date(danas);
+  ponedeljak.setDate(danas.getDate()-(dow===0?6:dow-1));
+  ponedeljak.setHours(0,0,0,0);
+  const weekStat=Array.from({length:7},(_,i)=>{
+    const d=new Date(ponedeljak.getTime()+i*86400000);
+    if(d.getTime()>danas.getTime()) return null;
+    const entries=(unosi||[]).filter(e=>e.ts&&e.ts>=d.getTime()&&e.ts<d.getTime()+86400000);
+    if(entries.some(e=>e.ish==="ep")) return "c";
+    if(entries.some(e=>e.ish==="try")) return "ž";
+    return "z";
+  });
   return(
     <div style={{paddingBottom:24}}>
       <div style={{padding:"60px 24px 24px",background:`linear-gradient(160deg,#F5E8D8 0%,${C.bgMuted} 55%,${C.bg} 100%)`}}>
@@ -558,16 +573,17 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout}){
         <div className="card fi" style={{marginBottom:14}}>
           <span className="lbl">OVA NEDELJA</span>
           <div style={{display:"flex",gap:4,justifyContent:"space-between"}}>
-            {dani.map((d,i)=>(
+            {dani.map((d,i)=>{const s=weekStat[i];return(
               <div key={i} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:5}}>
-                <div style={{width:38,height:38,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",background:stat[i]==="z"?C.greenLight:stat[i]==="ž"?C.amberLight:stat[i]==="c"?"#FAE8E8":C.bgMuted,boxShadow:stat[i]==="z"?"0 2px 8px rgba(78,158,122,.2)":stat[i]==="c"?"0 2px 8px rgba(184,85,85,.15)":"none"}}>
-                  {stat[i]==="z"&&<Ico d={I.check} size={16} stroke={C.green} sw={2.5}/>}
-                  {stat[i]==="ž"&&<span style={{fontSize:14,color:C.amber,fontWeight:700}}>~</span>}
-                  {stat[i]==="c"&&<span style={{fontSize:14,color:C.red}}>·</span>}
+                <div style={{width:36,height:36,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",background:s==="z"?C.greenLight:s==="ž"?C.amberLight:s==="c"?"#FAE8E8":C.bgMuted,boxShadow:s==="z"?"0 2px 8px rgba(90,154,110,.22)":s==="c"?"0 2px 8px rgba(192,80,80,.18)":"none",transition:"all .3s"}}>
+                  {s==="z"&&<Ico d={I.check} size={15} stroke={C.green} sw={2.5}/>}
+                  {s==="ž"&&<span style={{fontSize:16,color:C.amber,fontWeight:700,lineHeight:1}}>~</span>}
+                  {s==="c"&&<Ico d={I.x} size={13} stroke={C.red} sw={2.5}/>}
+                  {s===null&&<span style={{width:6,height:6,borderRadius:"50%",background:C.border,display:"block"}}/>}
                 </div>
-                <span style={{fontSize:10,color:C.textLight,fontWeight:700}}>{d}</span>
+                <span style={{fontSize:9,color:C.textLight,fontWeight:700}}>{d}</span>
               </div>
-            ))}
+            );})}
           </div>
         </div>
         <div className="card fi" style={{marginBottom:14}}>
@@ -638,7 +654,7 @@ function Dnevnik({noviUnosi,onDodaj}){
               <span className="tag" style={{background:bc(u.ish)+"20",color:bc(u.ish)}}>{bl(u.ish)}</span>
             </div>
             <div style={{display:"flex",gap:7,flexWrap:"wrap"}}>
-              {u.ok&&<span className="tag" style={{background:C.primaryLight,color:C.primaryDark}}>🎯 {u.ok}</span>}
+              {(Array.isArray(u.ok)?u.ok:[u.ok]).filter(Boolean).map(o=><span key={o} className="tag" style={{background:C.primaryLight,color:C.primaryDark}}>🎯 {o}</span>)}
               <span className="tag" style={{background:C.bgMuted,color:C.textMid}}>⚡ {u.int}/10</span>
               {u.lok&&<span className="tag" style={{background:C.bgMuted,color:C.textMid}}>{u.lok}</span>}
             </div>
@@ -693,7 +709,7 @@ function Napredak({unosi,niz}){
 
   // najčešći okidači
   const okCounts={};
-  unosi.filter(e=>e.ok).forEach(e=>{okCounts[e.ok]=(okCounts[e.ok]||0)+1;});
+  unosi.forEach(e=>{(Array.isArray(e.ok)?e.ok:[e.ok]).filter(Boolean).forEach(o=>{okCounts[o]=(okCounts[o]||0)+1;});});
   const totalOk=Object.values(okCounts).reduce((a,b)=>a+b,0);
   const topOki=Object.entries(okCounts).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([l,n],i)=>({l,p:Math.round(n/totalOk*100),c:OKI_BOJE[i]}));
 
@@ -880,14 +896,14 @@ export default function App(){
 
   async function loadJournalEntries(userId){
     const {data}=await supabase.from("journal_entries").select("*").eq("user_id",userId).order("created_at",{ascending:false});
-    if(data) setNoviUnosi(data.map(e=>({id:e.id,datum:new Date(e.created_at).toLocaleString("sr"),ts:new Date(e.created_at).getTime(),int:e.intensity,ok:e.trigger,lok:e.location,epre:e.emotion_before,epost:e.emotion_after,ish:e.outcome,bel:e.note,slike:e.images||[]})));
+    if(data) setNoviUnosi(data.map(e=>({id:e.id,datum:new Date(e.created_at).toLocaleString("sr"),ts:new Date(e.created_at).getTime(),int:e.intensity,ok:safeParseOk(e.trigger),lok:e.location,epre:e.emotion_before,epost:e.emotion_after,ish:e.outcome,bel:e.note,slike:e.images||[]})));
   }
 
   async function handleSacuvajUnos(u){
     const {data:{session}}=await supabase.auth.getSession();
     if(session){
       const {data}=await supabase.from("journal_entries").insert({
-        user_id:session.user.id,intensity:u.int,trigger:u.ok,location:u.lok,
+        user_id:session.user.id,intensity:u.int,trigger:JSON.stringify(u.ok),location:u.lok,
         emotion_before:u.epre,emotion_after:u.epost,outcome:u.ish,note:u.bel,images:u.slike
       }).select().single();
       if(data) setNoviUnosi(v=>[{id:data.id,datum:"Upravo",ts:Date.now(),int:u.int,ok:u.ok,lok:u.lok,epre:u.epre,epost:u.epost,ish:u.ish,bel:u.bel,slike:u.slike},...v]);
@@ -925,7 +941,7 @@ export default function App(){
         ):(
           <>
             <div style={{paddingBottom:ekran==="chat"?0:76,overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 72px)":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
-              {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} onSOS={()=>setPriSOS(true)} ras={ras} onRas={setRas} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
+              {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} onSOS={()=>setPriSOS(true)} ras={ras} onRas={setRas} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)}/>}
               {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
               {ekran==="bib"&&<Biblioteka/>}
