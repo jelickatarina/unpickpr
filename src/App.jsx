@@ -79,6 +79,20 @@ const OKI=["Stres","Umor","Ogledalo","Dosada","Ekrani","Tuga","Učenje","Jelo","
 
 function validEmail(e){return/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
 
+function calcStreak(entries){
+  // entries sorted newest first, each needs .ts (ms) and .ish ("res"|"try"|"ep")
+  const withTs=entries.filter(e=>e.ts);
+  if(!withTs.length) return 0;
+  const bad=withTs.filter(e=>e.ish==="try"||e.ish==="ep");
+  if(!bad.length){
+    // no bad entries ever — count days since oldest entry
+    const oldest=withTs[withTs.length-1];
+    return Math.floor((Date.now()-oldest.ts)/86400000);
+  }
+  // newest bad entry is first (entries sorted desc)
+  return Math.floor((Date.now()-bad[0].ts)/86400000);
+}
+
 function Auth({onDone}){
   const [mode,setMode]=useState("w");
   const [ime,setIme]=useState("");const [em,setEm]=useState("");const [loz,setLoz]=useState("");const [loz2,setLoz2]=useState("");
@@ -532,12 +546,19 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout}){
         <h1 className="serif italic" style={{fontSize:38,lineHeight:1.1,letterSpacing:-0.5,marginBottom:22}}>{prikazIme} 🌱</h1>
         <div style={{background:"rgba(255,255,255,.78)",backdropFilter:"blur(12px)",borderRadius:24,padding:"18px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",border:`1px solid ${C.border}`,boxShadow:`0 4px 24px ${C.shadow}`}}>
           <div><span className="lbl">TRENUTNI NIZ</span>
-            <div style={{display:"flex",alignItems:"baseline",gap:8}}>
-              <span style={{fontSize:50,fontWeight:400,color:C.primary,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{niz}</span>
-              <span style={{fontSize:16,color:C.textMid,fontWeight:600}}>dana</span>
-            </div>
+            {niz===0?(
+              <p style={{fontSize:16,fontWeight:700,color:C.textMid,marginTop:2}}>Počni danas! ✨</p>
+            ):(
+              <div style={{display:"flex",alignItems:"baseline",gap:8}}>
+                <span style={{fontSize:50,fontWeight:400,color:C.primary,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{niz}</span>
+                <span style={{fontSize:16,color:C.textMid,fontWeight:600}}>dana</span>
+              </div>
+            )}
           </div>
-          <div style={{textAlign:"right"}}><div style={{fontSize:44}}>🔥</div><p style={{fontSize:11,color:C.textMid,fontWeight:700,marginTop:4}}>Nastavi!</p></div>
+          <div style={{textAlign:"right"}}>
+            <div style={{fontSize:niz>=7?32:44,letterSpacing:-2}}>{niz===0?"🌱":niz<7?"🔥":niz<14?"🔥🔥":niz<30?"🔥🔥🔥":"🏆"}</div>
+            <p style={{fontSize:11,color:C.textMid,fontWeight:700,marginTop:4}}>{niz===0?"Kreni!":niz<7?"Nastavi!":niz<14?"Sjajno!":niz<30?"Neverovatno!":"Šampion!"}</p>
+          </div>
         </div>
       </div>
       <div style={{padding:"16px 20px 0"}}>
@@ -812,7 +833,7 @@ export default function App(){
 
   async function loadJournalEntries(userId){
     const {data}=await supabase.from("journal_entries").select("*").eq("user_id",userId).order("created_at",{ascending:false});
-    if(data) setNoviUnosi(data.map(e=>({id:e.id,datum:new Date(e.created_at).toLocaleString("sr"),int:e.intensity,ok:e.trigger,lok:e.location,epre:e.emotion_before,epost:e.emotion_after,ish:e.outcome,bel:e.note,slike:e.images||[]})));
+    if(data) setNoviUnosi(data.map(e=>({id:e.id,datum:new Date(e.created_at).toLocaleString("sr"),ts:new Date(e.created_at).getTime(),int:e.intensity,ok:e.trigger,lok:e.location,epre:e.emotion_before,epost:e.emotion_after,ish:e.outcome,bel:e.note,slike:e.images||[]})));
   }
 
   async function handleSacuvajUnos(u){
@@ -822,7 +843,7 @@ export default function App(){
         user_id:session.user.id,intensity:u.int,trigger:u.ok,location:u.lok,
         emotion_before:u.epre,emotion_after:u.epost,outcome:u.ish,note:u.bel,images:u.slike
       }).select().single();
-      if(data) setNoviUnosi(v=>[{id:data.id,datum:"Upravo",int:u.int,ok:u.ok,lok:u.lok,epre:u.epre,epost:u.epost,ish:u.ish,bel:u.bel,slike:u.slike},...v]);
+      if(data) setNoviUnosi(v=>[{id:data.id,datum:"Upravo",ts:Date.now(),int:u.int,ok:u.ok,lok:u.lok,epre:u.epre,epost:u.epost,ish:u.ish,bel:u.bel,slike:u.slike},...v]);
     }else{
       setNoviUnosi(v=>[{...u,id:Date.now(),datum:"Upravo"},...v]);
     }
@@ -857,7 +878,7 @@ export default function App(){
         ):(
           <>
             <div style={{paddingBottom:ekran==="chat"?0:76,overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 72px)":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
-              {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={12} onSOS={()=>setPriSOS(true)} ras={ras} onRas={setRas} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
+              {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi)} onSOS={()=>setPriSOS(true)} ras={ras} onRas={setRas} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)}/>}
               {ekran==="nap"&&<Napredak/>}
               {ekran==="bib"&&<Biblioteka/>}
