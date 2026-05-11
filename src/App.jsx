@@ -616,34 +616,36 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout}){
 }
 
 function Dnevnik({noviUnosi,onDodaj}){
-  const [svi,setSvi]=useState([
-    {id:1,datum:"Danas, 14:32",int:7,ok:"Stres",ish:"res",epre:"Anksiozna",epost:"Mirna",lok:"💼 Posao",bel:"Bila sam na roku, izašla sam da se prošetam.",slike:[]},
-    {id:2,datum:"Juče, 21:10",int:5,ok:"Ekrani",ish:"try",epre:"Utrnula",epost:"Neutralna",lok:"🛋️ Dnevna",bel:"",slike:[]},
-    {id:3,datum:"Pon, 09:45",int:4,ok:"Umor",ish:"res",epre:"Umorna",epost:"Dobro",lok:"🛏️ Spavaća",bel:"Jutarnja rutina pomogla.",slike:[]},
-  ]);
   const [otvoren,setOtvoren]=useState(null);
-  useEffect(()=>{if(noviUnosi.length)setSvi(v=>[noviUnosi[noviUnosi.length-1],...v])},[noviUnosi.length]);
   const bc=o=>o==="res"?C.green:o==="try"?C.amber:C.red;
   const bl=o=>o==="res"?"Odolela":o==="try"?"Pokušala":"Epizoda";
   return(
     <div style={{paddingBottom:20}} className="fi">
       <div style={{padding:"60px 24px 20px",background:`linear-gradient(160deg,${C.primaryLight} 0%,${C.bg} 70%)`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
-          <div><h1 className="serif" style={{fontSize:32,letterSpacing:-0.5}}>Dnevnik</h1><p style={{fontSize:13,color:C.textLight,fontWeight:600,marginTop:2}}>{svi.length} unosa</p></div>
-          <button onClick={onDodaj} style={{width:48,height:48,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 4px 18px rgba(168,81,106,.4)"}}>
+          <div><h1 className="serif" style={{fontSize:32,letterSpacing:-0.5}}>Dnevnik</h1><p style={{fontSize:13,color:C.textLight,fontWeight:600,marginTop:2}}>{noviUnosi.length} {noviUnosi.length===1?"unos":noviUnosi.length<5?"unosa":"unosa"}</p></div>
+          <button onClick={onDodaj} style={{width:48,height:48,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:`0 4px 18px rgba(196,113,74,.4)`}}>
             <Ico d={I.plus} size={22} stroke="#fff" sw={2.5}/>
           </button>
         </div>
       </div>
       <div style={{padding:"0 20px"}}>
-        {svi.map(u=>(
+        {noviUnosi.length===0&&(
+          <div style={{textAlign:"center",padding:"48px 24px"}}>
+            <div style={{fontSize:52,marginBottom:16}}>📓</div>
+            <h3 className="serif" style={{fontSize:22,marginBottom:8}}>Još nema unosa</h3>
+            <p style={{fontSize:14,color:C.textLight,fontWeight:500,lineHeight:1.7,marginBottom:24}}>Svaki zabeleženi trenutak<br/>pomaže ti da razumeš svoje obrasce.</p>
+            <button onClick={onDodaj} className="btn-p" style={{width:"auto",padding:"14px 32px"}}>Dodaj prvi unos →</button>
+          </div>
+        )}
+        {noviUnosi.map(u=>(
           <div key={u.id} className="card fi" style={{marginBottom:12,cursor:"pointer"}} onClick={()=>setOtvoren(otvoren===u.id?null:u.id)}>
             <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}>
               <span style={{fontSize:12,color:C.textLight,fontWeight:600}}>{u.datum}</span>
               <span className="tag" style={{background:bc(u.ish)+"20",color:bc(u.ish)}}>{bl(u.ish)}</span>
             </div>
             <div style={{display:"flex",gap:7,flexWrap:"wrap"}}>
-              <span className="tag" style={{background:C.primaryLight,color:C.primaryDark}}>🎯 {u.ok}</span>
+              {u.ok&&<span className="tag" style={{background:C.primaryLight,color:C.primaryDark}}>🎯 {u.ok}</span>}
               <span className="tag" style={{background:C.bgMuted,color:C.textMid}}>⚡ {u.int}/10</span>
               {u.lok&&<span className="tag" style={{background:C.bgMuted,color:C.textMid}}>{u.lok}</span>}
             </div>
@@ -664,18 +666,72 @@ function Dnevnik({noviUnosi,onDodaj}){
   );
 }
 
-function Napredak(){
-  const mes=["Jan","Feb","Mar","Apr","Maj"],pod=[18,14,11,7,4];
-  const ok=[{l:"Stres",p:38,c:C.primary},{l:"Ekrani",p:22,c:C.purple},{l:"Umor",p:20,c:C.amber},{l:"Dosada",p:12,c:C.green},{l:"Ostalo",p:8,c:C.textLight}];
+function Napredak({unosi,niz}){
+  const OKI_BOJE=[C.primary,C.purple,C.amber,C.green,C.textLight];
+
+  // epizode po mesecu — poslednjih 6 meseci
+  const meseci=Array.from({length:6},(_,i)=>{
+    const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-5+i);
+    const mes=d.toLocaleString("sr",{month:"short"});
+    const br=unosi.filter(e=>{
+      if(!e.ts) return false;
+      const ed=new Date(e.ts);
+      return ed.getMonth()===d.getMonth()&&ed.getFullYear()===d.getFullYear()&&(e.ish==="ep"||e.ish==="try");
+    }).length;
+    return {mes,br};
+  });
+  const maxBr=Math.max(...meseci.map(m=>m.br),1);
+
+  // rekordni niz
+  function calcBest(){
+    const withTs=unosi.filter(e=>e.ts).sort((a,b)=>a.ts-b.ts);
+    if(!withTs.length) return 0;
+    const badSet=new Set(withTs.filter(e=>e.ish==="try"||e.ish==="ep").map(e=>{const d=new Date(e.ts);return`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;}));
+    const start=new Date(withTs[0].ts);const today=new Date();
+    const total=Math.floor((today-start)/86400000)+1;
+    let best=0,cur=0;
+    for(let i=0;i<total;i++){
+      const d=new Date(start.getTime()+i*86400000);
+      const k=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      if(!badSet.has(k)){cur++;best=Math.max(best,cur);}else cur=0;
+    }
+    return best;
+  }
+
+  // najčešći okidači
+  const okCounts={};
+  unosi.filter(e=>e.ok).forEach(e=>{okCounts[e.ok]=(okCounts[e.ok]||0)+1;});
+  const totalOk=Object.values(okCounts).reduce((a,b)=>a+b,0);
+  const topOki=Object.entries(okCounts).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([l,n],i)=>({l,p:Math.round(n/totalOk*100),c:OKI_BOJE[i]}));
+
+  const total=unosi.length;
+  const best=calcBest();
+  const resCount=unosi.filter(e=>e.ish==="res").length;
+  const resP=total?Math.round(resCount/total*100):0;
+
+  if(total===0) return(
+    <div style={{paddingBottom:24}} className="fi">
+      <div style={{padding:"60px 24px 24px",background:`linear-gradient(160deg,${C.amberLight} 0%,${C.bg} 70%)`}}>
+        <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5,marginBottom:4}}>Napredak</h1>
+        <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Prati svoj put 🌱</p>
+      </div>
+      <div style={{textAlign:"center",padding:"48px 24px"}}>
+        <div style={{fontSize:52,marginBottom:16}}>📊</div>
+        <h3 className="serif" style={{fontSize:22,marginBottom:8}}>Još nema podataka</h3>
+        <p style={{fontSize:14,color:C.textLight,fontWeight:500,lineHeight:1.7}}>Kada počneš da unosiš epizode,<br/>ovde ćeš videti svoje obrasce i napredak.</p>
+      </div>
+    </div>
+  );
+
   return(
     <div style={{paddingBottom:24}} className="fi">
       <div style={{padding:"60px 24px 24px",background:`linear-gradient(160deg,${C.amberLight} 0%,${C.bg} 70%)`}}>
         <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5,marginBottom:4}}>Napredak</h1>
-        <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Pogledaj koliko si napredovala 🌱</p>
+        <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Pogledaj koliko si napredovao 🌱</p>
       </div>
       <div style={{padding:"0 20px"}}>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}}>
-          {[["🔥","12","Trenutni niz"],["🏆","21","Rekordni niz"],["✅","68%","SOS uspešnost"],["📓","24","Ukupno unosa"]].map(([e,v,l])=>(
+          {[[niz===0?"🌱":"🔥",String(niz),"Trenutni niz"],["🏆",String(best),"Rekordni niz"],["✅",`${resP}%`,"Odolelo"],["📓",String(total),"Ukupno unosa"]].map(([e,v,l])=>(
             <div key={l} className="card" style={{padding:"18px 16px"}}>
               <div style={{fontSize:24,marginBottom:8}}>{e}</div>
               <div style={{fontSize:32,fontWeight:400,color:C.primary,marginBottom:3,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{v}</div>
@@ -686,26 +742,24 @@ function Napredak(){
         <div className="card" style={{marginBottom:14}}>
           <span className="lbl">EPIZODE PO MESECU</span>
           <div style={{display:"flex",alignItems:"flex-end",gap:10,height:100}}>
-            {pod.map((v,i)=>(
+            {meseci.map((m,i)=>(
               <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
-                <span style={{fontSize:12,color:C.textMid,fontWeight:700}}>{v}</span>
-                <div style={{width:"100%",height:`${(v/20)*80}px`,background:i===pod.length-1?C.green:C.primary+(i===pod.length-2?"CC":"66"),borderRadius:"10px 10px 0 0",minHeight:6}}/>
-                <span style={{fontSize:11,color:C.textLight,fontWeight:700}}>{mes[i]}</span>
+                {m.br>0&&<span style={{fontSize:12,color:C.textMid,fontWeight:700}}>{m.br}</span>}
+                <div style={{width:"100%",height:m.br?`${(m.br/maxBr)*80}px`:"6px",background:i===meseci.length-1?C.green:C.primary+(i===meseci.length-2?"CC":"66"),borderRadius:"10px 10px 0 0",minHeight:6,opacity:m.br?1:.25}}/>
+                <span style={{fontSize:11,color:C.textLight,fontWeight:700}}>{m.mes}</span>
               </div>
             ))}
           </div>
-          <div style={{height:1,background:C.border,margin:"14px 0 10px"}}/>
-          <p style={{fontSize:13,color:C.green,fontWeight:700,textAlign:"center"}}>↓ 78% manje epizoda od januara</p>
         </div>
-        <div className="card">
+        {topOki.length>0&&<div className="card">
           <span className="lbl">NAJČEŠĆI OKIDAČI</span>
-          {ok.map(o=>(
+          {topOki.map(o=>(
             <div key={o.l} style={{marginBottom:14}}>
               <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{fontSize:14,color:C.textMid,fontWeight:600}}>{o.l}</span><span style={{fontSize:14,fontWeight:700,color:o.c}}>{o.p}%</span></div>
               <div className="pb" style={{height:7}}><div className="pf" style={{width:`${o.p}%`,background:o.c}}/></div>
             </div>
           ))}
-        </div>
+        </div>}
       </div>
     </div>
   );
@@ -880,7 +934,7 @@ export default function App(){
             <div style={{paddingBottom:ekran==="chat"?0:76,overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 72px)":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
               {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi)} onSOS={()=>setPriSOS(true)} ras={ras} onRas={setRas} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)}/>}
-              {ekran==="nap"&&<Napredak/>}
+              {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi)}/>}
               {ekran==="bib"&&<Biblioteka/>}
               {ekran==="chat"&&<AIChat/>}
             </div>
