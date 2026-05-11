@@ -287,13 +287,13 @@ function Boje({onDone}){
 
 function SOS({onZatvori}){
   const [faza,setFaza]=useState("izb");const [alat,setAlat]=useState(null);
-  const [ishod,setIshod]=useState(null);const [dk,setDk]=useState(0);const [tajmer,setTajmer]=useState(30);const [tAkt,setTAkt]=useState(false);
+  const [ishod,setIshod]=useState(null);const [dk,setDk]=useState(0);const [tajmer,setTajmer]=useState(7);const [tAkt,setTAkt]=useState(false);
   const [disSek,setDisSek]=useState(4);
   const ref=useRef(null);const acRef=useRef(null);
-  function playBeep(freq,dur,vol){
+  async function playBeep(freq,dur,vol){
     try{
       const ctx=acRef.current;if(!ctx)return;
-      if(ctx.state==="suspended")ctx.resume();
+      if(ctx.state==="suspended")await ctx.resume();
       const o=ctx.createOscillator();const g=ctx.createGain();
       o.connect(g);g.connect(ctx.destination);
       o.frequency.value=freq;
@@ -312,7 +312,7 @@ function SOS({onZatvori}){
     return()=>clearInterval(ref.current);
   },[tAkt,tajmer]);
   useEffect(()=>{
-    if(!tAkt||tajmer<=0||tajmer>5)return;
+    if(!tAkt||tajmer<=0||tajmer>3)return;
     playBeep(660,0.08,0.2);
   },[tajmer]);
   useEffect(()=>{
@@ -368,7 +368,7 @@ function SOS({onZatvori}){
         {dk>=3&&<button className="btn-o" style={{width:"auto"}} onClick={()=>onZatvori()}>Osećam se bolje</button>}
       </div>
     );}
-    if(alat==="taj"){const TOTAL=30;const prog=tajmer/TOTAL;const r=80;const circ=2*Math.PI*r;const done=tAkt&&tajmer===0;return(
+    if(alat==="taj"){const TOTAL=7;const prog=tajmer/TOTAL;const r=80;const circ=2*Math.PI*r;const done=tAkt&&tajmer===0;return(
       <div style={{minHeight:"100vh",padding:"40px 24px 48px",background:C.bg,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:28}} className="fi">
         <BackBtn/>
         <div>
