@@ -147,8 +147,12 @@ function Auth({onDone}){
           return;
         }
         await supabase.from("profiles").upsert({id:data.user.id,name:ime.trim()});
-        setUspeh("Nalog je kreiran! Proveri email za potvrdu, pa se prijavi.");
-        setTimeout(()=>{setMode("l");setUspeh("");setLoz("");setLoz2("");},3000);
+        if(data.session){
+          onDone({ime:ime.trim()});
+        }else{
+          setUspeh("Proveri email i potvrdi nalog, pa se prijavi.");
+          setTimeout(()=>{setMode("l");setUspeh("");setLoz("");setLoz2("");},4000);
+        }
       }
     }catch{
       setErrs({general:"Nešto nije pošlo po planu. Pokušaj ponovo."});
@@ -758,7 +762,7 @@ export default function App(){
       if(session) resolveSession(session);
       else setFaza("auth");
     });
-    const {data:{subscription}}=supabase.auth.onAuthStateChange((_,session)=>{
+    const {data:{subscription}}=supabase.auth.onAuthStateChange((event,session)=>{
       if(!session){setFaza("auth");setKor(null);}
     });
     return()=>subscription.unsubscribe();
