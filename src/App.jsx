@@ -519,14 +519,17 @@ function AIChat(){
 
 function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout}){
   const dani=["P","U","S","Č","P","S","N"],stat=["z","z","z","ž","c","z",null];
+  const h=new Date().getHours();
+  const pozdrav=h<12?"Dobro jutro":h<18?"Dobar dan":"Dobro veče";
+  const prikazIme=ime?.includes("@")?ime.split("@")[0]:ime;
   return(
     <div style={{paddingBottom:24}}>
       <div style={{padding:"60px 24px 24px",background:`linear-gradient(160deg,#F5E8D8 0%,${C.bgMuted} 55%,${C.bg} 100%)`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-          <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Dobro jutro,</p>
+          <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>{pozdrav},</p>
           <button onClick={onLogout} style={{background:"none",border:"none",fontSize:12,color:C.textLight,fontWeight:600,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"4px 8px"}}>Odjavi se</button>
         </div>
-        <h1 className="serif italic" style={{fontSize:38,lineHeight:1.1,letterSpacing:-0.5,marginBottom:22}}>{ime} 🌱</h1>
+        <h1 className="serif italic" style={{fontSize:38,lineHeight:1.1,letterSpacing:-0.5,marginBottom:22}}>{prikazIme} 🌱</h1>
         <div style={{background:"rgba(255,255,255,.78)",backdropFilter:"blur(12px)",borderRadius:24,padding:"18px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",border:`1px solid ${C.border}`,boxShadow:`0 4px 24px ${C.shadow}`}}>
           <div><span className="lbl">TRENUTNI NIZ</span>
             <div style={{display:"flex",alignItems:"baseline",gap:8}}>
