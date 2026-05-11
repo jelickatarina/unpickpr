@@ -74,7 +74,7 @@ const ONB=[
   {id:"t",q:"Šta najčešće izaziva tvoje impulse?",h:"Izaberi sve što odgovara",m:true,o:[["😰","Stres"],["😴","Umor"],["🪞","Ogledalo"],["📱","Ekrani"],["😶","Dosada"],["🎯","Učenje"],["😢","Tuga"],["🌙","Veče"]]},
   {id:"v",q:"Kada najčešće imaš epizode?",h:"Izaberi sve što odgovara",m:true,o:[["🌅","Ujutru (6–12)"],["☀️","Tokom dana (12–18)"],["🌆","Uveče (18–22)"],["🌙","Noću (22+)"],["🔀","Nema obrasca"]]},
   {id:"b",q:"Koji deo tela je najčešće zahvaćen?",h:"Izaberi sve što odgovara",m:true,o:[["😊","Lice"],["🖐️","Ruke i prsti"],["🦵","Noge"],["🔙","Leđa"],["💪","Ramena"],["👤","Skalp"]]},
-  {id:"p",q:"Šta ti pomaže da se smiruješ?",h:"Dodaćemo ovo u tvoj SOS alat",m:true,o:[["🫁","Disanje"],["🧊","Hladna voda"],["🤲","Krema za ruke"],["🎵","Muzika"],["🚶","Šetnja"],["🧸","Fidget"],["📞","Razgovor"],["🎮","Igrica"]]},
+  {id:"p",q:"Šta ti pomaže da se smiruješ?",h:"Dodaćemo ovo u tvoj SOS alat",m:true,o:[["🫁","Disanje"],["🧊","Hladna voda"],["🤲","Krema za ruke"],["🎵","Muzika"],["🚶","Šetnja"],["🧸","Fidget igračka"],["📞","Razgovor"],["🎮","Igrica"],["📖","Čitanje"],["🎨","Crtanje"],["🧘","Meditacija"],["✍️","Pisanje"],["🐾","Ljubimac"],["🤗","Zagrljaj"],["🛁","Kupka"],["🌬️","Svež vazduh"]]},
   {id:"c",q:"Koji je tvoj glavni cilj?",h:"Izaberi jedan",m:false,o:[["🌱","Smanjiti epizode"],["💪","Potpuno prestati"],["🧘","Razumeti okidače"],["🩹","Pomoći koži da zaraste"],["📊","Pratiti napredak"]]},
   {id:"r",q:"Kada da ti šaljemo jutarnji podsednik?",h:"Poruka ohrabrenja svako jutro",m:false,o:[["⏰","7:00"],["⏰","8:00"],["⏰","9:00"],["⏰","10:00"],["🔕","Bez podsetnika"]]},
 ];
@@ -147,11 +147,39 @@ function Auth({onDone}){
   );
 }
 
+const FIDGET_INFO="Fidget igračka je mali predmet koji zaposli ruke — spinner, kocka, gumena loptice, ili slično. Pomaže da impulsi za čačkanje odu na bezbedno mesto.";
+
 function Onboarding({ime,onDone}){
+  const [intro,setIntro]=useState(true);
   const [k,setK]=useState(0);const [ans,setAns]=useState({});
+  const [fidgetHint,setFidgetHint]=useState(false);
   const q=ONB[k];const cur=ans[q.id]||(q.m?[]:null);
   const toggle=opt=>{if(q.m){const a=cur||[];setAns(x=>({...x,[q.id]:a.includes(opt)?a.filter(v=>v!==opt):[...a,opt]}))}else setAns(x=>({...x,[q.id]:opt}))};
   const ok=q.m?(cur&&cur.length>0):!!cur;
+
+  if(intro) return(
+    <div className="fi" style={{minHeight:"100vh",background:"linear-gradient(160deg,#F0D8E8 0%,#EAE0F8 50%,"+C.bg+" 100%)",display:"flex",flexDirection:"column",justifyContent:"space-between",padding:"0 0 52px"}}>
+      <div style={{padding:"72px 32px 0"}}>
+        <div style={{width:52,height:52,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:32,boxShadow:"0 8px 28px rgba(168,81,106,.4)"}}>
+          <Ico d={I.spark} size={24} stroke="#fff" sw={1.8}/>
+        </div>
+        <h2 className="serif italic" style={{fontSize:36,lineHeight:1.1,marginBottom:16,letterSpacing:-0.5}}>Upoznajmo se, {ime} 🌸</h2>
+        <p style={{fontSize:16,color:C.textMid,lineHeight:1.8,fontWeight:500,marginBottom:24}}>Postavićemo ti {ONB.length} kratkih pitanja da bismo prilagodili aplikaciju tebi — tvojim okidačima, navikama i onome što ti pomaže.</p>
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+          {[["🎯","SOS alat po meri","Tvoje omiljene tehnike smirenja uvek nadohvat ruke"],["📊","Pametno praćenje","Uvide zasnovane na tvojim obrascima"],["⏰","Podsetnike na vreme","Jutarnja ohrabrenja kada ti odgovaraju"]].map(([e,n,d])=>(
+            <div key={n} style={{display:"flex",gap:14,alignItems:"flex-start",background:"rgba(255,255,255,.65)",borderRadius:18,padding:"14px 16px",backdropFilter:"blur(8px)"}}>
+              <span style={{fontSize:22,flexShrink:0}}>{e}</span>
+              <div><p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:2}}>{n}</p><p style={{fontSize:12,color:C.textMid,fontWeight:500}}>{d}</p></div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{padding:"0 28px"}}>
+        <button className="btn-p" onClick={()=>setIntro(false)}>Počnimo →</button>
+      </div>
+    </div>
+  );
+
   return(
     <div className="fi" style={{minHeight:"100vh",padding:"56px 24px 40px"}}>
       <div style={{marginBottom:28}}>
@@ -164,13 +192,24 @@ function Onboarding({ime,onDone}){
       <h2 className="serif" style={{fontSize:26,marginBottom:6,lineHeight:1.3,letterSpacing:-0.3}}>{q.q}</h2>
       <p style={{fontSize:13,color:C.textLight,marginBottom:24,fontWeight:500}}>{q.h}</p>
       {q.m?(
-        <div style={{display:"flex",flexWrap:"wrap",gap:9,marginBottom:32}}>
-          {q.o.map(([e,l])=><button key={l} className={`chip${(cur||[]).includes(l)?" on":""}`} onClick={()=>toggle(l)}><span>{e}</span>{l}</button>)}
+        <div style={{display:"flex",flexWrap:"wrap",gap:9,marginBottom:16}}>
+          {q.o.map(([e,l])=>(
+            <button key={l} className={`chip${(cur||[]).includes(l)?" on":""}`} onClick={()=>toggle(l)}>
+              <span>{e}</span>{l}
+              {l==="Fidget igračka"&&<span onClick={ev=>{ev.stopPropagation();setFidgetHint(v=>!v)}} style={{marginLeft:2,color:C.textLight,fontSize:11,fontWeight:700,cursor:"pointer"}}>?</span>}
+            </button>
+          ))}
         </div>
       ):(
         <div style={{marginBottom:32}}>{q.o.map(([e,l])=><button key={l} className={`cr${cur===l?" on":""}`} onClick={()=>toggle(l)}>{e} {l}</button>)}</div>
       )}
-      <button className="btn-p" onClick={()=>k<ONB.length-1?setK(v=>v+1):onDone(ans)} disabled={!ok} style={{opacity:ok?1:0.4}}>{k===ONB.length-1?"Završi →":"Nastavi →"}</button>
+      {q.id==="p"&&fidgetHint&&(
+        <div style={{background:C.purpleLight,borderRadius:16,padding:"12px 16px",marginBottom:16,fontSize:13,color:C.textMid,lineHeight:1.7,fontWeight:500}}>
+          <strong style={{color:C.purple}}>🧸 Šta je fidget igračka?</strong><br/>{FIDGET_INFO}
+        </div>
+      )}
+      <div style={{height:q.id==="p"?0:16}}/>
+      <button className="btn-p" onClick={()=>k<ONB.length-1?setK(v=>v+1):onDone(ans)} disabled={!ok} style={{opacity:ok?1:0.4,marginTop:q.id==="p"?16:0}}>{k===ONB.length-1?"Završi →":"Nastavi →"}</button>
     </div>
   );
 }
