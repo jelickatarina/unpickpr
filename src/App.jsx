@@ -527,25 +527,78 @@ function AIChat(){
 }
 
 function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
+  const [izvestaj,setIzvestaj]=useState(null);
   const h=new Date().getHours();
   const pozdrav=h<12?"Dobro jutro":h<18?"Dobar dan":"Dobro veče";
   const prikazIme=ime?.includes("@")?ime.split("@")[0]:ime;
   const dani=["Pon","Uto","Sre","Čet","Pet","Sub","Ned"];
+  const puniDani=["Ponedeljak","Utorak","Sreda","Četvrtak","Petak","Subota","Nedelja"];
   const danas=new Date();
   const dow=danas.getDay();
   const ponedeljak=new Date(danas);
   ponedeljak.setDate(danas.getDate()-(dow===0?6:dow-1));
   ponedeljak.setHours(0,0,0,0);
-  const weekStat=Array.from({length:7},(_,i)=>{
+  const weekData=Array.from({length:7},(_,i)=>{
     const d=new Date(ponedeljak.getTime()+i*86400000);
-    if(d.getTime()>danas.getTime()) return null;
+    const buduci=d.getTime()>danas.getTime();
     const entries=(unosi||[]).filter(e=>e.ts&&e.ts>=d.getTime()&&e.ts<d.getTime()+86400000);
-    if(entries.some(e=>e.ish==="ep")) return "c";
-    if(entries.some(e=>e.ish==="try")) return "ž";
-    return "z";
+    let s=null;
+    if(!buduci){
+      if(entries.some(e=>e.ish==="ep")) s="c";
+      else if(entries.some(e=>e.ish==="try")) s="ž";
+      else s="z";
+    }
+    return {s,entries,datum:d,naziv:puniDani[i]};
   });
+
+  const bc=o=>o==="res"?C.green:o==="try"?C.amber:C.red;
+  const bl=o=>o==="res"?"Odolela/o":o==="try"?"Pokušala/o":"Epizoda";
+
   return(
     <div style={{paddingBottom:24}}>
+      {izvestaj!==null&&(
+        <div style={{position:"fixed",inset:0,zIndex:200,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={()=>setIzvestaj(null)}>
+          <div style={{position:"absolute",inset:0,background:"rgba(30,20,16,.45)",backdropFilter:"blur(4px)"}}/>
+          <div onClick={e=>e.stopPropagation()} style={{position:"relative",background:C.bg,borderRadius:"28px 28px 0 0",padding:"24px 24px 48px",maxHeight:"75vh",overflowY:"auto",boxShadow:"0 -8px 40px rgba(80,40,10,.18)"}} className="fi">
+            <div style={{width:36,height:4,borderRadius:2,background:C.border,margin:"0 auto 20px"}}/>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+              <h3 className="serif" style={{fontSize:22,letterSpacing:-0.3}}>{weekData[izvestaj].naziv}</h3>
+              <button onClick={()=>setIzvestaj(null)} style={{background:C.bgMuted,border:"none",borderRadius:50,width:34,height:34,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>
+                <Ico d={I.x} size={14} stroke={C.textMid} sw={2}/>
+              </button>
+            </div>
+            <p style={{fontSize:13,color:C.textLight,fontWeight:600,marginBottom:20}}>
+              {weekData[izvestaj].datum.toLocaleDateString("sr",{day:"numeric",month:"long"})} · {weekData[izvestaj].entries.length} {weekData[izvestaj].entries.length===1?"unos":weekData[izvestaj].entries.length<5?"unosa":"unosa"}
+            </p>
+            {weekData[izvestaj].entries.length===0?(
+              <div style={{textAlign:"center",padding:"24px 0"}}>
+                <div style={{fontSize:40,marginBottom:12}}>✨</div>
+                <p style={{fontWeight:700,color:C.green,fontSize:15,marginBottom:4}}>Čist dan!</p>
+                <p style={{fontSize:13,color:C.textLight,fontWeight:500}}>Ovog dana nije bilo epizoda.</p>
+              </div>
+            ):(
+              <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                {weekData[izvestaj].entries.map((u,idx)=>(
+                  <div key={u.id||idx} style={{background:C.bgCard,borderRadius:18,padding:"16px",border:`1px solid ${C.border}`}}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+                      <span style={{fontSize:12,color:C.textLight,fontWeight:600}}>{u.datum}</span>
+                      <span className="tag" style={{background:bc(u.ish)+"20",color:bc(u.ish)}}>{bl(u.ish)}</span>
+                    </div>
+                    <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:u.bel?10:0}}>
+                      <span className="tag" style={{background:C.bgMuted,color:C.textMid}}>⚡ Impuls {u.int}/10</span>
+                      {(Array.isArray(u.ok)?u.ok:[u.ok]).filter(Boolean).map(o=><span key={o} className="tag" style={{background:C.primaryLight,color:C.primaryDark}}>🎯 {o}</span>)}
+                      {u.lok&&<span className="tag" style={{background:C.bgMuted,color:C.textMid}}>{u.lok}</span>}
+                      {u.epre&&<span className="tag" style={{background:C.bgMuted,color:C.textMid}}>Pre: {u.epre}</span>}
+                      {u.epost&&<span className="tag" style={{background:C.bgMuted,color:C.textMid}}>Posle: {u.epost}</span>}
+                    </div>
+                    {u.bel&&<p style={{fontSize:13,color:C.textMid,lineHeight:1.65,fontWeight:500,fontStyle:"italic"}}>"{u.bel}"</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <div style={{padding:"60px 24px 24px",background:`linear-gradient(160deg,#F5E8D8 0%,${C.bgMuted} 55%,${C.bg} 100%)`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
           <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>{pozdrav},</p>
@@ -573,17 +626,17 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
         <div className="card fi" style={{marginBottom:14}}>
           <span className="lbl">OVA NEDELJA</span>
           <div style={{display:"flex",gap:4,justifyContent:"space-between"}}>
-            {dani.map((d,i)=>{const s=weekStat[i];return(
-              <div key={i} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:5}}>
-                <div style={{width:36,height:36,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",background:s==="z"?C.greenLight:s==="ž"?C.amberLight:s==="c"?"#FAE8E8":C.bgMuted,boxShadow:s==="z"?"0 2px 8px rgba(90,154,110,.22)":s==="c"?"0 2px 8px rgba(192,80,80,.18)":"none",transition:"all .3s"}}>
+            {weekData.map(({s,entries},i)=>(
+              <div key={i} onClick={()=>s!==null&&setIzvestaj(i)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:5,cursor:s!==null?"pointer":"default"}}>
+                <div style={{width:36,height:36,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",background:s==="z"?C.greenLight:s==="ž"?C.amberLight:s==="c"?"#FAE8E8":C.bgMuted,boxShadow:s==="z"?"0 2px 8px rgba(90,154,110,.22)":s==="c"?"0 2px 8px rgba(192,80,80,.18)":"none",transition:"all .2s",transform:izvestaj===i?"scale(1.15)":"scale(1)"}}>
                   {s==="z"&&<Ico d={I.check} size={15} stroke={C.green} sw={2.5}/>}
                   {s==="ž"&&<span style={{fontSize:16,color:C.amber,fontWeight:700,lineHeight:1}}>~</span>}
                   {s==="c"&&<Ico d={I.x} size={13} stroke={C.red} sw={2.5}/>}
                   {s===null&&<span style={{width:6,height:6,borderRadius:"50%",background:C.border,display:"block"}}/>}
                 </div>
-                <span style={{fontSize:9,color:C.textLight,fontWeight:700}}>{d}</span>
+                <span style={{fontSize:9,color:izvestaj===i?C.primary:C.textLight,fontWeight:700}}>{dani[i]}</span>
               </div>
-            );})}
+            ))}
           </div>
         </div>
         <div className="card fi" style={{marginBottom:14}}>
