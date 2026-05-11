@@ -2,14 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
 
 const C = {
-  bg:"#F8F4FB",bgCard:"#FFFFFF",bgMuted:"#F0EAF5",
-  primary:"#A8516A",primaryGrad:"linear-gradient(135deg,#C06080 0%,#8B3F5C 100%)",
-  primaryLight:"#F7E8EE",primaryDark:"#7A2E48",
-  purple:"#7E6BA8",purpleLight:"#EDE8F8",
-  text:"#160D1E",textMid:"#5E4870",textLight:"#A090B5",
-  green:"#4E9E7A",greenLight:"#E3F5EC",
-  amber:"#C4813A",amberLight:"#FBF0E3",
-  red:"#B85555",border:"#E8DDEF",shadow:"rgba(60,20,80,0.08)",
+  bg:"#FAF7F2",bgCard:"#FFFFFF",bgMuted:"#F3EDE3",
+  primary:"#C4714A",primaryGrad:"linear-gradient(135deg,#D4825A 0%,#B46038 100%)",
+  primaryLight:"#FAF0E8",primaryDark:"#8C4A28",
+  purple:"#6A9E7F",purpleLight:"#E6F3EC",
+  text:"#1E1410",textMid:"#6B5540",textLight:"#B09070",
+  green:"#5A9A6E",greenLight:"#E4F3EB",
+  amber:"#C49040",amberLight:"#FBF2E0",
+  red:"#C05050",border:"#EDE5D8",shadow:"rgba(80,40,10,0.07)",
 };
 const fonts=`@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');`;
 const css=`
@@ -18,11 +18,11 @@ body{background:${C.bg};}
 .app{font-family:'Plus Jakarta Sans',sans-serif;background:${C.bg};min-height:100vh;max-width:390px;margin:0 auto;position:relative;color:${C.text};overflow-x:hidden;}
 .serif{font-family:'Instrument Serif',serif;}
 .italic{font-style:italic;}
-.btn-p{background:${C.primaryGrad};color:#fff;border:none;border-radius:16px;padding:17px 28px;font-size:16px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;width:100%;transition:all .18s;box-shadow:0 4px 20px rgba(168,81,106,.35);}
+.btn-p{background:${C.primaryGrad};color:#fff;border:none;border-radius:16px;padding:17px 28px;font-size:16px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;width:100%;transition:all .18s;box-shadow:0 4px 22px rgba(196,113,74,.38);}
 .btn-p:active{transform:scale(.98);}
 .btn-o{background:transparent;color:${C.primary};border:1.5px solid ${C.border};border-radius:16px;padding:15px 28px;font-size:15px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;width:100%;}
 .btn-g{background:transparent;color:${C.textMid};border:none;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;padding:6px;display:flex;align-items:center;gap:6px;font-weight:500;}
-.card{background:${C.bgCard};border-radius:24px;box-shadow:0 2px 12px ${C.shadow},0 1px 3px rgba(60,20,80,.04);padding:20px;}
+.card{background:${C.bgCard};border-radius:24px;box-shadow:0 2px 14px ${C.shadow},0 1px 3px rgba(80,40,10,.03);padding:20px;}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:100px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:13px;color:${C.textMid};cursor:pointer;transition:all .16s;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;}
 .chip.on{border-color:${C.primary};background:${C.primaryLight};color:${C.primaryDark};}
 .cr{display:block;width:100%;text-align:left;padding:16px 20px;border-radius:16px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:15px;color:${C.textMid};cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:10px;transition:all .16s;font-weight:500;}
@@ -30,7 +30,7 @@ body{background:${C.bg};}
 .inp{width:100%;padding:15px 18px;border-radius:16px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;color:${C.text};outline:none;transition:all .18s;font-weight:500;}
 .inp:focus{border-color:${C.primary};box-shadow:0 0 0 4px ${C.primaryLight};}
 textarea.inp{resize:none;min-height:80px;line-height:1.65;}
-.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:rgba(255,255,255,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(232,221,239,.7);display:flex;z-index:100;padding:6px 8px calc(env(safe-area-inset-bottom,0px) + 8px);gap:4px;}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:rgba(250,247,242,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid ${C.border};display:flex;z-index:100;padding:6px 8px calc(env(safe-area-inset-bottom,0px) + 8px);gap:4px;}
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px 6px;cursor:pointer;background:none;border:none;border-radius:14px;transition:all .18s;}
 .ni.active{background:${C.primaryLight};}
 .tag{display:inline-block;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;}
@@ -40,7 +40,7 @@ textarea.inp{resize:none;min-height:80px;line-height:1.65;}
 .pf{height:100%;background:${C.primaryGrad};border-radius:100px;transition:width .4s ease;}
 .emb{background:${C.bgMuted};border:2px solid transparent;border-radius:18px;padding:13px 6px;cursor:pointer;transition:all .16s;text-align:center;flex:1;}
 .emb.on{border-color:${C.primary};background:${C.primaryLight};}
-.bbu{background:${C.primaryGrad};color:#fff;border-radius:22px 22px 6px 22px;padding:13px 17px;font-size:14px;line-height:1.6;max-width:78%;align-self:flex-end;box-shadow:0 4px 20px rgba(140,63,88,.3);font-weight:500;}
+.bbu{background:${C.primaryGrad};color:#fff;border-radius:22px 22px 6px 22px;padding:13px 17px;font-size:14px;line-height:1.6;max-width:78%;align-self:flex-end;box-shadow:0 4px 20px rgba(196,113,74,.32);font-weight:500;}
 .bba{background:${C.bgCard};box-shadow:0 2px 12px ${C.shadow};color:${C.text};border-radius:22px 22px 22px 6px;padding:13px 17px;font-size:14px;line-height:1.6;max-width:84%;align-self:flex-start;font-weight:500;}
 .typing{display:flex;gap:5px;padding:13px 17px;align-items:center;}
 .dot{width:7px;height:7px;border-radius:50%;background:${C.textLight};animation:bounce 1.3s infinite;}
@@ -88,35 +88,33 @@ function Auth({onDone}){
 
   function reset(){setErrs({});setUspeh("");}
 
-  const AUTH={
-    dark:"#0E1117",darkCard:"rgba(255,255,255,.06)",darkBorder:"rgba(255,255,255,.1)",
-    accent:"#4A8C7A",accentLight:"rgba(74,140,122,.15)",
-    btnBg:"#4A8C7A",btnBgHov:"#3D7A6A",
-  };
-
   if(mode==="w") return(
-    <div className="fi" style={{minHeight:"100vh",background:AUTH.dark,display:"flex",flexDirection:"column",justifyContent:"space-between",padding:"0 0 52px"}}>
-      <div style={{padding:"72px 32px 0"}}>
-        <div style={{display:"inline-flex",alignItems:"center",gap:10,marginBottom:52}}>
-          <div style={{width:38,height:38,borderRadius:12,background:AUTH.accentLight,border:`1px solid ${AUTH.accent}50`,display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <Ico d={I.leaf} size={20} stroke={AUTH.accent} sw={1.8}/>
+    <div className="fi" style={{minHeight:"100vh",background:C.bg,display:"flex",flexDirection:"column"}}>
+      <div style={{position:"relative",padding:"72px 28px 36px",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:-100,right:-80,width:300,height:300,borderRadius:"50%",background:`radial-gradient(circle,${C.primaryLight} 0%,transparent 70%)`,pointerEvents:"none"}}/>
+        <div style={{position:"absolute",top:30,right:20,width:100,height:100,borderRadius:"50%",background:C.primaryLight,opacity:.7,pointerEvents:"none"}}/>
+        <div style={{position:"relative",display:"inline-flex",alignItems:"center",gap:10,marginBottom:40}}>
+          <div style={{width:42,height:42,borderRadius:14,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 6px 20px rgba(196,113,74,.4)`}}>
+            <Ico d={I.leaf} size={20} stroke="#fff" sw={2}/>
           </div>
-          <span style={{color:"rgba(255,255,255,.55)",fontSize:12,fontWeight:700,letterSpacing:2.5,textTransform:"uppercase"}}>Unpick</span>
+          <span style={{color:C.textLight,fontSize:11,fontWeight:700,letterSpacing:2.5,textTransform:"uppercase"}}>Unpick</span>
         </div>
-        <h1 className="serif" style={{fontSize:50,lineHeight:1.08,marginBottom:16,letterSpacing:-1.5,color:"#fff"}}>Sloboda od<br/><span className="italic">čačkanja kože.</span></h1>
-        <p style={{fontSize:15,color:"rgba(255,255,255,.4)",lineHeight:1.85,maxWidth:280,fontWeight:500}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima. Bez osude.</p>
-        <div style={{marginTop:40,display:"flex",flexDirection:"column",gap:16}}>
-          {[["📊","Praćenje epizoda i napretka"],["🆘","SOS alat za teške trenutke"],["🤖","AI podrška uvek dostupna"]].map(([e,t])=>(
-            <div key={t} style={{display:"flex",alignItems:"center",gap:14}}>
-              <div style={{width:36,height:36,borderRadius:10,background:AUTH.darkCard,border:`1px solid ${AUTH.darkBorder}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:16}}>{e}</div>
-              <span style={{fontSize:14,color:"rgba(255,255,255,.45)",fontWeight:500}}>{t}</span>
-            </div>
-          ))}
-        </div>
+        <h1 className="serif" style={{fontSize:46,lineHeight:1.1,marginBottom:16,letterSpacing:-1.5,color:C.text,position:"relative"}}>
+          Sloboda od<br/><span className="italic" style={{color:C.primary}}>čačkanja kože.</span>
+        </h1>
+        <p style={{fontSize:15,color:C.textMid,lineHeight:1.85,maxWidth:280,fontWeight:500,position:"relative"}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima. Bez osude.</p>
       </div>
-      <div style={{padding:"0 28px",display:"flex",flexDirection:"column",gap:10}}>
-        <button onClick={()=>{setMode("r");reset();}} style={{background:AUTH.btnBg,color:"#fff",border:"none",borderRadius:16,padding:"17px 28px",fontSize:16,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:"pointer",width:"100%",boxShadow:`0 4px 24px ${AUTH.accent}55`}}>Napravi nalog</button>
-        <button onClick={()=>{setMode("l");reset();}} style={{background:"transparent",color:"rgba(255,255,255,.4)",border:`1px solid ${AUTH.darkBorder}`,borderRadius:16,padding:"15px 28px",fontSize:15,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:"pointer",width:"100%"}}>Već imam nalog</button>
+      <div style={{padding:"0 24px",display:"flex",flexDirection:"column",gap:10,flex:1}}>
+        {[["📊","Praćenje epizoda","Beleži svaki trenutak"],["🆘","SOS alat","Podrška u krizi"],["🤖","Mia, AI drugarica","Tu je kada trebaš"]].map(([e,t,s])=>(
+          <div key={t} style={{display:"flex",alignItems:"center",gap:14,background:C.bgCard,borderRadius:18,padding:"14px 18px",border:`1px solid ${C.border}`,boxShadow:`0 2px 10px ${C.shadow}`}}>
+            <div style={{width:44,height:44,borderRadius:13,background:C.bgMuted,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{e}</div>
+            <div><p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:2}}>{t}</p><p style={{fontSize:12,color:C.textLight,fontWeight:500}}>{s}</p></div>
+          </div>
+        ))}
+      </div>
+      <div style={{padding:"24px 24px 52px",display:"flex",flexDirection:"column",gap:10}}>
+        <button onClick={()=>{setMode("r");reset();}} className="btn-p">Napravi nalog →</button>
+        <button onClick={()=>{setMode("l");reset();}} style={{background:"transparent",color:C.textMid,border:`1.5px solid ${C.border}`,borderRadius:16,padding:"15px 28px",fontSize:15,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:"pointer",width:"100%"}}>Već imam nalog</button>
       </div>
     </div>
   );
@@ -180,27 +178,28 @@ function Auth({onDone}){
 
   const inpStyle=(key)=>({borderColor:errs[key]?"#C0392B":undefined});
   const BtnPrimary=({children,disabled,onClick})=>(
-    <button onClick={onClick} disabled={disabled} style={{background:disabled?"#aaa":AUTH.btnBg,color:"#fff",border:"none",borderRadius:16,padding:"17px 28px",fontSize:16,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:disabled?"default":"pointer",width:"100%",transition:"all .18s",boxShadow:disabled?"none":`0 4px 20px ${AUTH.accent}40`}}>
+    <button onClick={onClick} disabled={disabled} className="btn-p" style={{opacity:disabled?.55:1,cursor:disabled?"default":"pointer"}}>
       {children}
     </button>
   );
 
   return(
-    <div className="fi" style={{minHeight:"100vh",background:"#fff"}}>
-      <div style={{padding:"52px 28px 28px",background:AUTH.dark}}>
-        <button onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:8,color:"rgba(255,255,255,.45)",fontSize:14,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",marginBottom:28,padding:0}}>
-          <Ico d={I.back} size={16} stroke="rgba(255,255,255,.45)" sw={2}/> Nazad
+    <div className="fi" style={{minHeight:"100vh",background:C.bg}}>
+      <div style={{position:"relative",padding:"60px 24px 28px",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:-60,right:-50,width:180,height:180,borderRadius:"50%",background:C.primaryLight,opacity:.7,pointerEvents:"none"}}/>
+        <button onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:8,color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",marginBottom:28,padding:0,position:"relative"}}>
+          <Ico d={I.back} size={16} stroke={C.textLight} sw={2}/> Nazad
         </button>
-        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
-          <div style={{width:32,height:32,borderRadius:10,background:AUTH.accentLight,border:`1px solid ${AUTH.accent}50`,display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <Ico d={I.leaf} size={16} stroke={AUTH.accent} sw={1.8}/>
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16,position:"relative"}}>
+          <div style={{width:36,height:36,borderRadius:12,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 4px 14px rgba(196,113,74,.35)`}}>
+            <Ico d={I.leaf} size={17} stroke="#fff" sw={2}/>
           </div>
-          <span style={{color:"rgba(255,255,255,.3)",fontSize:11,fontWeight:700,letterSpacing:2,textTransform:"uppercase"}}>Unpick</span>
+          <span style={{color:C.textLight,fontSize:11,fontWeight:700,letterSpacing:2,textTransform:"uppercase"}}>Unpick</span>
         </div>
-        <h2 className="serif" style={{fontSize:34,letterSpacing:-0.5,color:"#fff",marginBottom:6}}>{isL?"Dobrodošao nazad":"Napravi nalog"}</h2>
-        <p style={{color:"rgba(255,255,255,.38)",fontSize:14,fontWeight:500}}>{isL?"Nastavi odakle si stao.":"Besplatno. Bez osude."}</p>
+        <h2 className="serif" style={{fontSize:36,letterSpacing:-0.5,color:C.text,marginBottom:6,position:"relative"}}>{isL?"Dobrodošao nazad":"Napravi nalog"}</h2>
+        <p style={{color:C.textLight,fontSize:14,fontWeight:500,position:"relative"}}>{isL?"Nastavi odakle si stao.":"Besplatno. Bez osude."}</p>
       </div>
-      <div style={{padding:"28px 28px 40px",display:"flex",flexDirection:"column",gap:18}}>
+      <div style={{padding:"8px 24px 40px",display:"flex",flexDirection:"column",gap:18}}>
         {!isL&&<div>
           <input className="inp" placeholder="Ime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inpStyle("ime")}/>
           {prevErr("ime")}
@@ -285,8 +284,8 @@ function SOS({onZatvori}){
     <div style={{minHeight:"100vh",padding:"32px 24px 48px",background:C.bg}} className="fi">
       <div style={{display:"flex",justifyContent:"flex-end",marginBottom:24}}><button style={{background:C.bgMuted,border:"none",borderRadius:50,width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}} onClick={onZatvori}><Ico d={I.x} size={16} stroke={C.textMid} sw={2}/></button></div>
       <div style={{textAlign:"center",marginBottom:32}}>
-        <div style={{width:80,height:80,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}><Ico d={I.heart} size={38} stroke={C.primary} sw={1.8}/></div>
-        <h2 className="serif" style={{fontSize:30,lineHeight:1.2,marginBottom:10,letterSpacing:-0.3}}>Potražila si pomoć.<br/><span className="italic" style={{color:C.primary}}>To je hrabro.</span></h2>
+        <div style={{width:80,height:80,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}><Ico d={I.shield} size={38} stroke={C.primary} sw={1.8}/></div>
+        <h2 className="serif" style={{fontSize:30,lineHeight:1.2,marginBottom:10,letterSpacing:-0.3}}>Potražio si pomoć.<br/><span className="italic" style={{color:C.primary}}>To je hrabro.</span></h2>
         <p style={{color:C.textMid,fontSize:15,fontWeight:500}}>Hajde zajedno kroz ovo.</p>
       </div>
       <div className="card" style={{textAlign:"center",marginBottom:24}}>
@@ -481,7 +480,7 @@ function AIChat(){
     <div style={{display:"flex",flexDirection:"column",height:"100%",flex:1,minHeight:0}}>
       <div style={{padding:"52px 20px 14px",background:"rgba(255,255,255,.96)",borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
         <div style={{display:"flex",alignItems:"center",gap:14}}>
-          <div style={{width:46,height:46,borderRadius:"50%",background:`linear-gradient(135deg,${C.primaryLight},${C.purpleLight})`,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 4px 14px rgba(168,81,106,.2)`}}>
+          <div style={{width:46,height:46,borderRadius:"50%",background:`linear-gradient(135deg,${C.primaryLight},${C.purpleLight})`,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 4px 14px rgba(196,113,74,.2)`}}>
             <Ico d={I.spark} size={20} stroke={C.primary} sw={1.5}/>
           </div>
           <div><p style={{fontWeight:700,fontSize:16}}>Mia</p><p style={{fontSize:12,color:C.green,fontWeight:700}}>● dostupna</p></div>
@@ -522,13 +521,13 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout}){
   const dani=["P","U","S","Č","P","S","N"],stat=["z","z","z","ž","c","z",null];
   return(
     <div style={{paddingBottom:24}}>
-      <div style={{padding:"60px 24px 24px",background:"linear-gradient(160deg,#F0D8E8 0%,#EAE0F8 55%,"+C.bg+" 100%)"}}>
+      <div style={{padding:"60px 24px 24px",background:`linear-gradient(160deg,#F5E8D8 0%,${C.bgMuted} 55%,${C.bg} 100%)`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
           <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Dobro jutro,</p>
           <button onClick={onLogout} style={{background:"none",border:"none",fontSize:12,color:C.textLight,fontWeight:600,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"4px 8px"}}>Odjavi se</button>
         </div>
-        <h1 className="serif italic" style={{fontSize:38,lineHeight:1.1,letterSpacing:-0.5,marginBottom:22}}>{ime} 🌸</h1>
-        <div style={{background:"rgba(255,255,255,.72)",backdropFilter:"blur(12px)",borderRadius:24,padding:"18px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",border:"1px solid rgba(255,255,255,.9)",boxShadow:"0 4px 24px rgba(160,80,120,.1)"}}>
+        <h1 className="serif italic" style={{fontSize:38,lineHeight:1.1,letterSpacing:-0.5,marginBottom:22}}>{ime} 🌱</h1>
+        <div style={{background:"rgba(255,255,255,.78)",backdropFilter:"blur(12px)",borderRadius:24,padding:"18px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",border:`1px solid ${C.border}`,boxShadow:`0 4px 24px ${C.shadow}`}}>
           <div><span className="lbl">TRENUTNI NIZ</span>
             <div style={{display:"flex",alignItems:"baseline",gap:8}}>
               <span style={{fontSize:50,fontWeight:400,color:C.primary,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{niz}</span>
@@ -566,10 +565,11 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout}){
           </div>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}}>
-          <button onClick={onSOS} style={{height:130,borderRadius:24,background:C.primaryGrad,border:"none",color:"#fff",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,position:"relative",overflow:"hidden",boxShadow:"0 8px 32px rgba(168,81,106,.45)"}}>
-            <div style={{position:"absolute",top:-24,right:-24,width:90,height:90,borderRadius:"50%",background:"rgba(255,255,255,.12)"}}/>
-            <div style={{width:50,height:50,borderRadius:"50%",background:"rgba(255,255,255,.2)",display:"flex",alignItems:"center",justifyContent:"center"}}>
-              <Ico d={I.heart} size={26} stroke="#fff" sw={2}/>
+          <button onClick={onSOS} style={{height:130,borderRadius:24,background:C.primaryGrad,border:"none",color:"#fff",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,position:"relative",overflow:"hidden",boxShadow:"0 8px 32px rgba(196,113,74,.42)"}}>
+            <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,.14)"}}/>
+            <div style={{position:"absolute",bottom:-30,left:-20,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,.08)"}}/>
+            <div style={{width:50,height:50,borderRadius:"50%",background:"rgba(255,255,255,.22)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+              <Ico d={I.shield} size={24} stroke="#fff" sw={2}/>
             </div>
             <div><p style={{fontSize:16,fontWeight:700,textAlign:"center"}}>SOS</p><p style={{fontSize:11,opacity:.85,textAlign:"center",fontWeight:500}}>Trebam pomoć</p></div>
           </button>
@@ -580,12 +580,10 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout}){
             <div><p style={{fontSize:15,fontWeight:700,color:C.text,textAlign:"center"}}>Upiši epizodu</p><p style={{fontSize:11,color:C.textLight,textAlign:"center",fontWeight:500}}>Dodaj u dnevnik</p></div>
           </button>
         </div>
-        <div className="card fi" style={{background:`linear-gradient(135deg,${C.purpleLight},#F5E8F8)`,boxShadow:"none"}}>
+        <div className="card fi" style={{background:`linear-gradient(135deg,${C.amberLight},${C.bgMuted})`,boxShadow:"none",border:`1px solid ${C.border}`}}>
           <div style={{display:"flex",gap:14,alignItems:"flex-start"}}>
-            <div style={{width:40,height:40,borderRadius:14,background:"rgba(126,107,168,.18)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-              <Ico d={I.spark} size={18} stroke={C.purple} sw={1.5}/>
-            </div>
-            <div><span className="lbl" style={{color:C.purple}}>PORUKA DANA</span><p style={{fontSize:14,color:C.textMid,lineHeight:1.75,fontWeight:500}}>Svaki trenutak u kom odabereš drugačije jeste trenutak ozdravljenja. 🌱</p></div>
+            <div style={{width:40,height:40,borderRadius:14,background:"rgba(196,144,64,.15)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:20}}>🌿</div>
+            <div><span className="lbl" style={{color:C.amber}}>PORUKA DANA</span><p style={{fontSize:14,color:C.textMid,lineHeight:1.75,fontWeight:500}}>Svaki trenutak u kom odabereš drugačije jeste trenutak ozdravljenja. 🌱</p></div>
           </div>
         </div>
       </div>
@@ -605,7 +603,7 @@ function Dnevnik({noviUnosi,onDodaj}){
   const bl=o=>o==="res"?"Odolela":o==="try"?"Pokušala":"Epizoda";
   return(
     <div style={{paddingBottom:20}} className="fi">
-      <div style={{padding:"60px 24px 20px",background:`linear-gradient(160deg,#F5EBF0 0%,${C.bg} 70%)`}}>
+      <div style={{padding:"60px 24px 20px",background:`linear-gradient(160deg,${C.primaryLight} 0%,${C.bg} 70%)`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
           <div><h1 className="serif" style={{fontSize:32,letterSpacing:-0.5}}>Dnevnik</h1><p style={{fontSize:13,color:C.textLight,fontWeight:600,marginTop:2}}>{svi.length} unosa</p></div>
           <button onClick={onDodaj} style={{width:48,height:48,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:"0 4px 18px rgba(168,81,106,.4)"}}>
@@ -647,7 +645,7 @@ function Napredak(){
   const ok=[{l:"Stres",p:38,c:C.primary},{l:"Ekrani",p:22,c:C.purple},{l:"Umor",p:20,c:C.amber},{l:"Dosada",p:12,c:C.green},{l:"Ostalo",p:8,c:C.textLight}];
   return(
     <div style={{paddingBottom:24}} className="fi">
-      <div style={{padding:"60px 24px 24px",background:`linear-gradient(160deg,${C.purpleLight} 0%,${C.bg} 70%)`}}>
+      <div style={{padding:"60px 24px 24px",background:`linear-gradient(160deg,${C.amberLight} 0%,${C.bg} 70%)`}}>
         <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5,marginBottom:4}}>Napredak</h1>
         <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Pogledaj koliko si napredovala 🌱</p>
       </div>
@@ -760,7 +758,7 @@ function Biblioteka(){
   if(otvoren!==null) return<Clanak clanak={CLANCI[otvoren]} onNazad={()=>setOtvoren(null)}/>;
   return(
     <div style={{paddingBottom:20}} className="fi">
-      <div style={{padding:"60px 24px 24px",background:`linear-gradient(160deg,#EDE8F8 0%,${C.bg} 70%)`}}>
+      <div style={{padding:"60px 24px 24px",background:`linear-gradient(160deg,${C.purpleLight} 0%,${C.bg} 70%)`}}>
         <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5,marginBottom:4}}>Biblioteka</h1>
         <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Znanje koje podržava tvoj put</p>
       </div>
@@ -836,8 +834,8 @@ export default function App(){
     <><style>{fonts}{css}</style>
     <div className="app" style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh"}}>
       <div style={{textAlign:"center"}}>
-        <div style={{width:52,height:52,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px",boxShadow:"0 8px 28px rgba(168,81,106,.4)"}}>
-          <Ico d={I.heart} size={26} stroke="#fff" sw={2}/>
+        <div style={{width:52,height:52,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px",boxShadow:"0 8px 28px rgba(196,113,74,.4)"}}>
+          <Ico d={I.leaf} size={26} stroke="#fff" sw={2}/>
         </div>
         <p style={{color:C.textMid,fontWeight:600,fontSize:15}}>Učitava se...</p>
       </div>
