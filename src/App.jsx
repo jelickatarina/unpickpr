@@ -419,8 +419,10 @@ function SOS({onZatvori}){
   );
 }
 
-function NoviUnos({onSacuvaj,onOtkazi}){
-  const [k,setK]=useState(1);const [u,setU]=useState({int:5,ok:[],lok:"",epre:"",epost:"",ish:"",bel:"",slike:[]});const N=5;
+function NoviUnos({onSacuvaj,onOtkazi,editData}){
+  const [k,setK]=useState(1);
+  const [u,setU]=useState(editData?{int:editData.int||5,ok:editData.ok||[],lok:editData.lok||"",epre:editData.epre||"",epost:editData.epost||"",ish:editData.ish||"",bel:editData.bel||"",slike:editData.slike||[]}:{int:5,ok:[],lok:"",epre:"",epost:"",ish:"",bel:"",slike:[]});
+  const N=5;
   const Hdr=({title})=>(
     <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:24}}>
       <button className="btn-g" onClick={k>1?()=>setK(v=>v-1):onOtkazi} style={{padding:0}}><Ico d={I.back} size={20} stroke={C.textMid}/></button>
@@ -433,7 +435,7 @@ function NoviUnos({onSacuvaj,onOtkazi}){
   function toggleOk(o){setU(v=>({...v,ok:v.ok.includes(o)?v.ok.filter(x=>x!==o):[...v.ok,o]}));}
   return(
     <div style={{padding:"56px 24px 40px",minHeight:"100vh"}} className="fi">
-      {k===1&&<><Hdr title="Novi unos"/>
+      {k===1&&<><Hdr title={editData?"Izmena unosa":"Novi unos"}/>
         <h3 className="serif" style={{fontSize:26,marginBottom:20,letterSpacing:-0.3}}>Šta se desilo?</h3>
         <span className="lbl">JAK IMPULS</span>
         <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:8}}>
@@ -491,7 +493,7 @@ function NoviUnos({onSacuvaj,onOtkazi}){
             <div key={kk} style={{display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:7}}><span style={{color:C.textLight,fontWeight:600}}>{kk}</span><span style={{fontWeight:700,color:C.textMid,textAlign:"right",maxWidth:"60%"}}>{vv}</span></div>
           ))}
         </div>
-        <button className="btn-p" onClick={()=>onSacuvaj({...u,id:Date.now(),datum:"Upravo"})}>Sačuvaj unos 🌸</button>
+        <button className="btn-p" onClick={()=>onSacuvaj(u)}>{editData?"Sačuvaj izmene ✓":"Sačuvaj unos 🌸"}</button>
       </>}
     </div>
   );
@@ -706,8 +708,9 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
   );
 }
 
-function Dnevnik({noviUnosi,onDodaj}){
+function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
   const [otvoren,setOtvoren]=useState(null);
+  const [potvrda,setPotvrda]=useState(null);
   const bc=o=>o==="res"?C.green:o==="try"?C.amber:C.red;
   const bl=o=>o==="res"?"Odolela":o==="try"?"Pokušala":"Epizoda";
   return(
@@ -746,8 +749,15 @@ function Dnevnik({noviUnosi,onDodaj}){
                   {u.epre&&<div style={{background:C.bgMuted,borderRadius:14,padding:"12px 14px"}}><span className="lbl" style={{marginBottom:4}}>PRE</span><p style={{fontSize:15,fontWeight:700,color:C.text}}>{u.epre}</p></div>}
                   {u.epost&&<div style={{background:C.bgMuted,borderRadius:14,padding:"12px 14px"}}><span className="lbl" style={{marginBottom:4}}>POSLE</span><p style={{fontSize:15,fontWeight:700,color:C.text}}>{u.epost}</p></div>}
                 </div>
-                {u.bel&&<p style={{fontSize:13,color:C.textMid,lineHeight:1.7,fontWeight:500}}>{u.bel}</p>}
-                {u.slike?.length>0&&<div style={{display:"flex",gap:8,marginTop:12,flexWrap:"wrap"}}>{u.slike.map((s,i)=><img key={i} src={s} alt="" style={{width:76,height:76,borderRadius:14,objectFit:"cover"}}/>)}</div>}
+                {u.bel&&<p style={{fontSize:13,color:C.textMid,lineHeight:1.7,fontWeight:500,marginBottom:12}}>{u.bel}</p>}
+                {u.slike?.length>0&&<div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>{u.slike.map((s,i)=><img key={i} src={s} alt="" style={{width:76,height:76,borderRadius:14,objectFit:"cover"}}/>)}</div>}
+                <div style={{display:"flex",gap:8,marginTop:4}}>
+                  <button onClick={e=>{e.stopPropagation();onIzmeni(u);}} style={{flex:1,padding:"10px 0",borderRadius:13,border:`1.5px solid ${C.border}`,background:"transparent",color:C.textMid,fontWeight:600,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>✏️ Izmeni</button>
+                  {potvrda===u.id
+                    ?<button onClick={e=>{e.stopPropagation();onObrisi(u.id);setPotvrda(null);setOtvoren(null);}} style={{flex:1,padding:"10px 0",borderRadius:13,border:"none",background:C.red,color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>Potvrdi brisanje</button>
+                    :<button onClick={e=>{e.stopPropagation();setPotvrda(u.id);}} style={{flex:1,padding:"10px 0",borderRadius:13,border:`1.5px solid ${C.red}22`,background:`${C.red}10`,color:C.red,fontWeight:600,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>🗑️ Obriši</button>
+                  }
+                </div>
               </div>
             )}
           </div>
@@ -954,7 +964,7 @@ const NAV=[{id:"poc",l:"Početna",ico:"home"},{id:"dnv",l:"Dnevnik",ico:"journal
 
 export default function App(){
   const [faza,setFaza]=useState("loading");const [kor,setKor]=useState(null);const [ekran,setEkran]=useState("poc");
-  const [priSOS,setPriSOS]=useState(false);const [priUnos,setPriUnos]=useState(false);
+  const [priSOS,setPriSOS]=useState(false);const [priUnos,setPriUnos]=useState(false);const [editUnos,setEditUnos]=useState(null);
   const [ras,setRas]=useState(null);const [noviUnosi,setNoviUnosi]=useState([]);
 
   useEffect(()=>{
@@ -983,6 +993,16 @@ export default function App(){
 
   async function handleSacuvajUnos(u){
     const {data:{session}}=await supabase.auth.getSession();
+    if(editUnos){
+      if(session){
+        await supabase.from("journal_entries").update({
+          intensity:u.int,trigger:JSON.stringify(u.ok),location:u.lok,
+          emotion_before:u.epre,emotion_after:u.epost,outcome:u.ish,note:u.bel
+        }).eq("id",editUnos.id);
+      }
+      setNoviUnosi(v=>v.map(e=>e.id===editUnos.id?{...e,int:u.int,ok:u.ok,lok:u.lok,epre:u.epre,epost:u.epost,ish:u.ish,bel:u.bel}:e));
+      setEditUnos(null);setPriUnos(false);return;
+    }
     if(session){
       const {data}=await supabase.from("journal_entries").insert({
         user_id:session.user.id,intensity:u.int,trigger:JSON.stringify(u.ok),location:u.lok,
@@ -993,6 +1013,12 @@ export default function App(){
       setNoviUnosi(v=>[{...u,id:Date.now(),datum:"Upravo"},...v]);
     }
     setPriUnos(false);setEkran("dnv");
+  }
+
+  async function handleObrisiUnos(id){
+    const {data:{session}}=await supabase.auth.getSession();
+    if(session) await supabase.from("journal_entries").delete().eq("id",id);
+    setNoviUnosi(v=>v.filter(e=>e.id!==id));
   }
 
   async function handleLogout(){
@@ -1019,12 +1045,12 @@ export default function App(){
         priSOS?(
           <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto"}} className="fi"><SOS onZatvori={()=>setPriSOS(false)}/></div>
         ):priUnos?(
-          <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto"}} className="fi"><NoviUnos onSacuvaj={handleSacuvajUnos} onOtkazi={()=>setPriUnos(false)}/></div>
+          <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto"}} className="fi"><NoviUnos onSacuvaj={handleSacuvajUnos} onOtkazi={()=>{setPriUnos(false);setEditUnos(null);}} editData={editUnos}/></div>
         ):(
           <>
             <div style={{paddingBottom:ekran==="chat"?0:76,overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 72px)":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
               {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} onSOS={()=>setPriSOS(true)} ras={ras} onRas={setRas} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
-              {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)}/>}
+              {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
               {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
               {ekran==="bib"&&<Biblioteka/>}
               {ekran==="chat"&&<AIChat/>}
