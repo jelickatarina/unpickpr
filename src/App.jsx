@@ -56,6 +56,8 @@ const Ico=({d,size=24,stroke=C.textLight,sw=1.7})=>(
 );
 const I={
   home:["M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z","M9 21V12h6v9"],
+  edit:"M17 3a2.83 2.83 0 014 4L7.5 20.5 2 22l1.5-5.5L17 3z",
+  trash:["M3 6h18","M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6","M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2"],
   journal:["M4 4h16v16H4z","M8 8h8","M8 12h8","M8 16h5"],
   chart:["M18 20V10","M12 20V4","M6 20v-6"],
   library:["M4 19.5A2.5 2.5 0 016.5 17H20","M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"],
@@ -751,11 +753,17 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
                 </div>
                 {u.bel&&<p style={{fontSize:13,color:C.textMid,lineHeight:1.7,fontWeight:500,marginBottom:12}}>{u.bel}</p>}
                 {u.slike?.length>0&&<div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>{u.slike.map((s,i)=><img key={i} src={s} alt="" style={{width:76,height:76,borderRadius:14,objectFit:"cover"}}/>)}</div>}
-                <div style={{display:"flex",gap:8,marginTop:4}}>
-                  <button onClick={e=>{e.stopPropagation();onIzmeni(u);}} style={{flex:1,padding:"10px 0",borderRadius:13,border:`1.5px solid ${C.border}`,background:"transparent",color:C.textMid,fontWeight:600,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>✏️ Izmeni</button>
+                <div style={{display:"flex",gap:8,marginTop:14,paddingTop:14,borderTop:`1px solid ${C.border}`}}>
+                  <button onClick={e=>{e.stopPropagation();onIzmeni(u);}} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"11px 0",borderRadius:14,border:`1.5px solid ${C.border}`,background:C.bgMuted,color:C.textMid,fontWeight:600,fontSize:13,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>
+                    <Ico d={I.edit} size={14} stroke={C.textMid} sw={2}/>Izmeni
+                  </button>
                   {potvrda===u.id
-                    ?<button onClick={e=>{e.stopPropagation();onObrisi(u.id);setPotvrda(null);setOtvoren(null);}} style={{flex:1,padding:"10px 0",borderRadius:13,border:"none",background:C.red,color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>Potvrdi brisanje</button>
-                    :<button onClick={e=>{e.stopPropagation();setPotvrda(u.id);}} style={{flex:1,padding:"10px 0",borderRadius:13,border:`1.5px solid ${C.red}22`,background:`${C.red}10`,color:C.red,fontWeight:600,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>🗑️ Obriši</button>
+                    ?<button onClick={e=>{e.stopPropagation();onObrisi(u.id);setPotvrda(null);setOtvoren(null);}} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"11px 0",borderRadius:14,border:"none",background:C.red,color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>
+                        <Ico d={I.check} size={14} stroke="#fff" sw={2.5}/>Potvrdi
+                      </button>
+                    :<button onClick={e=>{e.stopPropagation();setPotvrda(u.id);}} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"11px 0",borderRadius:14,border:`1.5px solid ${C.red}30`,background:`${C.red}08`,color:C.red,fontWeight:600,fontSize:13,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>
+                        <Ico d={I.trash} size={14} stroke={C.red} sw={1.8}/>Obriši
+                      </button>
                   }
                 </div>
               </div>
