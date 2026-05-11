@@ -321,15 +321,15 @@ function SOS({onZatvori}){
   if(faza==="alat"){
     const kor=[{l:"Udahni...",d:4,c:C.primary},{l:"Zadrži...",d:7,c:C.purple},{l:"Izdahni...",d:8,c:C.green}];
     const BackBtn=()=><button className="btn-g" style={{alignSelf:"flex-start",marginBottom:8}} onClick={()=>setFaza("izb")}><Ico d={I.back} size={16} stroke={C.textMid}/> Nazad</button>;
-    if(alat==="dis"){const cur=kor[dk%3];const prog=1-(disSek/cur.d);const r=80;const circ=2*Math.PI*r;return(
+    if(alat==="dis"){const cur=kor[dk%3];const prog=Math.max(0,disSek/cur.d);const r=80;const circ=2*Math.PI*r;return(
       <div style={{minHeight:"100vh",padding:"40px 24px 48px",background:C.bg,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:24}} className="fi">
         <BackBtn/>
         <h3 className="serif" style={{fontSize:26,letterSpacing:-0.3}}>4 · 7 · 8 Disanje</h3>
         <div style={{position:"relative",width:196,height:196}}>
           <svg width={196} height={196} style={{position:"absolute",top:0,left:0,transform:"rotate(-90deg)"}}>
             <circle cx={98} cy={98} r={r} fill="none" stroke={cur.c+"22"} strokeWidth={6}/>
-            <circle cx={98} cy={98} r={r} fill="none" stroke={cur.c} strokeWidth={6} strokeLinecap="round"
-              strokeDasharray={circ} strokeDashoffset={circ*(1-prog)} style={{transition:"stroke-dashoffset .9s linear,stroke .6s"}}/>
+            <circle key={dk} cx={98} cy={98} r={r} fill="none" stroke={cur.c} strokeWidth={6} strokeLinecap="round"
+              strokeDasharray={circ} strokeDashoffset={circ*(1-prog)} style={{transition:"stroke-dashoffset 1s linear,stroke .4s"}}/>
           </svg>
           <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:4}}>
             <span style={{fontSize:36}}>{dk%3===0?"🫁":dk%3===1?"🤐":"💨"}</span>
