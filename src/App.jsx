@@ -289,25 +289,31 @@ function SOS({onZatvori}){
   const [faza,setFaza]=useState("izb");const [alat,setAlat]=useState(null);
   const [ishod,setIshod]=useState(null);const [dk,setDk]=useState(0);const [tajmer,setTajmer]=useState(30);const [tAkt,setTAkt]=useState(false);
   const [disSek,setDisSek]=useState(4);
-  const ref=useRef(null);
+  const ref=useRef(null);const acRef=useRef(null);
+  function playBeep(freq,dur,vol){
+    try{
+      const ctx=acRef.current;if(!ctx)return;
+      if(ctx.state==="suspended")ctx.resume();
+      const o=ctx.createOscillator();const g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=freq;
+      g.gain.setValueAtTime(vol,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+      o.start();o.stop(ctx.currentTime+dur);
+    }catch{}
+  }
   useEffect(()=>{
-    if(tAkt&&tajmer>0){ref.current=setInterval(()=>setTajmer(t=>t-1),1000);}
+    if(tAkt&&tajmer>0)ref.current=setInterval(()=>setTajmer(t=>t-1),1000);
     if(tAkt&&tajmer===0){
-      try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator();const g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.setValueAtTime(520,ctx.currentTime);o.frequency.setValueAtTime(660,ctx.currentTime+0.15);o.frequency.setValueAtTime(520,ctx.currentTime+0.3);g.gain.setValueAtTime(0.35,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.8);o.start();o.stop(ctx.currentTime+0.8);}catch{}
+      playBeep(520,0.15,0.35);
+      setTimeout(()=>playBeep(660,0.15,0.35),150);
+      setTimeout(()=>playBeep(520,0.5,0.35),300);
     }
     return()=>clearInterval(ref.current);
   },[tAkt,tajmer]);
   useEffect(()=>{
     if(!tAkt||tajmer<=0||tajmer>5)return;
-    try{
-      const ctx=new(window.AudioContext||window.webkitAudioContext)();
-      const o=ctx.createOscillator();const g=ctx.createGain();
-      o.connect(g);g.connect(ctx.destination);
-      o.frequency.value=660;
-      g.gain.setValueAtTime(0.18,ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
-      o.start();o.stop(ctx.currentTime+0.08);
-    }catch{}
+    playBeep(660,0.08,0.2);
   },[tajmer]);
   useEffect(()=>{
     if(alat!=="dis"||faza!=="alat")return;
@@ -385,7 +391,7 @@ function SOS({onZatvori}){
             }
           </div>
         </div>
-        {!tAkt&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();setTAkt(true);}} onClick={()=>setTAkt(true)} style={{width:"auto",padding:"15px 52px"}}>Pokreni ▶</button>}
+        {!tAkt&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();try{acRef.current=new(window.AudioContext||window.webkitAudioContext)();}catch{}setTAkt(true);}} onClick={()=>{try{acRef.current=new(window.AudioContext||window.webkitAudioContext)();}catch{}setTAkt(true);}} style={{width:"auto",padding:"15px 52px"}}>Pokreni ▶</button>}
         {done&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();onZatvori();}} onClick={()=>onZatvori()} style={{width:"auto",padding:"15px 44px"}}>Nastavi →</button>}
         {tAkt&&!done&&<p style={{color:C.textLight,fontSize:13,fontWeight:500}}>Drži se 💛</p>}
       </div>
