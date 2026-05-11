@@ -61,6 +61,8 @@ const I={
   library:["M4 19.5A2.5 2.5 0 016.5 17H20","M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"],
   chat:"M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z",
   heart:"M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z",
+  leaf:["M12 22V11","M12 11C12 11 5 9 5 3c4 0 7 3 7 8z","M12 11C12 11 19 9 19 3c-4 0-7 3-7 8z"],
+  shield:"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
   send:["M22 2L11 13","M22 2L15 22l-4-9-9-4 22-7z"],
   plus:["M12 5v14","M5 12h14"],
   back:"M19 12H5 M12 19l-7-7 7-7",
@@ -70,110 +72,170 @@ const I={
   chev:"M9 18l6-6-6-6",
 };
 
-const ONB=[
-  {id:"t",q:"Šta najčešće izaziva tvoje impulse?",h:"Izaberi sve što odgovara",m:true,o:[["😰","Stres"],["😴","Umor"],["🪞","Ogledalo"],["📱","Ekrani"],["😶","Dosada"],["🎯","Učenje"],["😢","Tuga"],["🌙","Veče"]]},
-  {id:"v",q:"Kada najčešće imaš epizode?",h:"Izaberi sve što odgovara",m:true,o:[["🌅","Ujutru (6–12)"],["☀️","Tokom dana (12–18)"],["🌆","Uveče (18–22)"],["🌙","Noću (22+)"],["🔀","Nema obrasca"]]},
-  {id:"b",q:"Koji deo tela je najčešće zahvaćen?",h:"Izaberi sve što odgovara",m:true,o:[["😊","Lice"],["🖐️","Ruke i prsti"],["🦵","Noge"],["🔙","Leđa"],["💪","Ramena"],["👤","Skalp"]]},
-  {id:"p",q:"Šta ti pomaže da se smiruješ?",h:"Dodaćemo ovo u tvoj SOS alat",m:true,o:[["🫁","Disanje"],["🧊","Hladna voda"],["🤲","Krema za ruke"],["🎵","Muzika"],["🚶","Šetnja"],["🧸","Fidget"],["📞","Razgovor"],["🎮","Igrica"]]},
-  {id:"c",q:"Koji je tvoj glavni cilj?",h:"Izaberi jedan",m:false,o:[["🌱","Smanjiti epizode"],["💪","Potpuno prestati"],["🧘","Razumeti okidače"],["🩹","Pomoći koži da zaraste"],["📊","Pratiti napredak"]]},
-  {id:"r",q:"Kada da ti šaljemo jutarnji podsednik?",h:"Poruka ohrabrenja svako jutro",m:false,o:[["⏰","7:00"],["⏰","8:00"],["⏰","9:00"],["⏰","10:00"],["🔕","Bez podsetnika"]]},
-];
 const RAS=["😔","😕","😐","🙂","😊"],RAS_N=["Teško","Loše","Okej","Dobro","Sjajno"];
 const EMOCIJE=[["😰","Anksiozna"],["😢","Tužna"],["😤","Ljuta"],["😶","Utrnula"],["😴","Umorna"],["😐","Neutralna"],["😌","Mirna"],["😊","Dobro"]];
 const LOK=["🛋️ Dnevna","🛁 Kupatilo","🍳 Kuhinja","🛏️ Spavaća","💼 Posao","🚗 Auto","🌳 Napolju","📱 Krevet"];
 const OKI=["Stres","Umor","Ogledalo","Dosada","Ekrani","Tuga","Učenje","Jelo","Ostalo"];
 
+function validEmail(e){return/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
+
 function Auth({onDone}){
   const [mode,setMode]=useState("w");
-  const [ime,setIme]=useState("");const [em,setEm]=useState("");const [loz,setLoz]=useState("");
-  const [err,setErr]=useState("");const [loading,setLoading]=useState(false);
+  const [ime,setIme]=useState("");const [em,setEm]=useState("");const [loz,setLoz]=useState("");const [loz2,setLoz2]=useState("");
+  const [errs,setErrs]=useState({});const [loading,setLoading]=useState(false);
+  const [showLoz,setShowLoz]=useState(false);const [showLoz2,setShowLoz2]=useState(false);
+  const [uspeh,setUspeh]=useState("");
+
+  function reset(){setErrs({});setUspeh("");}
+
+  const AUTH={
+    dark:"#0E1117",darkCard:"rgba(255,255,255,.06)",darkBorder:"rgba(255,255,255,.1)",
+    accent:"#4A8C7A",accentLight:"rgba(74,140,122,.15)",
+    btnBg:"#4A8C7A",btnBgHov:"#3D7A6A",
+  };
 
   if(mode==="w") return(
-    <div className="fi" style={{minHeight:"100vh",background:"linear-gradient(160deg,#F0D8E8 0%,#EAE0F8 45%,"+C.bg+" 100%)",display:"flex",flexDirection:"column",justifyContent:"space-between",padding:"0 0 52px"}}>
+    <div className="fi" style={{minHeight:"100vh",background:AUTH.dark,display:"flex",flexDirection:"column",justifyContent:"space-between",padding:"0 0 52px"}}>
       <div style={{padding:"72px 32px 0"}}>
-        <div style={{width:52,height:52,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:32,boxShadow:"0 8px 28px rgba(168,81,106,.4)"}}>
-          <Ico d={I.heart} size={26} stroke="#fff" sw={2}/>
+        <div style={{display:"inline-flex",alignItems:"center",gap:10,marginBottom:52}}>
+          <div style={{width:38,height:38,borderRadius:12,background:AUTH.accentLight,border:`1px solid ${AUTH.accent}50`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <Ico d={I.leaf} size={20} stroke={AUTH.accent} sw={1.8}/>
+          </div>
+          <span style={{color:"rgba(255,255,255,.55)",fontSize:12,fontWeight:700,letterSpacing:2.5,textTransform:"uppercase"}}>Unpick</span>
         </div>
-        <h1 className="serif italic" style={{fontSize:54,lineHeight:1.05,marginBottom:14,letterSpacing:-1}}>Unpick</h1>
-        <p style={{fontSize:16,color:C.textMid,lineHeight:1.8,maxWidth:270,fontWeight:500}}>Nežni pratilac na tvom putu ka slobodi od čačkanja kože.</p>
+        <h1 className="serif" style={{fontSize:50,lineHeight:1.08,marginBottom:16,letterSpacing:-1.5,color:"#fff"}}>Sloboda od<br/><span className="italic">čačkanja kože.</span></h1>
+        <p style={{fontSize:15,color:"rgba(255,255,255,.4)",lineHeight:1.85,maxWidth:280,fontWeight:500}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima. Bez osude.</p>
+        <div style={{marginTop:40,display:"flex",flexDirection:"column",gap:16}}>
+          {[["📊","Praćenje epizoda i napretka"],["🆘","SOS alat za teške trenutke"],["🤖","AI podrška uvek dostupna"]].map(([e,t])=>(
+            <div key={t} style={{display:"flex",alignItems:"center",gap:14}}>
+              <div style={{width:36,height:36,borderRadius:10,background:AUTH.darkCard,border:`1px solid ${AUTH.darkBorder}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:16}}>{e}</div>
+              <span style={{fontSize:14,color:"rgba(255,255,255,.45)",fontWeight:500}}>{t}</span>
+            </div>
+          ))}
+        </div>
       </div>
-      <div style={{padding:"0 28px",display:"flex",flexDirection:"column",gap:12}}>
-        <button className="btn-p" onClick={()=>setMode("r")}>Kreni</button>
-        <button className="btn-o" onClick={()=>setMode("l")}>Već imam nalog</button>
+      <div style={{padding:"0 28px",display:"flex",flexDirection:"column",gap:10}}>
+        <button onClick={()=>{setMode("r");reset();}} style={{background:AUTH.btnBg,color:"#fff",border:"none",borderRadius:16,padding:"17px 28px",fontSize:16,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:"pointer",width:"100%",boxShadow:`0 4px 24px ${AUTH.accent}55`}}>Napravi nalog</button>
+        <button onClick={()=>{setMode("l");reset();}} style={{background:"transparent",color:"rgba(255,255,255,.4)",border:`1px solid ${AUTH.darkBorder}`,borderRadius:16,padding:"15px 28px",fontSize:15,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:"pointer",width:"100%"}}>Već imam nalog</button>
       </div>
     </div>
   );
 
   const isL=mode==="l";
 
+  function validate(){
+    const e={};
+    if(!isL&&!ime.trim()) e.ime="Ime je obavezno.";
+    else if(!isL&&ime.trim().length<2) e.ime="Ime mora imati najmanje 2 karaktera.";
+    if(!em.trim()) e.em="Email adresa je obavezna.";
+    else if(!validEmail(em)) e.em="Unesite ispravnu email adresu.";
+    if(!loz) e.loz="Lozinka je obavezna.";
+    else if(loz.length<6) e.loz="Lozinka mora imati najmanje 6 karaktera.";
+    if(!isL&&loz&&loz2!==loz) e.loz2="Lozinke se ne poklapaju.";
+    return e;
+  }
+
+  function prevErr(key,hint){
+    if(errs[key]) return <p style={{color:C.red,fontSize:12,fontWeight:600,paddingLeft:4,marginTop:4}}>{errs[key]}</p>;
+    if(hint) return <p style={{color:C.textLight,fontSize:12,fontWeight:500,paddingLeft:4,marginTop:4}}>{hint}</p>;
+    return null;
+  }
+
+  const EyeBtn=({show,toggle})=><button type="button" onClick={toggle} style={{position:"absolute",right:14,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:C.textLight,padding:4,lineHeight:1}}>{show?"🙈":"👁️"}</button>;
+
   async function handleSubmit(){
-    setErr(""); setLoading(true);
+    const v=validate();
+    if(Object.keys(v).length){setErrs(v);return;}
+    setErrs({});setLoading(true);setUspeh("");
     try{
       if(isL){
-        const {data,error}=await supabase.auth.signInWithPassword({email:em,password:loz});
-        if(error) throw error;
-        const profile=await supabase.from("profiles").select("name,onboarding_done").eq("id",data.user.id).single();
-        onDone({ime:profile.data?.name||data.user.user_metadata?.name||em,r:true,onb:profile.data?.onboarding_done});
+        const {data,error}=await supabase.auth.signInWithPassword({email:em.trim(),password:loz});
+        if(error){
+          if(error.message.includes("Invalid login")) setErrs({general:"Pogrešan email ili lozinka. Pokušaj ponovo."});
+          else if(error.message.includes("Email not confirmed")) setErrs({general:"Potvrdi email adresu pre prijave."});
+          else setErrs({general:"Prijava nije uspela. Pokušaj ponovo."});
+          return;
+        }
+        const {data:profile}=await supabase.from("profiles").select("name").eq("id",data.user.id).single();
+        onDone({ime:profile?.name||data.user.user_metadata?.name||em});
       }else{
-        if(!ime.trim()){setErr("Unesite vaše ime.");setLoading(false);return;}
-        if(loz.length<6){setErr("Lozinka mora imati najmanje 6 znakova.");setLoading(false);return;}
-        const {data,error}=await supabase.auth.signUp({email:em,password:loz,options:{data:{name:ime}}});
-        if(error) throw error;
-        onDone({ime,r:false});
+        const {data,error}=await supabase.auth.signUp({email:em.trim(),password:loz,options:{data:{name:ime.trim()}}});
+        if(error){
+          if(error.message.includes("already registered")||error.message.includes("already exists")) setErrs({em:"Nalog sa ovim emailom već postoji."});
+          else setErrs({general:"Registracija nije uspela. Pokušaj ponovo."});
+          return;
+        }
+        await supabase.from("profiles").upsert({id:data.user.id,name:ime.trim()});
+        if(data.session){
+          onDone({ime:ime.trim()});
+        }else{
+          setUspeh("Proveri email i potvrdi nalog, pa se prijavi.");
+          setTimeout(()=>{setMode("l");setUspeh("");setLoz("");setLoz2("");},4000);
+        }
       }
-    }catch(e){
-      setErr(e.message||"Nešto nije pošlo po planu.");
+    }catch{
+      setErrs({general:"Nešto nije pošlo po planu. Pokušaj ponovo."});
     }finally{setLoading(false);}
   }
 
+  const inpStyle=(key)=>({borderColor:errs[key]?"#C0392B":undefined});
+  const BtnPrimary=({children,disabled,onClick})=>(
+    <button onClick={onClick} disabled={disabled} style={{background:disabled?"#aaa":AUTH.btnBg,color:"#fff",border:"none",borderRadius:16,padding:"17px 28px",fontSize:16,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:disabled?"default":"pointer",width:"100%",transition:"all .18s",boxShadow:disabled?"none":`0 4px 20px ${AUTH.accent}40`}}>
+      {children}
+    </button>
+  );
+
   return(
-    <div className="fi" style={{minHeight:"100vh",padding:"0 28px 40px"}}>
-      <div style={{paddingTop:64,marginBottom:32}}>
-        <button className="btn-g" style={{marginBottom:28,padding:0}} onClick={()=>{setMode("w");setErr("");}}><Ico d={I.back} size={18} stroke={C.textMid}/> Nazad</button>
-        <h2 className="serif" style={{fontSize:36,marginBottom:8,letterSpacing:-0.5}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
-        <p style={{color:C.textMid,fontSize:15,fontWeight:500}}>{isL?"Drago nam je što si tu.":"Bez osude — samo podrška."}</p>
+    <div className="fi" style={{minHeight:"100vh",background:"#fff"}}>
+      <div style={{padding:"52px 28px 28px",background:AUTH.dark}}>
+        <button onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:8,color:"rgba(255,255,255,.45)",fontSize:14,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",marginBottom:28,padding:0}}>
+          <Ico d={I.back} size={16} stroke="rgba(255,255,255,.45)" sw={2}/> Nazad
+        </button>
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
+          <div style={{width:32,height:32,borderRadius:10,background:AUTH.accentLight,border:`1px solid ${AUTH.accent}50`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <Ico d={I.leaf} size={16} stroke={AUTH.accent} sw={1.8}/>
+          </div>
+          <span style={{color:"rgba(255,255,255,.3)",fontSize:11,fontWeight:700,letterSpacing:2,textTransform:"uppercase"}}>Unpick</span>
+        </div>
+        <h2 className="serif" style={{fontSize:34,letterSpacing:-0.5,color:"#fff",marginBottom:6}}>{isL?"Dobrodošao nazad":"Napravi nalog"}</h2>
+        <p style={{color:"rgba(255,255,255,.38)",fontSize:14,fontWeight:500}}>{isL?"Nastavi odakle si stao.":"Besplatno. Bez osude."}</p>
       </div>
-      <div style={{display:"flex",flexDirection:"column",gap:14}}>
-        {!isL&&<input className="inp" placeholder="Tvoje ime" value={ime} onChange={e=>setIme(e.target.value)}/>}
-        <input className="inp" placeholder="Email" value={em} onChange={e=>setEm(e.target.value)} type="email"/>
-        <input className="inp" type="password" placeholder="Lozinka" value={loz} onChange={e=>setLoz(e.target.value)}/>
-        {err&&<p style={{color:C.red,fontSize:13,fontWeight:600,textAlign:"center"}}>{err}</p>}
-        <div style={{height:4}}/>
-        <button className="btn-p" onClick={handleSubmit} disabled={loading} style={{opacity:loading?0.7:1}}>
-          {loading?"Molimo sačekajte...":(isL?"Prijavi se":"Nastavi →")}
+      <div style={{padding:"28px 28px 40px",display:"flex",flexDirection:"column",gap:18}}>
+        {!isL&&<div>
+          <input className="inp" placeholder="Ime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inpStyle("ime")}/>
+          {prevErr("ime")}
+        </div>}
+        <div>
+          <input className="inp" placeholder="Email adresa" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" style={inpStyle("em")}/>
+          {prevErr("em")}
+        </div>
+        <div>
+          <div style={{position:"relative"}}>
+            <input className="inp" type={showLoz?"text":"password"} placeholder="Lozinka" value={loz} onChange={e=>{setLoz(e.target.value);if(errs.loz)setErrs(v=>({...v,loz:""}));}} style={{paddingRight:44,...inpStyle("loz")}}/>
+            <EyeBtn show={showLoz} toggle={()=>setShowLoz(v=>!v)}/>
+          </div>
+          {prevErr("loz",!isL?"Najmanje 6 karaktera":null)}
+        </div>
+        {!isL&&<div>
+          <div style={{position:"relative"}}>
+            <input className="inp" type={showLoz2?"text":"password"} placeholder="Ponovi lozinku" value={loz2} onChange={e=>{setLoz2(e.target.value);if(errs.loz2)setErrs(v=>({...v,loz2:""}));}} style={{paddingRight:44,...inpStyle("loz2")}}/>
+            <EyeBtn show={showLoz2} toggle={()=>setShowLoz2(v=>!v)}/>
+          </div>
+          {prevErr("loz2")}
+        </div>}
+        {errs.general&&<div style={{background:"#FEF2F2",borderRadius:14,padding:"12px 16px",border:"1px solid #FCA5A5"}}><p style={{color:"#991B1B",fontSize:13,fontWeight:600,textAlign:"center"}}>{errs.general}</p></div>}
+        {uspeh&&<div style={{background:"#F0FDF4",borderRadius:14,padding:"12px 16px",border:"1px solid #86EFAC"}}><p style={{color:"#166534",fontSize:13,fontWeight:600,textAlign:"center"}}>{uspeh}</p></div>}
+        <BtnPrimary onClick={handleSubmit} disabled={loading||!!uspeh}>
+          {loading?"Molimo sačekajte...":(isL?"Prijavi se →":"Registruj se →")}
+        </BtnPrimary>
+        <button onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"6px 0",textAlign:"center"}}>
+          {isL?"Nemaš nalog? Registruj se":"Već imaš nalog? Prijavi se"}
         </button>
       </div>
     </div>
   );
 }
 
-function Onboarding({ime,onDone}){
-  const [k,setK]=useState(0);const [ans,setAns]=useState({});
-  const q=ONB[k];const cur=ans[q.id]||(q.m?[]:null);
-  const toggle=opt=>{if(q.m){const a=cur||[];setAns(x=>({...x,[q.id]:a.includes(opt)?a.filter(v=>v!==opt):[...a,opt]}))}else setAns(x=>({...x,[q.id]:opt}))};
-  const ok=q.m?(cur&&cur.length>0):!!cur;
-  return(
-    <div className="fi" style={{minHeight:"100vh",padding:"56px 24px 40px"}}>
-      <div style={{marginBottom:28}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-          <span style={{fontSize:13,color:C.textLight,fontWeight:600}}>{k+1} / {ONB.length}</span>
-          {k>0&&<button className="btn-g" onClick={()=>setK(v=>v-1)}><Ico d={I.back} size={14} stroke={C.textMid}/> Nazad</button>}
-        </div>
-        <div className="pb"><div className="pf" style={{width:`${((k+1)/ONB.length)*100}%`}}/></div>
-      </div>
-      <h2 className="serif" style={{fontSize:26,marginBottom:6,lineHeight:1.3,letterSpacing:-0.3}}>{q.q}</h2>
-      <p style={{fontSize:13,color:C.textLight,marginBottom:24,fontWeight:500}}>{q.h}</p>
-      {q.m?(
-        <div style={{display:"flex",flexWrap:"wrap",gap:9,marginBottom:32}}>
-          {q.o.map(([e,l])=><button key={l} className={`chip${(cur||[]).includes(l)?" on":""}`} onClick={()=>toggle(l)}><span>{e}</span>{l}</button>)}
-        </div>
-      ):(
-        <div style={{marginBottom:32}}>{q.o.map(([e,l])=><button key={l} className={`cr${cur===l?" on":""}`} onClick={()=>toggle(l)}>{e} {l}</button>)}</div>
-      )}
-      <button className="btn-p" onClick={()=>k<ONB.length-1?setK(v=>v+1):onDone(ans)} disabled={!ok} style={{opacity:ok?1:0.4}}>{k===ONB.length-1?"Završi →":"Nastavi →"}</button>
-    </div>
-  );
-}
 
 function Mehurici({onDone}){
   const [ms,setMs]=useState(()=>Array.from({length:9},(_,i)=>({id:i,x:10+(i%3)*33,y:8+Math.floor(i/3)*30,e:["💗","🌸","✨","💜","🌺","💫","🦋","🌷","🍀"][i],p:false})));
@@ -733,32 +795,23 @@ export default function App(){
       if(session) resolveSession(session);
       else setFaza("auth");
     });
-    const {data:{subscription}}=supabase.auth.onAuthStateChange((_,session)=>{
+    const {data:{subscription}}=supabase.auth.onAuthStateChange((event,session)=>{
       if(!session){setFaza("auth");setKor(null);}
     });
     return()=>subscription.unsubscribe();
   },[]);
 
   async function resolveSession(session){
-    const {data:profile}=await supabase.from("profiles").select("name,onboarding_done").eq("id",session.user.id).single();
+    const {data:profile}=await supabase.from("profiles").select("name").eq("id",session.user.id).single();
     const ime=profile?.name||session.user.user_metadata?.name||session.user.email;
     setKor({ime,id:session.user.id});
-    setFaza(profile?.onboarding_done?"app":"onb");
-    if(profile?.onboarding_done) loadJournalEntries(session.user.id);
+    setFaza("app");
+    loadJournalEntries(session.user.id);
   }
 
   async function loadJournalEntries(userId){
     const {data}=await supabase.from("journal_entries").select("*").eq("user_id",userId).order("created_at",{ascending:false});
     if(data) setNoviUnosi(data.map(e=>({id:e.id,datum:new Date(e.created_at).toLocaleString("sr"),int:e.intensity,ok:e.trigger,lok:e.location,epre:e.emotion_before,epost:e.emotion_after,ish:e.outcome,bel:e.note,slike:e.images||[]})));
-  }
-
-  async function handleOnboardingDone(ans){
-    const {data:{session}}=await supabase.auth.getSession();
-    if(session){
-      await supabase.from("profiles").upsert({id:session.user.id,name:kor?.ime,onboarding_done:true,onboarding_answers:ans});
-      loadJournalEntries(session.user.id);
-    }
-    setFaza("app");
   }
 
   async function handleSacuvajUnos(u){
@@ -794,8 +847,7 @@ export default function App(){
   return(
     <><style>{fonts}{css}</style>
     <div className="app">
-      {faza==="auth"&&<Auth onDone={u=>{setKor(u);setFaza(u.onb?"app":(u.r?"app":"onb"));if(u.onb||u.r) supabase.auth.getSession().then(({data:{session}})=>{if(session)loadJournalEntries(session.user.id)});}}/>}
-      {faza==="onb"&&<Onboarding ime={kor?.ime||"tu"} onDone={handleOnboardingDone}/>}
+      {faza==="auth"&&<Auth onDone={u=>{setKor(u);supabase.auth.getSession().then(({data:{session}})=>{if(session){loadJournalEntries(session.user.id);}});setFaza("app");}}/>}
       {faza==="app"&&(
         priSOS?(
           <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto"}} className="fi"><SOS onZatvori={()=>setPriSOS(false)}/></div>
