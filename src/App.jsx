@@ -298,7 +298,7 @@ function SOS({onZatvori}){
     return()=>clearInterval(ref.current);
   },[tAkt,tajmer]);
   useEffect(()=>{
-    if(!tAkt||tajmer<=0||tajmer<25)return;
+    if(!tAkt||tajmer<=0||tajmer>5)return;
     try{
       const ctx=new(window.AudioContext||window.webkitAudioContext)();
       const o=ctx.createOscillator();const g=ctx.createGain();
