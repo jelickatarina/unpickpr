@@ -86,6 +86,10 @@ function calcStreak(entries, registeredAt){
   return Math.floor((Date.now()-sinceTs)/86400000);
 }
 
+const EyeBtn=({show,toggle})=>(
+  <button type="button" onClick={toggle} style={{position:"absolute",right:14,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:C.textLight,padding:4,lineHeight:1}}>{show?"🙈":"👁️"}</button>
+);
+
 function Auth({onDone}){
   const [mode,setMode]=useState("w");
   const [ime,setIme]=useState("");const [em,setEm]=useState("");const [loz,setLoz]=useState("");const [loz2,setLoz2]=useState("");
@@ -146,8 +150,6 @@ function Auth({onDone}){
     return null;
   }
 
-  const EyeBtn=({show,toggle})=><button type="button" onClick={toggle} style={{position:"absolute",right:14,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:C.textLight,padding:4,lineHeight:1}}>{show?"🙈":"👁️"}</button>;
-
   async function handleSubmit(){
     const v=validate();
     if(Object.keys(v).length){setErrs(v);return;}
@@ -184,17 +186,13 @@ function Auth({onDone}){
   }
 
   const inpStyle=(key)=>({borderColor:errs[key]?"#C0392B":undefined});
-  const BtnPrimary=({children,disabled,onClick})=>(
-    <button onClick={onClick} disabled={disabled} className="btn-p" style={{opacity:disabled?.55:1,cursor:disabled?"default":"pointer"}}>
-      {children}
-    </button>
-  );
+  const dis=loading||!!uspeh;
 
   return(
     <div className="fi" style={{minHeight:"100vh",background:C.bg}}>
       <div style={{position:"relative",padding:"60px 24px 28px",overflow:"hidden"}}>
         <div style={{position:"absolute",top:-60,right:-50,width:180,height:180,borderRadius:"50%",background:C.primaryLight,opacity:.7,pointerEvents:"none"}}/>
-        <button onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:8,color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",marginBottom:28,padding:0,position:"relative"}}>
+        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:8,color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",marginBottom:28,padding:0,position:"relative"}}>
           <Ico d={I.back} size={16} stroke={C.textLight} sw={2}/> Nazad
         </button>
         <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16,position:"relative"}}>
@@ -206,38 +204,38 @@ function Auth({onDone}){
         <h2 className="serif" style={{fontSize:36,letterSpacing:-0.5,color:C.text,marginBottom:6,position:"relative"}}>{isL?"Dobrodošao nazad":"Napravi nalog"}</h2>
         <p style={{color:C.textLight,fontSize:14,fontWeight:500,position:"relative"}}>{isL?"Nastavi odakle si stao.":"Besplatno. Bez osude."}</p>
       </div>
-      <div style={{padding:"8px 24px 40px",display:"flex",flexDirection:"column",gap:18}}>
+      <form onSubmit={e=>{e.preventDefault();handleSubmit();}} style={{padding:"8px 24px 40px",display:"flex",flexDirection:"column",gap:18}}>
         {!isL&&<div>
           <input className="inp" placeholder="Ime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inpStyle("ime")}/>
           {prevErr("ime")}
         </div>}
         <div>
-          <input className="inp" placeholder="Email adresa" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" style={inpStyle("em")}/>
+          <input className="inp" placeholder="Email adresa" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" autoComplete="email" style={inpStyle("em")}/>
           {prevErr("em")}
         </div>
         <div>
           <div style={{position:"relative"}}>
-            <input className="inp" type={showLoz?"text":"password"} placeholder="Lozinka" value={loz} onChange={e=>{setLoz(e.target.value);if(errs.loz)setErrs(v=>({...v,loz:""}));}} style={{paddingRight:44,...inpStyle("loz")}}/>
+            <input className="inp" type={showLoz?"text":"password"} placeholder="Lozinka" value={loz} onChange={e=>{setLoz(e.target.value);if(errs.loz)setErrs(v=>({...v,loz:""}));}} autoComplete={isL?"current-password":"new-password"} style={{paddingRight:44,...inpStyle("loz")}}/>
             <EyeBtn show={showLoz} toggle={()=>setShowLoz(v=>!v)}/>
           </div>
           {prevErr("loz",!isL?"Najmanje 6 karaktera":null)}
         </div>
         {!isL&&<div>
           <div style={{position:"relative"}}>
-            <input className="inp" type={showLoz2?"text":"password"} placeholder="Ponovi lozinku" value={loz2} onChange={e=>{setLoz2(e.target.value);if(errs.loz2)setErrs(v=>({...v,loz2:""}));}} style={{paddingRight:44,...inpStyle("loz2")}}/>
+            <input className="inp" type={showLoz2?"text":"password"} placeholder="Ponovi lozinku" value={loz2} onChange={e=>{setLoz2(e.target.value);if(errs.loz2)setErrs(v=>({...v,loz2:""}));}} autoComplete="new-password" style={{paddingRight:44,...inpStyle("loz2")}}/>
             <EyeBtn show={showLoz2} toggle={()=>setShowLoz2(v=>!v)}/>
           </div>
           {prevErr("loz2")}
         </div>}
         {errs.general&&<div style={{background:"#FEF2F2",borderRadius:14,padding:"12px 16px",border:"1px solid #FCA5A5"}}><p style={{color:"#991B1B",fontSize:13,fontWeight:600,textAlign:"center"}}>{errs.general}</p></div>}
         {uspeh&&<div style={{background:"#F0FDF4",borderRadius:14,padding:"12px 16px",border:"1px solid #86EFAC"}}><p style={{color:"#166534",fontSize:13,fontWeight:600,textAlign:"center"}}>{uspeh}</p></div>}
-        <BtnPrimary onClick={handleSubmit} disabled={loading||!!uspeh}>
+        <button type="submit" disabled={dis} className="btn-p" style={{opacity:dis?0.55:1,cursor:dis?"default":"pointer"}}>
           {loading?"Molimo sačekajte...":(isL?"Prijavi se →":"Registruj se →")}
-        </BtnPrimary>
-        <button onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"6px 0",textAlign:"center"}}>
+        </button>
+        <button type="button" onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"6px 0",textAlign:"center"}}>
           {isL?"Nemaš nalog? Registruj se":"Već imaš nalog? Prijavi se"}
         </button>
-      </div>
+      </form>
     </div>
   );
 }
