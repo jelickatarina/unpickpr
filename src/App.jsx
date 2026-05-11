@@ -434,7 +434,12 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
       </div>
     </div>
   );
-  function toggleOk(o){setU(v=>({...v,ok:v.ok.includes(o)?v.ok.filter(x=>x!==o):[...v.ok,o]}));}
+  function toggleOk(o){
+    if(o==="Ostalo"){setU(v=>({...v,ok:v.ok.includes("Ostalo")||v.ok.some(x=>x.startsWith("Ostalo:"))?v.ok.filter(x=>x!=="Ostalo"&&!x.startsWith("Ostalo:")):v.ok.includes("Ostalo")?v.ok:[...v.ok,"Ostalo"]}));return;}
+    setU(v=>({...v,ok:v.ok.includes(o)?v.ok.filter(x=>x!==o):[...v.ok,o]}));
+  }
+  const ostaloAkt=u.ok.includes("Ostalo")||u.ok.some(x=>x.startsWith("Ostalo:"));
+  const ostaloTekst=u.ok.find(x=>x.startsWith("Ostalo:"))?.slice(7)||"";
   return(
     <div style={{padding:"56px 24px 40px",minHeight:"100vh"}} className="fi">
       {k===1&&<><Hdr title={editData?"Izmena unosa":"Novi unos"}/>
@@ -446,9 +451,10 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
         </div>
         <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:C.textLight,fontWeight:600,marginBottom:24}}><span>Jedva primetio</span><span>Nepodnošljiv</span></div>
         <span className="lbl">OKIDAČI <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(može više)</span></span>
-        <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:20}}>
-          {OKI.map(o=><button key={o} className={`chip${u.ok.includes(o)?" on":""}`} onClick={()=>toggleOk(o)} style={{padding:"8px 14px"}}>{o}</button>)}
+        <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:ostaloAkt?12:20}}>
+          {OKI.map(o=><button key={o} className={`chip${(o==="Ostalo"?ostaloAkt:u.ok.includes(o))?" on":""}`} onClick={()=>toggleOk(o)} style={{padding:"8px 14px"}}>{o}</button>)}
         </div>
+        {ostaloAkt&&<input className="inp" placeholder="Opiši okidač..." autoFocus value={ostaloTekst} onChange={e=>{const t=e.target.value;setU(v=>({...v,ok:[...v.ok.filter(x=>x!=="Ostalo"&&!x.startsWith("Ostalo:")),t?"Ostalo:"+t:"Ostalo"]}));}} style={{marginBottom:20}}/>}
         <span className="lbl">LOKACIJA</span>
         <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:28}}>
           {LOK.map(l=><button key={l} className={`chip${u.lok===l?" on":""}`} onClick={()=>setU(v=>({...v,lok:l}))} style={{padding:"8px 12px",fontSize:13}}>{l}</button>)}
