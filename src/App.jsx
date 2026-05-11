@@ -749,7 +749,7 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
               <div className="fi" style={{borderTop:`1px solid ${C.border}`,marginTop:14,paddingTop:14}}>
                 {u.bel&&<p style={{fontSize:13,color:C.textMid,lineHeight:1.7,fontWeight:500,marginBottom:12}}>{u.bel}</p>}
                 {u.slike?.length>0&&<div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>{u.slike.map((s,i)=><img key={i} src={s} alt="" style={{width:76,height:76,borderRadius:14,objectFit:"cover"}}/>)}</div>}
-                <div style={{display:"flex",gap:8,marginTop:14,paddingTop:14,borderTop:`1px solid ${C.border}`}}>
+                <div style={{display:"flex",gap:8,marginTop:4}}>
                   <button onClick={e=>{e.stopPropagation();onIzmeni(u);}} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"11px 0",borderRadius:14,border:`1.5px solid ${C.border}`,background:C.bgMuted,color:C.textMid,fontWeight:600,fontSize:13,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>
                     <Ico d={I.edit} size={14} stroke={C.textMid} sw={2}/>Izmeni
                   </button>
