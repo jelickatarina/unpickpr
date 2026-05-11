@@ -298,6 +298,19 @@ function SOS({onZatvori}){
     return()=>clearInterval(ref.current);
   },[tAkt,tajmer]);
   useEffect(()=>{
+    if(!tAkt||tajmer<=0||tajmer===30)return;
+    try{
+      const ctx=new(window.AudioContext||window.webkitAudioContext)();
+      const o=ctx.createOscillator();const g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      const last5=tajmer<=5;
+      o.frequency.value=last5?660:440;
+      g.gain.setValueAtTime(last5?0.18:0.07,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
+      o.start();o.stop(ctx.currentTime+0.08);
+    }catch{}
+  },[tajmer]);
+  useEffect(()=>{
     if(alat!=="dis"||faza!=="alat")return;
     const dur=[4,7,8][dk%3];setDisSek(dur);
     const id=setInterval(()=>setDisSek(s=>s-1),1000);
