@@ -78,6 +78,7 @@ const LOK=["🛋️ Dnevna","🛁 Kupatilo","🍳 Kuhinja","🛏️ Spavaća","�
 const OKI=["Stres","Umor","Ogledalo","Dosada","Ekrani","Tuga","Učenje","Jelo","Ostalo"];
 
 function safeParseOk(v){if(!v)return[];try{const p=JSON.parse(v);return Array.isArray(p)?p:[v];}catch{return v?[v]:[];}}
+function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
 
 function calcStreak(entries, registeredAt){
   const refTs=registeredAt?new Date(registeredAt).getTime():Date.now();
