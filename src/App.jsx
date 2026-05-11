@@ -79,18 +79,11 @@ const OKI=["Stres","Umor","Ogledalo","Dosada","Ekrani","Tuga","Učenje","Jelo","
 
 function validEmail(e){return/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
 
-function calcStreak(entries){
-  // entries sorted newest first, each needs .ts (ms) and .ish ("res"|"try"|"ep")
-  const withTs=entries.filter(e=>e.ts);
-  if(!withTs.length) return 0;
-  const bad=withTs.filter(e=>e.ish==="try"||e.ish==="ep");
-  if(!bad.length){
-    // no bad entries ever — count days since oldest entry
-    const oldest=withTs[withTs.length-1];
-    return Math.floor((Date.now()-oldest.ts)/86400000);
-  }
-  // newest bad entry is first (entries sorted desc)
-  return Math.floor((Date.now()-bad[0].ts)/86400000);
+function calcStreak(entries, registeredAt){
+  const refTs=registeredAt?new Date(registeredAt).getTime():Date.now();
+  const bad=entries.filter(e=>e.ts&&(e.ish==="try"||e.ish==="ep"));
+  const sinceTs=bad.length?bad[0].ts:refTs;
+  return Math.floor((Date.now()-sinceTs)/86400000);
 }
 
 function Auth({onDone}){
@@ -880,7 +873,7 @@ export default function App(){
   async function resolveSession(session){
     const {data:profile}=await supabase.from("profiles").select("name").eq("id",session.user.id).single();
     const ime=profile?.name||session.user.user_metadata?.name||session.user.email;
-    setKor({ime,id:session.user.id});
+    setKor({ime,id:session.user.id,registeredAt:session.user.created_at});
     setFaza("app");
     loadJournalEntries(session.user.id);
   }
@@ -932,9 +925,9 @@ export default function App(){
         ):(
           <>
             <div style={{paddingBottom:ekran==="chat"?0:76,overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 72px)":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
-              {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi)} onSOS={()=>setPriSOS(true)} ras={ras} onRas={setRas} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
+              {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} onSOS={()=>setPriSOS(true)} ras={ras} onRas={setRas} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)}/>}
-              {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi)}/>}
+              {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
               {ekran==="bib"&&<Biblioteka/>}
               {ekran==="chat"&&<AIChat/>}
             </div>
