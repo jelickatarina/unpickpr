@@ -116,9 +116,13 @@ function Auth({onDone}){
     return e;
   }
 
-  function prevErr(key,msg){return errs[key]?<p style={{color:C.red,fontSize:12,fontWeight:600,marginTop:-8,paddingLeft:4}}>{errs[key]}</p>:msg?<p style={{color:C.textLight,fontSize:12,fontWeight:500,marginTop:-8,paddingLeft:4}}>{msg}</p>:null;}
+  function prevErr(key,hint){
+    if(errs[key]) return <p style={{color:C.red,fontSize:12,fontWeight:600,paddingLeft:4,marginTop:4}}>{errs[key]}</p>;
+    if(hint) return <p style={{color:C.textLight,fontSize:12,fontWeight:500,paddingLeft:4,marginTop:4}}>{hint}</p>;
+    return null;
+  }
 
-  const EyeBtn=({show,toggle})=><button type="button" onClick={toggle} style={{position:"absolute",right:14,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:C.textLight,padding:4}}>{show?"🙈":"👁️"}</button>;
+  const EyeBtn=({show,toggle})=><button type="button" onClick={toggle} style={{position:"absolute",right:14,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:C.textLight,padding:4,lineHeight:1}}>{show?"🙈":"👁️"}</button>;
 
   async function handleSubmit(){
     const v=validate();
@@ -158,13 +162,11 @@ function Auth({onDone}){
         <h2 className="serif" style={{fontSize:36,marginBottom:6,letterSpacing:-0.5}}>{isL?"Dobrodošla nazad 👋":"Napravi nalog 🌸"}</h2>
         <p style={{color:C.textMid,fontSize:14,fontWeight:500}}>{isL?"Drago nam je što si tu.":"Bez osude — samo podrška."}</p>
       </div>
-      <div style={{padding:"24px 28px 0",display:"flex",flexDirection:"column",gap:14}}>
-        {!isL&&<>
-          <div style={{position:"relative"}}>
-            <input className="inp" placeholder="Tvoje ime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={{borderColor:errs.ime?C.red:undefined}}/>
-          </div>
+      <div style={{padding:"24px 28px 0",display:"flex",flexDirection:"column",gap:18}}>
+        {!isL&&<div>
+          <input className="inp" placeholder="Tvoje ime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={{borderColor:errs.ime?C.red:undefined}}/>
           {prevErr("ime")}
-        </>}
+        </div>}
         <div>
           <input className="inp" placeholder="Email adresa" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" style={{borderColor:errs.em?C.red:undefined}}/>
           {prevErr("em")}
