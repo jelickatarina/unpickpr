@@ -235,7 +235,7 @@ function Auth({onDone}){
           disabled={dis}
           className="btn-p"
           style={{opacity:dis?0.55:1,cursor:dis?"default":"pointer",touchAction:"manipulation"}}
-          onTouchEnd={e=>{e.preventDefault();if(!dis)handleSubmit();}}
+          onTouchStart={e=>{e.preventDefault();if(!dis)handleSubmit();}}
           onClick={()=>{if(!dis)handleSubmit();}}
         >
           {loading?"Molimo sačekajte...":(isL?"Prijavi se →":"Registruj se →")}
