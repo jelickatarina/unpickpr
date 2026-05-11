@@ -18,10 +18,10 @@ body{background:${C.bg};}
 .app{font-family:'Plus Jakarta Sans',sans-serif;background:${C.bg};min-height:100vh;max-width:390px;margin:0 auto;position:relative;color:${C.text};overflow-x:hidden;}
 .serif{font-family:'Instrument Serif',serif;}
 .italic{font-style:italic;}
-.btn-p{background:${C.primaryGrad};color:#fff;border:none;border-radius:16px;padding:17px 28px;font-size:16px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;width:100%;transition:all .18s;box-shadow:0 4px 22px rgba(196,113,74,.38);}
+.btn-p{background:${C.primaryGrad};color:#fff;border:none;border-radius:16px;padding:17px 28px;font-size:16px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;width:100%;transition:all .18s;box-shadow:0 4px 22px rgba(196,113,74,.38);touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .btn-p:active{transform:scale(.98);}
-.btn-o{background:transparent;color:${C.primary};border:1.5px solid ${C.border};border-radius:16px;padding:15px 28px;font-size:15px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;width:100%;}
-.btn-g{background:transparent;color:${C.textMid};border:none;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;padding:6px;display:flex;align-items:center;gap:6px;font-weight:500;}
+.btn-o{background:transparent;color:${C.primary};border:1.5px solid ${C.border};border-radius:16px;padding:15px 28px;font-size:15px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;width:100%;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.btn-g{background:transparent;color:${C.textMid};border:none;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;padding:6px;display:flex;align-items:center;gap:6px;font-weight:500;touch-action:manipulation;}
 .card{background:${C.bgCard};border-radius:24px;box-shadow:0 2px 14px ${C.shadow},0 1px 3px rgba(80,40,10,.03);padding:20px;}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:100px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:13px;color:${C.textMid};cursor:pointer;transition:all .16s;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;}
 .chip.on{border-color:${C.primary};background:${C.primaryLight};color:${C.primaryDark};}
@@ -204,13 +204,15 @@ function Auth({onDone}){
         <h2 className="serif" style={{fontSize:36,letterSpacing:-0.5,color:C.text,marginBottom:6,position:"relative"}}>{isL?"Dobrodošao nazad":"Napravi nalog"}</h2>
         <p style={{color:C.textLight,fontSize:14,fontWeight:500,position:"relative"}}>{isL?"Nastavi odakle si stao.":"Besplatno. Bez osude."}</p>
       </div>
-      <form onSubmit={e=>{e.preventDefault();handleSubmit();}} style={{padding:"8px 24px 40px",display:"flex",flexDirection:"column",gap:18}}>
+      <div style={{padding:"8px 24px 40px",display:"flex",flexDirection:"column",gap:18}}>
+        {errs.general&&<div style={{background:"#FEF2F2",borderRadius:14,padding:"12px 16px",border:"1px solid #FCA5A5"}}><p style={{color:"#991B1B",fontSize:13,fontWeight:600,textAlign:"center"}}>{errs.general}</p></div>}
+        {uspeh&&<div style={{background:"#F0FDF4",borderRadius:14,padding:"12px 16px",border:"1px solid #86EFAC"}}><p style={{color:"#166534",fontSize:13,fontWeight:600,textAlign:"center"}}>{uspeh}</p></div>}
         {!isL&&<div>
-          <input className="inp" placeholder="Ime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inpStyle("ime")}/>
+          <input className="inp" placeholder="Ime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inpStyle("ime")} autoComplete="given-name"/>
           {prevErr("ime")}
         </div>}
         <div>
-          <input className="inp" placeholder="Email adresa" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" autoComplete="email" style={inpStyle("em")}/>
+          <input className="inp" placeholder="Email adresa" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" autoComplete="email" inputMode="email" style={inpStyle("em")}/>
           {prevErr("em")}
         </div>
         <div>
@@ -227,15 +229,20 @@ function Auth({onDone}){
           </div>
           {prevErr("loz2")}
         </div>}
-        {errs.general&&<div style={{background:"#FEF2F2",borderRadius:14,padding:"12px 16px",border:"1px solid #FCA5A5"}}><p style={{color:"#991B1B",fontSize:13,fontWeight:600,textAlign:"center"}}>{errs.general}</p></div>}
-        {uspeh&&<div style={{background:"#F0FDF4",borderRadius:14,padding:"12px 16px",border:"1px solid #86EFAC"}}><p style={{color:"#166534",fontSize:13,fontWeight:600,textAlign:"center"}}>{uspeh}</p></div>}
-        <button type="submit" disabled={dis} className="btn-p" style={{opacity:dis?0.55:1,cursor:dis?"default":"pointer"}}>
+        <button
+          type="button"
+          disabled={dis}
+          className="btn-p"
+          style={{opacity:dis?0.55:1,cursor:dis?"default":"pointer",touchAction:"manipulation"}}
+          onTouchEnd={e=>{e.preventDefault();if(!dis)handleSubmit();}}
+          onClick={()=>{if(!dis)handleSubmit();}}
+        >
           {loading?"Molimo sačekajte...":(isL?"Prijavi se →":"Registruj se →")}
         </button>
-        <button type="button" onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"6px 0",textAlign:"center"}}>
+        <button type="button" onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"6px 0",textAlign:"center",touchAction:"manipulation"}}>
           {isL?"Nemaš nalog? Registruj se":"Već imaš nalog? Prijavi se"}
         </button>
-      </form>
+      </div>
     </div>
   );
 }
