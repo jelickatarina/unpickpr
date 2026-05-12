@@ -72,6 +72,11 @@ const I={
   spark:"M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z",
   check:"M20 6L9 17l-5-5",
   chev:"M9 18l6-6-6-6",
+  flame:"M12 2c0 0-5 5.5-5 10a5 5 0 0010 0c0-4.5-5-10-5-10z",
+  trophy:["M8 21h8","M12 17v4","M5 3h14l-1 7a6 6 0 01-12 0L5 3z","M3 7h2","M19 7h2"],
+  book:["M4 19.5A2.5 2.5 0 016.5 17H20","M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"],
+  camera:["M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z","M12 17a4 4 0 100-8 4 4 0 000 8z"],
+  target:["M12 22a10 10 0 100-20 10 10 0 000 20z","M12 16a4 4 0 100-8 4 4 0 000 8z","M12 12h.01"],
 };
 
 const RAS=["😔","😕","😐","🙂","😊"],RAS_N=["Teško","Loše","Okej","Dobro","Sjajno"];
@@ -119,9 +124,9 @@ function Auth({onDone}){
         <p style={{fontSize:15,color:C.textMid,lineHeight:1.85,maxWidth:280,fontWeight:500,position:"relative"}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima. Bez osude.</p>
       </div>
       <div style={{padding:"0 24px",display:"flex",flexDirection:"column",gap:10,flex:1}}>
-        {[["📊","Praćenje epizoda","Beleži svaki trenutak"],["🆘","SOS alat","Podrška u krizi"],["🤖","Mia, AI drugarica","Tu je kada trebaš"]].map(([e,t,s])=>(
+        {[[I.chart,C.primary,"Praćenje epizoda","Beleži svaki trenutak"],[I.shield,C.red,"SOS alat","Podrška u krizi"],[I.chat,C.purple,"Mia, AI drugarica","Tu je kada trebaš"]].map(([ico,clr,t,s])=>(
           <div key={t} style={{display:"flex",alignItems:"center",gap:14,background:C.bgCard,borderRadius:18,padding:"14px 18px",border:`1px solid ${C.border}`,boxShadow:`0 2px 10px ${C.shadow}`}}>
-            <div style={{width:44,height:44,borderRadius:13,background:C.bgMuted,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{e}</div>
+            <div style={{width:44,height:44,borderRadius:13,background:C.bgMuted,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={ico} size={20} stroke={clr} sw={1.8}/></div>
             <div><p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:2}}>{t}</p><p style={{fontSize:12,color:C.textLight,fontWeight:500}}>{s}</p></div>
           </div>
         ))}
@@ -325,7 +330,7 @@ function SOS({onZatvori}){
   const fmt=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
   const W=({ch})=><div style={{minHeight:"100vh",padding:"32px 24px 48px",background:C.bg}} className="fi">{ch}</div>;
   const XBtn=()=><div style={{display:"flex",justifyContent:"flex-end",marginBottom:24}}><button style={{background:C.bgMuted,border:"none",borderRadius:50,width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}} onClick={onZatvori}><Ico d={I.x} size={16} stroke={C.textMid} sw={2}/></button></div>;
-  const ALATI=[{id:"dis",icon:"🫁",l:"Vežba disanja",op:"4-7-8 tehnika"},{id:"taj",icon:"⏱️",l:"Čekaj 5 minuta",op:"Impulsi prolaze"},{id:"ruke",icon:"🤲",l:"Zaposli ruke",op:"Alternativne aktivnosti"},{id:"uzem",icon:"🌿",l:"Uzemljenje",op:"5-4-3-2-1 tehnika"},{id:"meh",icon:"🫧",l:"Prsni mehuriće",op:"Igrica"},{id:"boj",icon:"🎨",l:"Igra boja",op:"Igrica"}];
+  const ALATI=[{id:"dis",icon:I.leaf,l:"Vežba disanja",op:"4-7-8 tehnika"},{id:"taj",icon:I.spark,l:"Čekaj 5 minuta",op:"Impulsi prolaze"},{id:"ruke",icon:I.shield,l:"Zaposli ruke",op:"Alternativne aktivnosti"},{id:"uzem",icon:I.heart,l:"Uzemljenje",op:"5-4-3-2-1 tehnika"},{id:"meh",icon:I.plus,l:"Prsni mehuriće",op:"Igrica"},{id:"boj",icon:I.spark,l:"Igra boja",op:"Igrica"}];
 
   if(faza==="izb") return(
     <div style={{minHeight:"100vh",padding:"32px 24px 48px",background:C.bg}} className="fi">
@@ -335,7 +340,7 @@ function SOS({onZatvori}){
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
         {ALATI.map(a=>(
           <button key={a.id} onClick={()=>{setAlat(a.id);setFaza("alat")}} style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:20,padding:"16px 20px",cursor:"pointer",display:"flex",alignItems:"center",gap:16,textAlign:"left",boxShadow:`0 2px 8px ${C.shadow}`}}>
-            <div style={{width:50,height:50,borderRadius:16,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0}}>{a.icon}</div>
+            <div style={{width:50,height:50,borderRadius:16,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={a.icon} size={22} stroke={C.primary} sw={1.8}/></div>
             <div style={{flex:1}}><p style={{fontWeight:600,fontSize:15,color:C.text,marginBottom:2}}>{a.l}</p><p style={{fontSize:13,color:C.textLight}}>{a.op}</p></div>
             <Ico d={I.chev} size={16} stroke={C.textLight} sw={2}/>
           </button>
@@ -358,7 +363,7 @@ function SOS({onZatvori}){
               strokeDasharray={circ} strokeDashoffset={circ*(1-prog)} style={{transition:"stroke-dashoffset 1s linear,stroke .4s"}}/>
           </svg>
           <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:4}}>
-            <span style={{fontSize:36}}>{dk%3===0?"🫁":dk%3===1?"🤐":"💨"}</span>
+            <Ico d={dk%3===0?I.plus:dk%3===1?I.shield:I.send} size={28} stroke={cur.c} sw={1.8}/>
             <span style={{fontSize:42,fontWeight:400,color:cur.c,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{Math.max(disSek,0)}</span>
             <span style={{fontWeight:600,color:cur.c,fontSize:13}}>{cur.l}</span>
           </div>
@@ -372,7 +377,7 @@ function SOS({onZatvori}){
       <div style={{minHeight:"100vh",padding:"40px 24px 48px",background:C.bg,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:28}} className="fi">
         <BackBtn/>
         <div>
-          <h3 className="serif" style={{fontSize:30,letterSpacing:-0.5,marginBottom:6}}>{done?"Uspela si! 🌸":"Čekaj malo"}</h3>
+          <h3 className="serif" style={{fontSize:30,letterSpacing:-0.5,marginBottom:6}}>{done?"Uspela si!":"Čekaj malo"}</h3>
           <p style={{color:C.textMid,fontSize:14,fontWeight:500}}>{done?"Impuls je prošao. Budi ponosna.":"Impulsi prolaze. Samo 5 minuta."}</p>
         </div>
         <div style={{position:"relative",width:210,height:210}}>
@@ -383,7 +388,7 @@ function SOS({onZatvori}){
           </svg>
           <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:4}}>
             {done
-              ? <span style={{fontSize:52}}>✅</span>
+              ? <div style={{width:64,height:64,borderRadius:"50%",background:C.greenLight,display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={I.check} size={32} stroke={C.green} sw={2.5}/></div>
               : <>
                   <span style={{fontSize:44,fontWeight:400,color:C.primary,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{tajmer}</span>
                   <span style={{fontSize:12,color:C.textLight,fontWeight:600,letterSpacing:1}}>SEK</span>
@@ -393,14 +398,14 @@ function SOS({onZatvori}){
         </div>
         {!tAkt&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();try{acRef.current=new(window.AudioContext||window.webkitAudioContext)();}catch{}setTAkt(true);}} onClick={()=>{try{acRef.current=new(window.AudioContext||window.webkitAudioContext)();}catch{}setTAkt(true);}} style={{width:"auto",padding:"15px 52px"}}>Pokreni ▶</button>}
         {done&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();onZatvori();}} onClick={()=>onZatvori()} style={{width:"auto",padding:"15px 44px"}}>Nastavi →</button>}
-        {tAkt&&!done&&<p style={{color:C.textLight,fontSize:13,fontWeight:500}}>Drži se 💛</p>}
+        {tAkt&&!done&&<p style={{color:C.textLight,fontSize:13,fontWeight:500}}>Drži se</p>}
       </div>
     );}
     if(alat==="ruke") return(
       <div style={{minHeight:"100vh",padding:"32px 24px 48px",background:C.bg}} className="fi">
         <BackBtn/>
         <h3 className="serif" style={{fontSize:26,marginBottom:20,letterSpacing:-0.3}}>Zaposli ruke</h3>
-        {["🧴 Nanesite kremu za ruke","🧊 Držite kocku leda","🤲 Pritisnite nokte u dlan","🖊️ Klikćite hemijsku","🎯 Kuckajte prstima o sto","💆 Masirajte sopstvene ruke"].map(a=><div key={a} className="card" style={{marginBottom:10,fontSize:14,fontWeight:500}}>{a}</div>)}
+        {["Nanesite kremu za ruke","Držite kocku leda","Pritisnite nokte u dlan","Klikćite hemijsku","Kuckajte prstima o sto","Masirajte sopstvene ruke"].map(a=><div key={a} className="card" style={{marginBottom:10,fontSize:14,fontWeight:500}}>{a}</div>)}
         <div style={{height:16}}/><button className="btn-p" onClick={()=>onZatvori()}>Probala sam →</button>
       </div>
     );
@@ -409,32 +414,32 @@ function SOS({onZatvori}){
         <BackBtn/>
         <h3 className="serif" style={{fontSize:26,marginBottom:6,letterSpacing:-0.3}}>5-4-3-2-1 Uzemljenje</h3>
         <p style={{color:C.textMid,fontSize:14,marginBottom:22,fontWeight:500}}>Primeti šta je oko tebe, upravo sada.</p>
-        {[["👀","5","stvari koje VIDIŠ"],["🤚","4","stvari koje DODIRUJEŠ"],["👂","3","zvuka koje ČUJEŠ"],["👃","2","mirisa koje OSEĆAŠ"],["👅","1","ukus koji OSETIŠ"]].map(([e,n,l])=>(
+        {[[I.spark,"5","stvari koje VIDIŠ"],[I.heart,"4","stvari koje DODIRUJEŠ"],[I.chat,"3","zvuka koje ČUJEŠ"],[I.leaf,"2","mirisa koje OSEĆAŠ"],[I.plus,"1","ukus koji OSETIŠ"]].map(([ico,n,l])=>(
           <div key={l} className="card" style={{marginBottom:10,display:"flex",alignItems:"center",gap:14}}>
-            <span style={{fontSize:26}}>{e}</span>
+            <div style={{width:36,height:36,borderRadius:10,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={ico} size={18} stroke={C.primary} sw={1.8}/></div>
             <div><span style={{fontWeight:400,color:C.primary,fontSize:22,fontFamily:"'Instrument Serif',serif"}}>{n} </span><span style={{fontSize:13,color:C.textMid,fontWeight:500}}>{l}</span></div>
           </div>
         ))}
         <div style={{height:16}}/><button className="btn-p" onClick={()=>onZatvori()}>Završila sam →</button>
       </div>
     );
-    if(alat==="meh") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Prsni mehuriće! 🫧</h3><Mehurici onDone={()=>onZatvori()}/></div>);
-    if(alat==="boj") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Igra boja 🎨</h3><Boje onDone={()=>onZatvori()}/></div>);
+    if(alat==="meh") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Prsni mehuriće</h3><Mehurici onDone={()=>onZatvori()}/></div>);
+    if(alat==="boj") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Igra boja</h3><Boje onDone={()=>onZatvori()}/></div>);
   }
 
   return(
     <div style={{minHeight:"100vh",padding:"40px 24px 48px",background:C.bg,display:"flex",flexDirection:"column",alignItems:"center",gap:16}} className="fi">
-      <div style={{fontSize:56,marginBottom:4}}>💛</div>
+      <div style={{width:72,height:72,borderRadius:"50%",background:C.amberLight,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:4}}><Ico d={I.heart} size={34} stroke={C.amber} sw={1.8}/></div>
       <h2 className="serif" style={{fontSize:30,letterSpacing:-0.3}}>Kako je prošlo?</h2>
       <p style={{color:C.textMid,fontSize:14,fontWeight:500}}>Nema pogrešnog odgovora.</p>
       <div style={{display:"flex",flexDirection:"column",gap:10,width:"100%"}}>
-        {[["✅","Odolela sam impulsu",C.green,C.greenLight],["💛","Pokušala sam, ali teško",C.amber,C.amberLight],["❌","Imala sam epizodu",C.red,"#FAEAEA"]].map(([e,l,c,bg])=>(
-          <button key={l} onClick={()=>setIshod(l)} style={{width:"100%",padding:"18px 20px",borderRadius:18,border:`2px solid ${ishod===l?c:C.border}`,background:ishod===l?bg:C.bgCard,cursor:"pointer",fontSize:15,fontWeight:ishod===l?700:500,display:"flex",alignItems:"center",gap:14,transition:"all .16s",boxShadow:ishod===l?`0 4px 16px ${c}25`:`0 2px 8px ${C.shadow}`}}>
-            <span style={{fontSize:24}}>{e}</span>{l}
+        {[["res","Odolela sam impulsu",C.green,C.greenLight],["try","Pokušala sam, ali teško",C.amber,C.amberLight],["ep","Imala sam epizodu",C.red,"#FAEAEA"]].map(([v,l,c,bg])=>(
+          <button key={v} onClick={()=>setIshod(l)} style={{width:"100%",padding:"18px 20px",borderRadius:18,border:`2px solid ${ishod===l?c:C.border}`,background:ishod===l?bg:C.bgCard,cursor:"pointer",fontSize:15,fontWeight:ishod===l?700:500,display:"flex",alignItems:"center",gap:14,transition:"all .16s",boxShadow:ishod===l?`0 4px 16px ${c}25`:`0 2px 8px ${C.shadow}`}}>
+            <div style={{width:20,height:20,borderRadius:"50%",background:c,flexShrink:0}}/>  {l}
           </button>
         ))}
       </div>
-      {ishod&&<><p style={{fontSize:13,color:C.textLight,fontWeight:500,textAlign:"center"}}>{ishod.includes("✅")?"Neverovatno! Ta snaga je tvoja. 🌸":ishod.includes("💛")?"Pokušaj je napredak. Budi blaga. 💛":"U redu je. Potražila si pomoć — to je važno. 🩹"}</p><button className="btn-p" style={{width:"auto",padding:"14px 44px"}} onClick={onZatvori}>Sačuvaj i zatvori</button></>}
+      {ishod&&<><p style={{fontSize:13,color:C.textLight,fontWeight:500,textAlign:"center"}}>{ishod==="Odolela sam impulsu"?"Neverovatno! Ta snaga je tvoja.":ishod==="Pokušala sam, ali teško"?"Pokušaj je napredak. Budi blaga.":"U redu je. Potražila si pomoć — to je važno."}</p><button className="btn-p" style={{width:"auto",padding:"14px 44px"}} onClick={onZatvori}>Sačuvaj i zatvori</button></>}
     </div>
   );
 }
@@ -493,7 +498,7 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
       </>}
       {k===3&&<><Hdr title="Ishod"/>
         <h3 className="serif" style={{fontSize:26,marginBottom:20,letterSpacing:-0.3}}>Kakav je bio ishod?</h3>
-        {[["res","✅ Odolela sam impulsu"],["try","💛 Pokušala sam, ali nije išlo"],["ep","❌ Imala sam epizodu"]].map(([v,l])=><button key={v} className={`cr${u.ish===v?" on":""}`} onClick={()=>setU(x=>({...x,ish:v}))}>{l}</button>)}
+        {[["res","Odolela sam impulsu"],["try","Pokušala sam, ali nije išlo"],["ep","Imala sam epizodu"]].map(([v,l])=><button key={v} className={`cr${u.ish===v?" on":""}`} onClick={()=>setU(x=>({...x,ish:v}))}>{l}</button>)}
         <div style={{height:18}}/><button className="btn-p" onClick={()=>setK(4)} disabled={!u.ish} style={{opacity:u.ish?1:0.4}}>Nastavi →</button>
       </>}
       {k===4&&<><Hdr title="Fotografija"/>
@@ -501,7 +506,7 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
         <p style={{fontSize:14,color:C.textMid,marginBottom:20,fontWeight:500}}>Opciono — ostaje privatno</p>
         <label style={{display:"block",border:`2px dashed ${C.border}`,borderRadius:22,padding:"30px 20px",textAlign:"center",cursor:"pointer",background:C.bgMuted,marginBottom:14}}>
           <input type="file" accept="image/*" multiple style={{display:"none"}} onChange={e=>{Promise.all(Array.from(e.target.files).map(f=>new Promise(res=>{const r=new FileReader();r.onload=ev=>res(ev.target.result);r.readAsDataURL(f)}))).then(urls=>setU(v=>({...v,slike:[...v.slike,...urls]})))}}/>
-          <div style={{fontSize:36,marginBottom:10}}>📷</div>
+          <div style={{marginBottom:10}}><Ico d={I.camera} size={36} stroke={C.primary} sw={1.5}/></div>
           <p style={{fontWeight:700,color:C.primary,marginBottom:4}}>Dodaj slike</p>
           <p style={{fontSize:13,color:C.textLight}}>Tapni da odabereš iz galerije</p>
         </label>
@@ -519,7 +524,7 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
             <div key={kk} style={{display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:7}}><span style={{color:C.textLight,fontWeight:600}}>{kk}</span><span style={{fontWeight:700,color:C.textMid,textAlign:"right",maxWidth:"60%"}}>{vv}</span></div>
           ))}
         </div>
-        <button className="btn-p" onTouchStart={e=>{e.preventDefault();onSacuvaj(u);}} onClick={()=>onSacuvaj(u)}>{editData?"Sačuvaj izmene ✓":"Sačuvaj unos 🌸"}</button>
+        <button className="btn-p" onTouchStart={e=>{e.preventDefault();onSacuvaj(u);}} onClick={()=>onSacuvaj(u)}>{editData?"Sačuvaj izmene":"Sačuvaj unos"}</button>
       </>}
     </div>
   );
@@ -528,7 +533,7 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
 const SYS=`Ti si Mia, topla AI drugarica unutar aplikacije Unpick za podršku osobama sa dermatilomanijom. Slušaš bez osude, pružaš podršku, predlažeš tehnike kada je prikladno. Uvek govori u ženskom rodu. Koristi srpski. Budi sažeta — do 3-4 rečenice. Ne zamenjuješ stručnu pomoć.`;
 
 function AIChat(){
-  const [poruke,setPoruke]=useState([{id:0,ko:"ai",tekst:"Zdravo! Ja sam Mia 🌸 Tu sam da razgovaramo — o teškim trenucima, napretku, ili jednostavno kada ti treba neko da te sasluša. Kako ti je danas?"}]);
+  const [poruke,setPoruke]=useState([{id:0,ko:"ai",tekst:"Zdravo! Ja sam Mia. Tu sam da razgovaramo — o teškim trenucima, napretku, ili jednostavno kada ti treba neko da te sasluša. Kako ti je danas?"}]);
   const [unos,setUnos]=useState("");const [ucitava,setUcitava]=useState(false);const krajRef=useRef(null);
   useEffect(()=>{krajRef.current?.scrollIntoView({behavior:"smooth"})},[poruke,ucitava]);
   async function posalji(){
@@ -569,7 +574,7 @@ function AIChat(){
         <div ref={krajRef}/>
       </div>
       {poruke.length===1&&<div style={{padding:"0 16px 10px",display:"flex",gap:8,overflowX:"auto",background:C.bg,flexShrink:0}}>
-        {["Teško mi je večeras 😔","Imala sam epizodu","Trebam tehniku smirenja","Napredovala sam danas 🌱"].map(t=>(
+        {["Teško mi je večeras","Imala sam epizodu","Trebam tehniku smirenja","Napredovala sam danas"].map(t=>(
           <button key={t} onClick={()=>setUnos(t)} style={{flexShrink:0,padding:"9px 16px",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:100,fontSize:13,color:C.textMid,cursor:"pointer",whiteSpace:"nowrap",fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",boxShadow:`0 2px 8px ${C.shadow}`}}>{t}</button>
         ))}
       </div>}
@@ -643,7 +648,7 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
                     </div>
                     <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:u.bel?10:0}}>
                       <span className="tag" style={{background:C.bgMuted,color:C.textMid}}>⚡ Impuls {u.int}/10</span>
-                      {(Array.isArray(u.ok)?u.ok:[u.ok]).filter(Boolean).map(o=><span key={o} className="tag" style={{background:C.primaryLight,color:C.primaryDark}}>🎯 {o}</span>)}
+                      {(Array.isArray(u.ok)?u.ok:[u.ok]).filter(Boolean).map(o=><span key={o} className="tag" style={{background:C.primaryLight,color:C.primaryDark}}>{o}</span>)}
                       {u.lok&&<span className="tag" style={{background:C.bgMuted,color:C.textMid}}>{u.lok}</span>}
                       {u.epre&&<span className="tag" style={{background:C.bgMuted,color:C.textMid}}>Pre: {u.epre}</span>}
                       {u.epost&&<span className="tag" style={{background:C.bgMuted,color:C.textMid}}>Posle: {u.epost}</span>}
@@ -661,7 +666,7 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
           <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>{pozdrav},</p>
           <button onClick={onLogout} style={{background:"none",border:"none",fontSize:12,color:C.textLight,fontWeight:600,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"4px 8px"}}>Odjavi se</button>
         </div>
-        <h1 className="serif italic" style={{fontSize:38,lineHeight:1.1,letterSpacing:-0.5,marginBottom:22}}>{prikazIme} 🌱</h1>
+        <h1 className="serif italic" style={{fontSize:38,lineHeight:1.1,letterSpacing:-0.5,marginBottom:22}}>{prikazIme}</h1>
         <div style={{background:"rgba(255,255,255,.78)",backdropFilter:"blur(12px)",borderRadius:24,padding:"18px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",border:`1px solid ${C.border}`,boxShadow:`0 4px 24px ${C.shadow}`}}>
           <div><span className="lbl">TRENUTNI NIZ</span>
             {niz===0?(
@@ -674,7 +679,7 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
             )}
           </div>
           <div style={{textAlign:"right"}}>
-            <div style={{fontSize:niz>=7?32:44,letterSpacing:-2}}>{niz===0?"🌱":niz<7?"🔥":niz<14?"🔥🔥":niz<30?"🔥🔥🔥":"🏆"}</div>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={niz===0?I.leaf:niz>=30?I.trophy:I.flame} size={40} stroke={niz===0?C.green:niz>=30?C.amber:C.primary} sw={1.8}/></div>
             <p style={{fontSize:11,color:C.textMid,fontWeight:700,marginTop:4}}>{niz===0?"Kreni!":niz<7?"Nastavi!":niz<14?"Sjajno!":niz<30?"Neverovatno!":"Šampion!"}</p>
           </div>
         </div>
@@ -725,8 +730,8 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
         </div>
         <div className="card fi" style={{background:`linear-gradient(135deg,${C.amberLight},${C.bgMuted})`,boxShadow:"none",border:`1px solid ${C.border}`}}>
           <div style={{display:"flex",gap:14,alignItems:"flex-start"}}>
-            <div style={{width:40,height:40,borderRadius:14,background:"rgba(196,144,64,.15)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:20}}>🌿</div>
-            <div><span className="lbl" style={{color:C.amber}}>PORUKA DANA</span><p style={{fontSize:14,color:C.textMid,lineHeight:1.75,fontWeight:500}}>Svaki trenutak u kom odabereš drugačije jeste trenutak ozdravljenja. 🌱</p></div>
+            <div style={{width:40,height:40,borderRadius:14,background:"rgba(196,144,64,.15)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.leaf} size={20} stroke={C.amber} sw={1.8}/></div>
+            <div><span className="lbl" style={{color:C.amber}}>PORUKA DANA</span><p style={{fontSize:14,color:C.textMid,lineHeight:1.75,fontWeight:500}}>Svaki trenutak u kom odabereš drugačije jeste trenutak ozdravljenja.</p></div>
           </div>
         </div>
       </div>
@@ -752,7 +757,7 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
       <div style={{padding:"0 20px"}}>
         {noviUnosi.length===0&&(
           <div style={{textAlign:"center",padding:"48px 24px"}}>
-            <div style={{fontSize:52,marginBottom:16}}>📓</div>
+            <div style={{width:72,height:72,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 16px"}}><Ico d={I.journal} size={32} stroke={C.primary} sw={1.5}/></div>
             <h3 className="serif" style={{fontSize:22,marginBottom:8}}>Još nema unosa</h3>
             <p style={{fontSize:14,color:C.textLight,fontWeight:500,lineHeight:1.7,marginBottom:24}}>Svaki zabeleženi trenutak<br/>pomaže ti da razumeš svoje obrasce.</p>
             <button onClick={onDodaj} className="btn-p" style={{width:"auto",padding:"14px 32px"}}>Dodaj prvi unos →</button>
@@ -765,7 +770,7 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
               <span className="tag" style={{background:bc(u.ish)+"20",color:bc(u.ish)}}>{bl(u.ish)}</span>
             </div>
             <div style={{display:"flex",gap:7,flexWrap:"wrap"}}>
-              {(Array.isArray(u.ok)?u.ok:[u.ok]).filter(Boolean).map(o=><span key={o} className="tag" style={{background:C.primaryLight,color:C.primaryDark}}>🎯 {o}</span>)}
+              {(Array.isArray(u.ok)?u.ok:[u.ok]).filter(Boolean).map(o=><span key={o} className="tag" style={{background:C.primaryLight,color:C.primaryDark}}>{o}</span>)}
               <span className="tag" style={{background:C.bgMuted,color:C.textMid}}>⚡ {u.int}/10</span>
               {u.lok&&<span className="tag" style={{background:C.bgMuted,color:C.textMid}}>{u.lok}</span>}
             </div>
@@ -842,10 +847,10 @@ function Napredak({unosi,niz}){
     <div style={{paddingBottom:24}} className="fi">
       <div style={{padding:"60px 24px 24px",background:`linear-gradient(160deg,${C.amberLight} 0%,${C.bg} 70%)`}}>
         <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5,marginBottom:4}}>Napredak</h1>
-        <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Prati svoj put 🌱</p>
+        <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Prati svoj put</p>
       </div>
       <div style={{textAlign:"center",padding:"48px 24px"}}>
-        <div style={{fontSize:52,marginBottom:16}}>📊</div>
+        <div style={{width:72,height:72,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 16px"}}><Ico d={I.chart} size={32} stroke={C.primary} sw={1.5}/></div>
         <h3 className="serif" style={{fontSize:22,marginBottom:8}}>Još nema podataka</h3>
         <p style={{fontSize:14,color:C.textLight,fontWeight:500,lineHeight:1.7}}>Kada počneš da unosiš epizode,<br/>ovde ćeš videti svoje obrasce i napredak.</p>
       </div>
@@ -856,14 +861,14 @@ function Napredak({unosi,niz}){
     <div style={{paddingBottom:24}} className="fi">
       <div style={{padding:"60px 24px 24px",background:`linear-gradient(160deg,${C.amberLight} 0%,${C.bg} 70%)`}}>
         <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5,marginBottom:4}}>Napredak</h1>
-        <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Pogledaj koliko si napredovao 🌱</p>
+        <p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Pogledaj koliko si napredovala</p>
       </div>
       <div style={{padding:"0 20px"}}>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}}>
-          {[[niz===0?"🌱":"🔥",String(niz),"Trenutni niz"],["🏆",String(best),"Rekordni niz"],["✅",`${resP}%`,"Odolelo"],["📓",String(total),"Ukupno unosa"]].map(([e,v,l])=>(
+          {[[niz===0?I.leaf:I.flame,niz===0?C.green:C.primary,String(niz),"Trenutni niz"],[I.trophy,C.amber,String(best),"Rekordni niz"],[I.check,C.green,`${resP}%`,"Odolelo"],[I.journal,C.textMid,String(total),"Ukupno unosa"]].map(([ico,clr,v,l])=>(
             <div key={l} className="card" style={{padding:"18px 16px"}}>
-              <div style={{fontSize:24,marginBottom:8}}>{e}</div>
-              <div style={{fontSize:32,fontWeight:400,color:C.primary,marginBottom:3,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{v}</div>
+              <div style={{marginBottom:8}}><Ico d={ico} size={22} stroke={clr} sw={2}/></div>
+              <div style={{fontSize:32,fontWeight:400,color:clr,marginBottom:3,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{v}</div>
               <div style={{fontSize:10,color:C.textLight,fontWeight:700,letterSpacing:0.8,textTransform:"uppercase"}}>{l}</div>
             </div>
           ))}
