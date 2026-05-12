@@ -667,21 +667,43 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
           <button onClick={onLogout} style={{background:"none",border:"none",fontSize:12,color:C.textLight,fontWeight:600,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"4px 8px"}}>Odjavi se</button>
         </div>
         <h1 className="serif italic" style={{fontSize:38,lineHeight:1.1,letterSpacing:-0.5,marginBottom:22}}>{prikazIme}</h1>
-        <div style={{background:"rgba(255,255,255,.78)",backdropFilter:"blur(12px)",borderRadius:24,padding:"18px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",border:`1px solid ${C.border}`,boxShadow:`0 4px 24px ${C.shadow}`}}>
-          <div><span className="lbl">TRENUTNI NIZ</span>
-            {niz===0?(
-              <p style={{fontSize:16,fontWeight:700,color:C.textMid,marginTop:2}}>Počni danas! ✨</p>
-            ):(
-              <div style={{display:"flex",alignItems:"baseline",gap:8}}>
-                <span style={{fontSize:50,fontWeight:400,color:C.primary,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{niz}</span>
-                <span style={{fontSize:16,color:C.textMid,fontWeight:600}}>dana</span>
+        <div style={{background:"rgba(255,255,255,.78)",backdropFilter:"blur(12px)",borderRadius:24,padding:"18px 20px",border:`1px solid ${C.border}`,boxShadow:`0 4px 24px ${C.shadow}`}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:niz>0?14:0}}>
+            <div><span className="lbl">TRENUTNI NIZ</span>
+              {niz===0?(
+                <p style={{fontSize:16,fontWeight:700,color:C.textMid,marginTop:2}}>Počni danas! ✨</p>
+              ):(
+                <div style={{display:"flex",alignItems:"baseline",gap:8}}>
+                  <span style={{fontSize:50,fontWeight:400,color:C.primary,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{niz}</span>
+                  <span style={{fontSize:16,color:C.textMid,fontWeight:600}}>dana</span>
+                </div>
+              )}
+            </div>
+            <div style={{textAlign:"right"}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={niz===0?I.leaf:niz>=30?I.trophy:I.flame} size={40} stroke={niz===0?C.green:niz>=30?C.amber:C.primary} sw={1.8}/></div>
+              <p style={{fontSize:11,color:C.textMid,fontWeight:700,marginTop:4}}>{niz===0?"Kreni!":niz<7?"Nastavi!":niz<14?"Sjajno!":niz<30?"Neverovatno!":"Šampion!"}</p>
+            </div>
+          </div>
+          {niz>0&&(()=>{
+            const VATRICE=[7,14,30,60,90];
+            const sledeca=VATRICE.find(m=>m>niz)||(Math.ceil(niz/30)*30+30);
+            const prethodna=VATRICE.slice().reverse().find(m=>m<=niz)||0;
+            const pct=Math.min(((niz-prethodna)/(sledeca-prethodna))*100,100);
+            const fali=sledeca-niz;
+            return(
+              <div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+                  <span style={{fontSize:11,color:C.textLight,fontWeight:700}}>DO SLEDECE VATRICE 🔥</span>
+                  <span style={{fontSize:11,color:C.primary,fontWeight:700}}>{fali} {fali===1?"dan":"dana"}</span>
+                </div>
+                <div className="pb"><div className="pf" style={{width:`${pct}%`}}/></div>
+                <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}>
+                  <span style={{fontSize:10,color:C.textLight,fontWeight:600}}>{prethodna} dana</span>
+                  <span style={{fontSize:10,color:C.textLight,fontWeight:600}}>{sledeca} dana</span>
+                </div>
               </div>
-            )}
-          </div>
-          <div style={{textAlign:"right"}}>
-            <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={niz===0?I.leaf:niz>=30?I.trophy:I.flame} size={40} stroke={niz===0?C.green:niz>=30?C.amber:C.primary} sw={1.8}/></div>
-            <p style={{fontSize:11,color:C.textMid,fontWeight:700,marginTop:4}}>{niz===0?"Kreni!":niz<7?"Nastavi!":niz<14?"Sjajno!":niz<30?"Neverovatno!":"Šampion!"}</p>
-          </div>
+            );
+          })()}
         </div>
       </div>
       <div style={{padding:"16px 20px 0"}}>
