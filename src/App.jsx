@@ -88,10 +88,16 @@ function safeParseOk(v){if(!v)return[];try{const p=JSON.parse(v);return Array.is
 function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
 
 function calcStreak(entries, registeredAt){
-  const refTs=registeredAt?new Date(registeredAt).getTime():Date.now();
+  const todayMidnight=new Date();todayMidnight.setHours(0,0,0,0);
   const bad=entries.filter(e=>e.ts&&(e.ish==="try"||e.ish==="ep"));
-  const sinceTs=bad.length?bad[0].ts:refTs;
-  return Math.floor((Date.now()-sinceTs)/86400000);
+  let refMidnight;
+  if(bad.length>0){
+    refMidnight=new Date(Math.max(...bad.map(e=>e.ts)));
+  }else{
+    refMidnight=registeredAt?new Date(registeredAt):new Date();
+  }
+  refMidnight.setHours(0,0,0,0);
+  return Math.max(0,Math.floor((todayMidnight-refMidnight)/86400000));
 }
 
 const EyeBtn=({show,toggle})=>(
