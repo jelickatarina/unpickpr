@@ -452,6 +452,7 @@ function SOS({onZatvori}){
 
 function NoviUnos({onSacuvaj,onOtkazi,editData}){
   const [k,setK]=useState(1);
+  const [saving,setSaving]=useState(false);
   const [u,setU]=useState(editData?{int:editData.int||5,ok:editData.ok||[],lok:editData.lok||"",epre:editData.epre||"",epost:editData.epost||"",ish:editData.ish||"",bel:editData.bel||"",slike:editData.slike||[]}:{int:5,ok:[],lok:"",epre:"",epost:"",ish:"",bel:"",slike:[]});
   const N=5;
   const Hdr=({title})=>(
@@ -530,7 +531,7 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
             <div key={kk} style={{display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:7}}><span style={{color:C.textLight,fontWeight:600}}>{kk}</span><span style={{fontWeight:700,color:C.textMid,textAlign:"right",maxWidth:"60%"}}>{vv}</span></div>
           ))}
         </div>
-        <button className="btn-p" onTouchStart={e=>{e.preventDefault();onSacuvaj(u);}} onClick={()=>onSacuvaj(u)}>{editData?"Sačuvaj izmene":"Sačuvaj unos"}</button>
+        <button className="btn-p" disabled={saving} style={{opacity:saving?0.6:1}} onClick={()=>{if(saving)return;setSaving(true);onSacuvaj(u);}}>{editData?"Sačuvaj izmene":"Sačuvaj unos"}</button>
       </>}
     </div>
   );
