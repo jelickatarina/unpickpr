@@ -668,7 +668,7 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
         </div>
         <h1 className="serif italic" style={{fontSize:38,lineHeight:1.1,letterSpacing:-0.5,marginBottom:22}}>{prikazIme}</h1>
         <div style={{background:"rgba(255,255,255,.78)",backdropFilter:"blur(12px)",borderRadius:24,padding:"18px 20px",border:`1px solid ${C.border}`,boxShadow:`0 4px 24px ${C.shadow}`}}>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:niz>0?14:0}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
             <div><span className="lbl">TRENUTNI NIZ</span>
               {niz===0?(
                 <p style={{fontSize:16,fontWeight:700,color:C.textMid,marginTop:2}}>Počni danas! ✨</p>
@@ -684,14 +684,14 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
               <p style={{fontSize:11,color:C.textMid,fontWeight:700,marginTop:4}}>{niz===0?"Kreni!":niz<7?"Nastavi!":niz<14?"Sjajno!":niz<30?"Neverovatno!":"Šampion!"}</p>
             </div>
           </div>
-          {niz>0&&(()=>{
+          {(()=>{
             const VATRICE=[7,14,30,60,90];
-            const sledeca=VATRICE.find(m=>m>niz)||(Math.ceil(niz/30)*30+30);
+            const sledeca=VATRICE.find(m=>m>niz)||(Math.ceil((niz+1)/30)*30);
             const prethodna=VATRICE.slice().reverse().find(m=>m<=niz)||0;
             const pct=Math.min(((niz-prethodna)/(sledeca-prethodna))*100,100);
             const fali=sledeca-niz;
             return(
-              <div>
+              <div style={{marginTop:14}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
                   <span style={{fontSize:11,color:C.textLight,fontWeight:700}}>DO SLEDECE VATRICE 🔥</span>
                   <span style={{fontSize:11,color:C.primary,fontWeight:700}}>{fali} {fali===1?"dan":"dana"}</span>
