@@ -691,21 +691,23 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
             </div>
           </div>
           {(()=>{
-            const VATRICE=[7,14,30,60,90];
-            const sledeca=VATRICE.find(m=>m>niz)||(Math.ceil((niz+1)/30)*30);
-            const prethodna=VATRICE.slice().reverse().find(m=>m<=niz)||0;
-            const pct=Math.min(((niz-prethodna)/(sledeca-prethodna))*100,100);
-            const fali=sledeca-niz;
+            const now=new Date();
+            const minutesToday=now.getHours()*60+now.getMinutes();
+            const pct=Math.min((minutesToday/1440)*100,100);
+            const faliMin=1440-minutesToday;
+            const faliH=Math.floor(faliMin/60);
+            const faliM=faliMin%60;
+            const faliTekst=faliH>0?`${faliH}h ${faliM}m`:`${faliM}m`;
             return(
               <div style={{marginTop:14}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
                   <span style={{fontSize:11,color:C.textLight,fontWeight:700}}>DO SLEDECE VATRICE 🔥</span>
-                  <span style={{fontSize:11,color:C.primary,fontWeight:700}}>{fali} {fali===1?"dan":"dana"}</span>
+                  <span style={{fontSize:11,color:C.primary,fontWeight:700}}>{faliTekst}</span>
                 </div>
                 <div className="pb"><div className="pf" style={{width:`${pct}%`}}/></div>
                 <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}>
-                  <span style={{fontSize:10,color:C.textLight,fontWeight:600}}>{prethodna} dana</span>
-                  <span style={{fontSize:10,color:C.textLight,fontWeight:600}}>{sledeca} dana</span>
+                  <span style={{fontSize:10,color:C.textLight,fontWeight:600}}>Ponoć</span>
+                  <span style={{fontSize:10,color:C.textLight,fontWeight:600}}>Ponoć +1</span>
                 </div>
               </div>
             );
