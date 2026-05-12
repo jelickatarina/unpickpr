@@ -693,17 +693,19 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
           </div>
           {(()=>{
             const now=new Date();
+            const todayStart=new Date(now);todayStart.setHours(0,0,0,0);
+            const badDanas=(unosi||[]).some(e=>e.ts&&e.ts>=todayStart.getTime()&&(e.ish==="ep"||e.ish==="try"));
             const minutesToday=now.getHours()*60+now.getMinutes();
-            const pct=Math.min((minutesToday/1440)*100,100);
+            const pct=badDanas?0:Math.min((minutesToday/1440)*100,100);
             const faliMin=1440-minutesToday;
             const faliH=Math.floor(faliMin/60);
             const faliM=faliMin%60;
-            const faliTekst=faliH>0?`${faliH}h ${faliM}m`:`${faliM}m`;
+            const faliTekst=badDanas?"Resetovano":faliH>0?`${faliH}h ${faliM}m`:`${faliM}m`;
             return(
               <div style={{marginTop:14}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
                   <span style={{fontSize:11,color:C.textLight,fontWeight:700}}>DO SLEDECE VATRICE 🔥</span>
-                  <span style={{fontSize:11,color:C.primary,fontWeight:700}}>{faliTekst}</span>
+                  <span style={{fontSize:11,color:badDanas?C.red:C.primary,fontWeight:700}}>{faliTekst}</span>
                 </div>
                 <div className="pb"><div className="pf" style={{width:`${pct}%`}}/></div>
                 <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}>
