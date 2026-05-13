@@ -159,8 +159,8 @@ function Auth({onDone}){
           <Ico d={I.leaf} size={36} stroke="#fff" sw={1.8}/>
         </div>
         <p style={{fontSize:11,fontWeight:700,letterSpacing:3,textTransform:"uppercase",color:C.textLight,marginBottom:16}}>Unpick</p>
-        <h1 className="serif" style={{fontSize:38,lineHeight:1.25,marginBottom:16,letterSpacing:-0.3,color:C.text}}>
-          Your Skin<br/><span className="italic" style={{color:C.primary}}>Deserves Kindness.</span>
+        <h1 style={{fontSize:34,lineHeight:1.3,marginBottom:16,letterSpacing:-0.2,color:C.text,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700}}>
+          Your skin<br/><span style={{color:C.primary,fontWeight:800}}>deserves kindness.</span>
         </h1>
         <p style={{fontSize:15,color:C.textMid,lineHeight:1.8,fontWeight:500,maxWidth:260,marginBottom:40}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
         <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8,marginBottom:16}}>
