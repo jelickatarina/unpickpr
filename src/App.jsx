@@ -79,6 +79,7 @@ const I={
   book:["M4 19.5A2.5 2.5 0 016.5 17H20","M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"],
   camera:["M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z","M12 17a4 4 0 100-8 4 4 0 000 8z"],
   target:["M12 22a10 10 0 100-20 10 10 0 000 20z","M12 16a4 4 0 100-8 4 4 0 000 8z","M12 12h.01"],
+  wind:["M17.7 7.7a2.5 2.5 0 111.8 4.3H2","M9.6 4.6A2 2 0 1111 8H2","M12.6 19.4A2 2 0 1014 16H2"],
 };
 
 const PORUKE_DANA=[
@@ -154,17 +155,17 @@ function Auth({onDone}){
 
   if(mode==="w") return(
     <div className="fi" style={{minHeight:"100vh",background:C.bg,display:"flex",flexDirection:"column"}}>
-      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",paddingTop:`max(60px,${SAT})`,paddingLeft:32,paddingRight:32,paddingBottom:32,textAlign:"center"}}>
-        <div style={{width:80,height:80,borderRadius:28,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 12px 36px rgba(122,158,142,.32)`,marginBottom:28}}>
-          <Ico d={I.leaf} size={36} stroke="#fff" sw={1.8}/>
+      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"flex-start",justifyContent:"center",paddingTop:`max(60px,${SAT})`,paddingLeft:32,paddingRight:32,paddingBottom:32,textAlign:"left"}}>
+        <div style={{width:72,height:72,borderRadius:24,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 12px 36px rgba(192,120,144,.28)`,marginBottom:24}}>
+          <Ico d={I.leaf} size={32} stroke="#fff" sw={1.8}/>
         </div>
-        <p style={{fontSize:11,fontWeight:700,letterSpacing:3,textTransform:"uppercase",color:C.textLight,marginBottom:16}}>Unpick</p>
-        <h1 style={{fontSize:34,lineHeight:1.3,marginBottom:16,letterSpacing:-0.2,color:C.text,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700}}>
+        <p style={{fontSize:11,fontWeight:700,letterSpacing:3,textTransform:"uppercase",color:C.textLight,marginBottom:12}}>Unpick</p>
+        <h1 style={{fontSize:34,lineHeight:1.3,marginBottom:12,letterSpacing:-0.2,color:C.text,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700}}>
           Your skin<br/><span style={{color:C.primary,fontWeight:800}}>deserves kindness.</span>
         </h1>
-        <p style={{fontSize:15,color:C.textMid,lineHeight:1.8,fontWeight:500,maxWidth:260,marginBottom:40}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
+        <p style={{fontSize:15,color:C.textMid,lineHeight:1.7,fontWeight:500,marginBottom:32}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
         <div style={{width:"100%",display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
-          {[[I.chart,"Praćenje epizoda","Beleži epizode i prati obrasce"],[I.shield,"SOS alat u krizi","Tehnike za smirenje u trenutku"],[I.chat,"Mia — AI podrška","Uvek dostupna, bez osude"]].map(([ico,t,sub])=>(
+          {[[I.chart,"Praćenje epizoda","Beleži epizode i prati obrasce"],[I.wind,"SOS alat u krizi","Tehnike za smirenje u trenutku"],[I.chat,"Mia — AI podrška","Uvek dostupna, bez osude"]].map(([ico,t,sub])=>(
             <div key={t} style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",borderRadius:18,background:C.bgCard,border:`1.5px solid ${C.border}`,boxShadow:`0 2px 12px ${C.shadow}`}}>
               <div style={{width:44,height:44,borderRadius:14,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 12px rgba(192,120,144,0.25)`}}>
                 <Ico d={ico} size={20} stroke="#fff" sw={1.8}/>
