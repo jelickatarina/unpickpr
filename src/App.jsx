@@ -1096,100 +1096,106 @@ function Napredak({unosi,niz}){
   const resCount=unosi.filter(e=>e.ish==="res").length;
   const resP=total?Math.round(resCount/total*100):0;
 
-  const circumference=2*Math.PI*44;
-  const offset=circumference-(resP/100)*circumference;
+  // poslednjih 7 dana za sedmični pregled
+  const sedmica=Array.from({length:7},(_,i)=>{
+    const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-6+i);
+    const dUnosi=unosi.filter(e=>e.ts&&new Date(e.ts).toDateString()===d.toDateString());
+    const hasEp=dUnosi.some(e=>e.ish==="ep");
+    const hasTry=dUnosi.some(e=>e.ish==="try");
+    const hasRes=dUnosi.some(e=>e.ish==="res");
+    const isToday=i===6;
+    const dani=["ned","pon","uto","sre","čet","pet","sub"];
+    const status=hasEp?"ep":hasTry?"try":hasRes?"res":dUnosi.length?"res":"none";
+    return{dan:dani[d.getDay()],status,isToday};
+  });
 
-  const emptyState=(
+  if(total===0) return(
     <div style={{paddingBottom:90}} className="fi">
-      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:20}}>
+      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:24}}>
         <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.5,textTransform:"uppercase",marginBottom:6}}>Napredak</p>
         <h1 style={{fontSize:28,fontWeight:800,color:C.text,letterSpacing:-0.5}}>Tvoje statistike</h1>
       </div>
-      <div style={{margin:"0 20px",borderRadius:28,background:C.primaryGrad,padding:"48px 24px",textAlign:"center",boxShadow:`0 8px 32px rgba(192,120,144,0.25)`}}>
-        <div style={{fontSize:48,marginBottom:16}}>📊</div>
-        <p style={{fontWeight:800,fontSize:18,color:"#fff",marginBottom:8}}>Još nema podataka</p>
-        <p style={{fontSize:14,color:"rgba(255,255,255,0.75)",lineHeight:1.7}}>Unesi prvu epizodu i<br/>pratićeš napredak ovde.</p>
+      <div style={{margin:"0 20px",borderRadius:28,background:C.bgCard,padding:"40px 24px",textAlign:"center",border:`1px solid ${C.border}`}}>
+        <div style={{width:64,height:64,borderRadius:20,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}><Ico d={I.chart} size={28} stroke={C.primary} sw={1.8}/></div>
+        <p style={{fontWeight:700,fontSize:17,color:C.text,marginBottom:8}}>Još nema podataka</p>
+        <p style={{fontSize:14,color:C.textLight,lineHeight:1.7}}>Unesi prvu epizodu i pratićeš napredak ovde.</p>
       </div>
     </div>
   );
 
-  if(total===0) return emptyState;
-
   return(
     <div style={{paddingBottom:90}} className="fi">
-      {/* Header */}
       <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:20}}>
         <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.5,textTransform:"uppercase",marginBottom:6}}>Napredak</p>
         <h1 style={{fontSize:28,fontWeight:800,color:C.text,letterSpacing:-0.5}}>Tvoje statistike</h1>
       </div>
 
-      {/* Stat cards */}
-      <div style={{margin:"0 20px 16px",display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-        {/* Niz */}
-        <div style={{background:C.bgCard,borderRadius:24,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`}}>
-          <div style={{width:36,height:36,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:14}}>
-            <span style={{fontSize:18}}>🔥</span>
-          </div>
-          <p style={{fontSize:32,fontWeight:900,color:C.text,lineHeight:1,marginBottom:4}}>{niz}</p>
-          <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:0.8,textTransform:"uppercase"}}>Trenutni niz</p>
+      {/* Streak hero */}
+      <div style={{margin:"0 20px 12px",borderRadius:28,background:C.primaryGrad,padding:"24px",boxShadow:`0 8px 28px rgba(192,120,144,0.28)`}}>
+        <p style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.7)",letterSpacing:1.5,textTransform:"uppercase",marginBottom:8}}>Trenutni niz</p>
+        <div style={{display:"flex",alignItems:"flex-end",gap:10,marginBottom:20}}>
+          <span style={{fontSize:56,fontWeight:900,color:"#fff",lineHeight:1}}>{niz}</span>
+          <span style={{fontSize:32,marginBottom:6}}>🔥</span>
+          {niz>0&&<span style={{fontSize:13,color:"rgba(255,255,255,0.75)",fontWeight:600,marginBottom:10}}>{niz===1?"dan":"dana"}</span>}
         </div>
-        {/* Odolelo % */}
-        <div style={{background:C.greenLight,borderRadius:24,padding:"20px",border:`1px solid ${C.green}22`,boxShadow:`0 2px 16px ${C.shadow}`}}>
-          <div style={{width:36,height:36,borderRadius:12,background:"rgba(122,158,120,0.2)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:14}}>
-            <Ico d={I.check} size={18} stroke={C.green} sw={2.5}/>
-          </div>
-          <p style={{fontSize:32,fontWeight:900,color:C.text,lineHeight:1,marginBottom:4}}>{resP}%</p>
-          <p style={{fontSize:11,fontWeight:700,color:C.green,letterSpacing:0.8,textTransform:"uppercase"}}>Odolelo</p>
-        </div>
-        {/* Rekord */}
-        <div style={{background:C.amberLight,borderRadius:24,padding:"20px",border:`1px solid ${C.amber}22`,boxShadow:`0 2px 16px ${C.shadow}`}}>
-          <div style={{width:36,height:36,borderRadius:12,background:"rgba(196,168,112,0.2)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:14}}>
-            <span style={{fontSize:18}}>🏆</span>
-          </div>
-          <p style={{fontSize:32,fontWeight:900,color:C.text,lineHeight:1,marginBottom:4}}>{best}</p>
-          <p style={{fontSize:11,fontWeight:700,color:C.amber,letterSpacing:0.8,textTransform:"uppercase"}}>Rekordni niz</p>
-        </div>
-        {/* Ukupno */}
-        <div style={{background:C.purpleLight,borderRadius:24,padding:"20px",border:`1px solid ${C.purple}22`,boxShadow:`0 2px 16px ${C.shadow}`}}>
-          <div style={{width:36,height:36,borderRadius:12,background:"rgba(168,144,192,0.2)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:14}}>
-            <Ico d={I.journal} size={18} stroke={C.purple} sw={2}/>
-          </div>
-          <p style={{fontSize:32,fontWeight:900,color:C.text,lineHeight:1,marginBottom:4}}>{total}</p>
-          <p style={{fontSize:11,fontWeight:700,color:C.purple,letterSpacing:0.8,textTransform:"uppercase"}}>Ukupno unosa</p>
+        <div style={{display:"flex",gap:0}}>
+          {sedmica.map((d,i)=>{
+            const bg=d.status==="ep"?"rgba(255,255,255,0.15)":d.status==="try"?"rgba(255,255,255,0.25)":d.status==="res"?"rgba(255,255,255,0.55)":d.isToday?"rgba(255,255,255,0.1)":"rgba(255,255,255,0.07)";
+            const dot=d.status==="ep"?"#ff8fa3":d.status==="try"?"#ffd166":d.status==="res"?"#fff":d.isToday?"rgba(255,255,255,0.4)":"transparent";
+            return(
+              <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
+                <div style={{width:32,height:32,borderRadius:10,background:bg,border:d.isToday?"2px solid rgba(255,255,255,0.6)":"2px solid transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  {d.status!=="none"&&<div style={{width:8,height:8,borderRadius:"50%",background:dot}}/>}
+                </div>
+                <span style={{fontSize:9,fontWeight:d.isToday?800:600,color:d.isToday?"#fff":"rgba(255,255,255,0.55)",textTransform:"uppercase",letterSpacing:0.5}}>{d.dan}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
+      {/* 3 mini statistike */}
+      <div style={{margin:"0 20px 12px",display:"flex",gap:10}}>
+        {[
+          {v:String(best),l:"Rekord",e:"🏆",bg:C.amberLight,c:C.amber},
+          {v:`${resP}%`,l:"Odolelo",e:"✅",bg:C.greenLight,c:C.green},
+          {v:String(total),l:"Unosa",e:"📓",bg:C.purpleLight,c:C.purple},
+        ].map(s=>(
+          <div key={s.l} style={{flex:1,background:s.bg,borderRadius:20,padding:"16px 12px",textAlign:"center"}}>
+            <div style={{fontSize:18,marginBottom:6}}>{s.e}</div>
+            <p style={{fontSize:22,fontWeight:900,color:C.text,lineHeight:1,marginBottom:3}}>{s.v}</p>
+            <p style={{fontSize:10,fontWeight:700,color:s.c,letterSpacing:0.8,textTransform:"uppercase"}}>{s.l}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Linijski grafikon */}
-      <div style={{margin:"0 20px 16px",background:C.bgCard,borderRadius:24,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`}}>
-        <p style={{fontSize:12,fontWeight:800,color:C.text,letterSpacing:0.2,marginBottom:16}}>Epizode po mesecu</p>
+      <div style={{margin:"0 20px 12px",background:C.bgCard,borderRadius:24,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`}}>
+        <p style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:16}}>Epizode po mesecu</p>
         {(()=>{
-          const W=280,H=90,pad=8;
+          const W=280,H=80,pad=8;
           const vals=meseci.map(m=>m.br);
           const vmax=Math.max(...vals,1);
-          const pts=vals.map((v,i)=>{
-            const x=pad+(i/(meseci.length-1))*(W-pad*2);
-            const y=H-pad-(v/vmax)*(H-pad*2);
-            return[x,y];
-          });
+          const pts=vals.map((v,i)=>([pad+(i/(meseci.length-1))*(W-pad*2), H-pad-(v/vmax)*(H-pad*2)]));
           const poly=pts.map(p=>p.join(",")).join(" ");
           const area=[`${pts[0][0]},${H}`,poly,`${pts[pts.length-1][0]},${H}`].join(" ");
           return(
-            <svg width="100%" viewBox={`0 0 ${W} ${H+24}`} style={{overflow:"visible"}}>
+            <svg width="100%" viewBox={`0 0 ${W} ${H+20}`} style={{overflow:"visible"}}>
               <defs>
                 <linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={C.primary} stopOpacity="0.18"/>
+                  <stop offset="0%" stopColor={C.primary} stopOpacity="0.15"/>
                   <stop offset="100%" stopColor={C.primary} stopOpacity="0"/>
                 </linearGradient>
               </defs>
               <polygon points={area} fill="url(#lg)"/>
-              <polyline points={poly} fill="none" stroke={C.primary} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round"/>
+              <polyline points={poly} fill="none" stroke={C.primary} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/>
               {pts.map(([x,y],i)=>{
                 const isCur=i===pts.length-1;
                 return(
                   <g key={i}>
-                    <circle cx={x} cy={y} r={isCur?5:3.5} fill={C.bgCard} stroke={isCur?C.primary:C.primary+"99"} strokeWidth={isCur?2.5:1.5}/>
-                    {vals[i]>0&&<text x={x} y={y-9} textAnchor="middle" fontSize="10" fontWeight="700" fill={isCur?C.primary:C.textMid}>{vals[i]}</text>}
-                    <text x={x} y={H+18} textAnchor="middle" fontSize="10" fontWeight={isCur?800:600} fill={isCur?C.primary:C.textLight}>{meseci[i].mes}</text>
+                    <circle cx={x} cy={y} r={isCur?5:3} fill={isCur?C.primary:C.bgCard} stroke={C.primary} strokeWidth={isCur?0:1.5}/>
+                    {vals[i]>0&&<text x={x} y={y-8} textAnchor="middle" fontSize="10" fontWeight="700" fill={C.textMid}>{vals[i]}</text>}
+                    <text x={x} y={H+16} textAnchor="middle" fontSize="10" fontWeight={isCur?700:500} fill={isCur?C.primary:C.textLight}>{meseci[i].mes}</text>
                   </g>
                 );
               })}
@@ -1201,7 +1207,7 @@ function Napredak({unosi,niz}){
       {/* Okidači */}
       {topOki.length>0&&(
         <div style={{margin:"0 20px",background:C.bgCard,borderRadius:24,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`}}>
-          <p style={{fontSize:12,fontWeight:800,color:C.text,letterSpacing:0.2,marginBottom:16}}>Najčešći okidači</p>
+          <p style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:16}}>Najčešći okidači</p>
           {topOki.map((o,i)=>(
             <div key={o.l} style={{marginBottom:i<topOki.length-1?14:0}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
