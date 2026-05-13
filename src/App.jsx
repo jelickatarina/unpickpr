@@ -2,14 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
 
 const C = {
-  bg:"#FBF6F2",bgCard:"#FFFFFF",bgMuted:"#F5EDE6",
-  primary:"#C87848",primaryGrad:"linear-gradient(135deg,#E8A878 0%,#B85E30 100%)",
-  primaryLight:"#FDEEE4",primaryDark:"#8A3A14",
-  purple:"#C09098",purpleLight:"#FAF0F2",
-  text:"#2A1E14",textMid:"#7A5E52",textLight:"#B89A8E",
+  bg:"#FAF5F7",bgCard:"#FFFFFF",bgMuted:"#F5ECEF",
+  primary:"#C07890",primaryGrad:"linear-gradient(135deg,#D898AC 0%,#A85A74 100%)",
+  primaryLight:"#FAE8EF",primaryDark:"#7A3050",
+  purple:"#A890C0",purpleLight:"#F3EEFB",
+  text:"#2A1820",textMid:"#7A5868",textLight:"#B8A0AC",
   green:"#7A9E78",greenLight:"#EAF2E8",
-  amber:"#D4A86A",amberLight:"#FAF0DC",
-  red:"#C46868",border:"#EDE4DC",shadow:"rgba(200,120,72,0.09)",
+  amber:"#C4A870",amberLight:"#FAF0DC",
+  red:"#C46878",border:"#EEE0E6",shadow:"rgba(192,120,144,0.09)",
 };
 const fonts=`@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');`;
 const css=`
