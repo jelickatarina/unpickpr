@@ -160,7 +160,7 @@ function Auth({onDone}){
         </div>
         <p style={{fontSize:11,fontWeight:700,letterSpacing:3,textTransform:"uppercase",color:C.textLight,marginBottom:16}}>Unpick</p>
         <h1 className="serif" style={{fontSize:44,lineHeight:1.1,marginBottom:16,letterSpacing:-1,color:C.text}}>
-          Sloboda od<br/><span className="italic" style={{color:C.primary}}>čačkanja kože.</span>
+          Your Skin<br/><span className="italic" style={{color:C.primary}}>Deserves Kindness.</span>
         </h1>
         <p style={{fontSize:15,color:C.textMid,lineHeight:1.8,fontWeight:500,maxWidth:260,marginBottom:40}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
         <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8,marginBottom:16}}>
