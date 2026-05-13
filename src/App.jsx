@@ -694,9 +694,9 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
 function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
   const [izvestaj,setIzvestaj]=useState(null);
   const h=new Date().getHours();
-  const pozdrav=h<12?"Dobro jutro":h<18?"Dobar dan":"Dobro veče";
+  const pozdrav=h<12?"Dobro jutro,":h<18?"Dobar dan,":"Dobro veče,";
   const prikazIme=ime?.includes("@")?ime.split("@")[0]:ime;
-  const dani=["Pon","Uto","Sre","Čet","Pet","Sub","Ned"];
+  const dani=["P","U","S","Č","P","S","N"];
   const puniDani=["Ponedeljak","Utorak","Sreda","Četvrtak","Petak","Subota","Nedelja"];
   const danas=new Date();
   const dow=danas.getDay();
@@ -713,48 +713,47 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
       else if(entries.some(e=>e.ish==="try")) s="ž";
       else s="z";
     }
-    return {s,entries,datum:d,naziv:puniDani[i]};
+    return{s,entries,datum:d,naziv:puniDani[i]};
   });
-
+  const now=new Date();
+  const todayStart=new Date(now);todayStart.setHours(0,0,0,0);
+  const badDanas=(unosi||[]).some(e=>e.ts&&e.ts>=todayStart.getTime()&&(e.ish==="ep"||e.ish==="try"));
+  const minutesToday=now.getHours()*60+now.getMinutes();
+  const pct=badDanas?0:Math.min((minutesToday/1440)*100,100);
+  const faliMin=1440-minutesToday;
+  const faliH=Math.floor(faliMin/60);
+  const faliM=faliMin%60;
+  const faliTekst=badDanas?"Resetovano":faliH>0?`${faliH}h ${faliM}m`:`${faliM}m`;
+  const poruka=PORUKE_DANA[Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0).getTime())/86400000)%PORUKE_DANA.length];
   const bc=o=>o==="res"?C.green:o==="try"?C.amber:C.red;
   const bl=o=>o==="res"?"Odolela/o":o==="try"?"Pokušala/o":"Epizoda";
+  const nedZelene=weekData.filter(w=>w.s==="z").length;
+  const nedAmber=weekData.filter(w=>w.s==="ž").length;
+  const nedCrvene=weekData.filter(w=>w.s==="c").length;
 
   return(
-    <div style={{paddingBottom:24}}>
+    <div style={{padding:"56px 18px 20px",minHeight:"100vh"}} className="fi">
       {izvestaj!==null&&(
         <div style={{position:"fixed",inset:0,zIndex:200,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={()=>setIzvestaj(null)}>
           <div style={{position:"absolute",inset:0,background:"rgba(30,20,16,.45)",backdropFilter:"blur(4px)"}}/>
-          <div onClick={e=>e.stopPropagation()} style={{position:"relative",background:C.bg,borderRadius:"28px 28px 0 0",padding:"24px 24px 48px",maxHeight:"75vh",overflowY:"auto",boxShadow:"0 -8px 40px rgba(42,36,32,.18)"}} className="fi">
+          <div onClick={e=>e.stopPropagation()} style={{position:"relative",background:C.bg,borderRadius:"32px 32px 0 0",padding:"24px 24px 52px",maxHeight:"75vh",overflowY:"auto",boxShadow:"0 -8px 40px rgba(42,36,32,.18)"}} className="fi">
             <div style={{width:36,height:4,borderRadius:2,background:C.border,margin:"0 auto 20px"}}/>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
               <h3 className="serif" style={{fontSize:22,letterSpacing:-0.3}}>{weekData[izvestaj].naziv}</h3>
-              <button onClick={()=>setIzvestaj(null)} style={{background:C.bgMuted,border:"none",borderRadius:50,width:34,height:34,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>
-                <Ico d={I.x} size={14} stroke={C.textMid} sw={2}/>
-              </button>
+              <button onClick={()=>setIzvestaj(null)} style={{background:C.bgMuted,border:"none",borderRadius:50,width:34,height:34,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}><Ico d={I.x} size={14} stroke={C.textMid} sw={2}/></button>
             </div>
-            <p style={{fontSize:13,color:C.textLight,fontWeight:600,marginBottom:20}}>
-              {weekData[izvestaj].datum.toLocaleDateString("sr",{day:"numeric",month:"long"})} · {weekData[izvestaj].entries.length} {weekData[izvestaj].entries.length===1?"unos":weekData[izvestaj].entries.length<5?"unosa":"unosa"}
-            </p>
+            <p style={{fontSize:13,color:C.textLight,fontWeight:600,marginBottom:20}}>{weekData[izvestaj].datum.toLocaleDateString("sr",{day:"numeric",month:"long"})} · {weekData[izvestaj].entries.length} unosa</p>
             {weekData[izvestaj].entries.length===0?(
-              <div style={{textAlign:"center",padding:"24px 0"}}>
-                <div style={{fontSize:40,marginBottom:12}}>✨</div>
-                <p style={{fontWeight:700,color:C.green,fontSize:15,marginBottom:4}}>Čist dan!</p>
-                <p style={{fontSize:13,color:C.textLight,fontWeight:500}}>Ovog dana nije bilo epizoda.</p>
-              </div>
+              <div style={{textAlign:"center",padding:"24px 0"}}><div style={{fontSize:40,marginBottom:12}}>✨</div><p style={{fontWeight:700,color:C.green,fontSize:15,marginBottom:4}}>Čist dan!</p><p style={{fontSize:13,color:C.textLight,fontWeight:500}}>Ovog dana nije bilo epizoda.</p></div>
             ):(
               <div style={{display:"flex",flexDirection:"column",gap:12}}>
                 {weekData[izvestaj].entries.map((u,idx)=>(
                   <div key={u.id||idx} style={{background:C.bgCard,borderRadius:18,padding:"16px",border:`1px solid ${C.border}`}}>
-                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-                      <span style={{fontSize:12,color:C.textLight,fontWeight:600}}>{u.datum}</span>
-                      <span className="tag" style={{background:bc(u.ish)+"20",color:bc(u.ish)}}>{bl(u.ish)}</span>
-                    </div>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}><span style={{fontSize:12,color:C.textLight,fontWeight:600}}>{u.datum}</span><span className="tag" style={{background:bc(u.ish)+"20",color:bc(u.ish)}}>{bl(u.ish)}</span></div>
                     <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:u.bel?10:0}}>
-                      <span className="tag" style={{background:C.bgMuted,color:C.textMid}}>⚡ Impuls {u.int}/10</span>
+                      <span className="tag" style={{background:C.bgMuted,color:C.textMid}}>⚡ {u.int}/10</span>
                       {(Array.isArray(u.ok)?u.ok:[u.ok]).filter(Boolean).map(o=><span key={o} className="tag" style={{background:C.primaryLight,color:C.primaryDark}}>{o}</span>)}
                       {u.lok&&<span className="tag" style={{background:C.bgMuted,color:C.textMid}}>{u.lok}</span>}
-                      {u.epre&&<span className="tag" style={{background:C.bgMuted,color:C.textMid}}>Pre: {u.epre}</span>}
-                      {u.epost&&<span className="tag" style={{background:C.bgMuted,color:C.textMid}}>Posle: {u.epost}</span>}
                     </div>
                     {u.bel&&<p style={{fontSize:13,color:C.textMid,lineHeight:1.65,fontWeight:500,fontStyle:"italic"}}>"{u.bel}"</p>}
                   </div>
@@ -764,87 +763,92 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
           </div>
         </div>
       )}
-      <div style={{padding:"60px 24px 20px"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:28}}>
-          <div>
-            <p style={{fontSize:12,color:C.textLight,fontWeight:600,marginBottom:2}}>{pozdrav}</p>
-            <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.3,color:C.text}}>{prikazIme}</h1>
-          </div>
-          <button onClick={onLogout} style={{background:C.bgCard,border:`1px solid ${C.border}`,borderRadius:100,fontSize:12,color:C.textLight,fontWeight:600,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"8px 14px",boxShadow:`0 2px 8px ${C.shadow}`}}>Odjavi se</button>
-        </div>
 
-        <div style={{background:C.bgCard,borderRadius:32,padding:"24px",boxShadow:`0 8px 40px rgba(122,158,142,0.12)`,marginBottom:16}}>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
-            <div>
-              <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:6}}>Vatrice 🔥</p>
-              {niz===0?(
-                <p style={{fontSize:18,fontWeight:700,color:C.textMid}}>Počni danas!</p>
-              ):(
-                <div style={{display:"flex",alignItems:"baseline",gap:6}}>
-                  <span style={{fontSize:56,fontWeight:400,color:C.primary,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{niz}</span>
-                  <span style={{fontSize:15,color:C.textMid,fontWeight:600}}>dana</span>
-                </div>
-              )}
-            </div>
-            <div style={{width:64,height:64,borderRadius:"50%",background:niz===0?C.greenLight:niz>=30?C.amberLight:C.primaryLight,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2}}>
-              <Ico d={niz===0?I.leaf:niz>=30?I.trophy:I.flame} size={28} stroke={niz===0?C.green:niz>=30?C.amber:C.primary} sw={1.8}/>
-              <span style={{fontSize:9,fontWeight:700,color:niz===0?C.green:niz>=30?C.amber:C.primary}}>{niz===0?"Kreni":niz<7?"Nastavi":niz<14?"Sjajno":niz<30?"Odlično":"Šampion"}</span>
-            </div>
-          </div>
-          {(()=>{
-            const now=new Date();
-            const todayStart=new Date(now);todayStart.setHours(0,0,0,0);
-            const badDanas=(unosi||[]).some(e=>e.ts&&e.ts>=todayStart.getTime()&&(e.ish==="ep"||e.ish==="try"));
-            const minutesToday=now.getHours()*60+now.getMinutes();
-            const pct=badDanas?0:Math.min((minutesToday/1440)*100,100);
-            const faliMin=1440-minutesToday;
-            const faliH=Math.floor(faliMin/60);
-            const faliM=faliMin%60;
-            const faliTekst=badDanas?"Resetovano":faliH>0?`${faliH}h ${faliM}m`:`${faliM}m`;
-            return(
-              <div>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
-                  <span style={{fontSize:11,color:C.textLight,fontWeight:700,letterSpacing:.5}}>DO SLEDEĆE VATRICE</span>
-                  <span style={{fontSize:12,color:badDanas?C.red:C.primary,fontWeight:700}}>{faliTekst}</span>
-                </div>
-                <div className="pb"><div className="pf" style={{width:`${pct}%`}}/></div>
+      {/* ── Header ── */}
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18}}>
+        <div>
+          <p style={{fontSize:13,color:C.textMid,fontWeight:500,marginBottom:2}}>{pozdrav}</p>
+          <h1 className="serif" style={{fontSize:30,lineHeight:1,letterSpacing:-0.5,color:C.text}}>{prikazIme}</h1>
+        </div>
+        <button onClick={onLogout} style={{background:"transparent",border:`1px solid ${C.border}`,borderRadius:100,fontSize:11,color:C.textLight,fontWeight:700,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"7px 13px",marginTop:4}}>Odjavi</button>
+      </div>
+
+      {/* ── Row 1: Streak widget + Week widget ── */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:12}}>
+
+        {/* Streak widget */}
+        <div style={{background:C.primaryGrad,borderRadius:28,padding:"20px 18px",boxShadow:"0 10px 36px rgba(94,140,122,.38)",position:"relative",overflow:"hidden",minHeight:190}}>
+          <div style={{position:"absolute",top:-24,right:-24,width:90,height:90,borderRadius:"50%",background:"rgba(255,255,255,.09)"}}/>
+          <div style={{position:"absolute",bottom:-16,left:-16,width:60,height:60,borderRadius:"50%",background:"rgba(255,255,255,.06)"}}/>
+          <p style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,.65)",letterSpacing:1.2,textTransform:"uppercase",marginBottom:12,position:"relative"}}>Vatrica 🔥</p>
+          <div style={{position:"relative",marginBottom:4}}>
+            {niz===0
+              ?<p style={{fontSize:20,fontWeight:700,color:"#fff",lineHeight:1.2}}>Počni<br/>danas!</p>
+              :<div style={{display:"flex",alignItems:"baseline",gap:4}}>
+                <span style={{fontSize:58,fontWeight:400,color:"#fff",fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{niz}</span>
+                <span style={{fontSize:14,color:"rgba(255,255,255,.75)",fontWeight:600}}>dana</span>
               </div>
-            );
-          })()}
+            }
+          </div>
+          <p style={{fontSize:11,color:"rgba(255,255,255,.6)",fontWeight:600,marginBottom:14}}>{niz===0?"Kreni":niz<7?"Nastavi":niz<14?"Sjajno!":niz<30?"Odlično!":"Šampion! 🏆"}</p>
+          <div style={{height:3,background:"rgba(255,255,255,.25)",borderRadius:100,overflow:"hidden",marginBottom:6}}>
+            <div style={{height:"100%",background:"#fff",borderRadius:100,width:`${pct}%`,transition:"width .5s ease"}}/>
+          </div>
+          <p style={{fontSize:10,color:badDanas?"rgba(255,180,180,.9)":"rgba(255,255,255,.6)",fontWeight:700}}>{faliTekst}</p>
         </div>
 
-        <div style={{background:C.bgCard,borderRadius:24,padding:"16px 20px",boxShadow:`0 4px 20px rgba(122,158,142,0.08)`,marginBottom:16}}>
-          <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:12}}>Ova nedelja</p>
-          <div style={{display:"flex",gap:4,justifyContent:"space-between"}}>
-            {weekData.map(({s,entries},i)=>(
-              <div key={i} onClick={()=>s!==null&&setIzvestaj(i)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,cursor:s!==null?"pointer":"default",flex:1}}>
-                <div style={{width:34,height:34,borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",background:s==="z"?C.greenLight:s==="ž"?C.amberLight:s==="c"?`${C.red}18`:C.bgMuted,transform:izvestaj===i?"scale(1.12)":"scale(1)",transition:"transform .2s"}}>
-                  {s==="z"&&<Ico d={I.check} size={14} stroke={C.green} sw={2.5}/>}
-                  {s==="ž"&&<span style={{fontSize:14,color:C.amber,fontWeight:800,lineHeight:1}}>~</span>}
-                  {s==="c"&&<Ico d={I.x} size={12} stroke={C.red} sw={2.5}/>}
-                  {s===null&&<span style={{width:5,height:5,borderRadius:"50%",background:C.border,display:"block"}}/>}
+        {/* Week widget */}
+        <div style={{background:C.bgCard,borderRadius:28,padding:"18px 14px",boxShadow:"0 4px 20px rgba(122,158,142,.08)",border:`1px solid ${C.border}`,display:"flex",flexDirection:"column",minHeight:190}}>
+          <p style={{fontSize:10,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:12}}>Ova nedelja</p>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:3,marginBottom:"auto"}}>
+            {weekData.map(({s},i)=>(
+              <div key={i} onClick={()=>s!==null&&setIzvestaj(i)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,cursor:s!==null?"pointer":"default"}}>
+                <div style={{width:"100%",aspectRatio:"1",borderRadius:9,display:"flex",alignItems:"center",justifyContent:"center",background:s==="z"?C.greenLight:s==="ž"?C.amberLight:s==="c"?`${C.red}18`:C.bgMuted,transform:izvestaj===i?"scale(1.15)":"scale(1)",transition:"transform .18s"}}>
+                  {s==="z"&&<Ico d={I.check} size={10} stroke={C.green} sw={2.5}/>}
+                  {s==="ž"&&<span style={{fontSize:9,color:C.amber,fontWeight:900,lineHeight:1}}>~</span>}
+                  {s==="c"&&<Ico d={I.x} size={9} stroke={C.red} sw={2.5}/>}
+                  {s===null&&<span style={{width:3,height:3,borderRadius:"50%",background:C.border,display:"block"}}/>}
                 </div>
-                <span style={{fontSize:9,color:izvestaj===i?C.primary:C.textLight,fontWeight:700}}>{dani[i]}</span>
+                <span style={{fontSize:7.5,color:izvestaj===i?C.primary:C.textLight,fontWeight:700}}>{dani[i]}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{borderTop:`1px solid ${C.border}`,paddingTop:12,marginTop:12,display:"flex",justifyContent:"space-between"}}>
+            {[[nedZelene,C.green,"✓"],[nedAmber,C.amber,"~"],[nedCrvene,C.red,"✗"]].map(([n,c,sym])=>(
+              <div key={sym} style={{textAlign:"center",flex:1}}>
+                <div style={{fontSize:20,fontWeight:400,color:n>0?c:C.border,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{n}</div>
+                <div style={{fontSize:9,fontWeight:700,color:C.textLight,marginTop:2}}>{sym}</div>
               </div>
             ))}
           </div>
         </div>
+      </div>
 
-        <div style={{borderRadius:24,padding:"20px 24px",marginBottom:16,background:C.primaryLight}}>
-          <p style={{fontSize:11,fontWeight:700,color:C.primary,letterSpacing:1,textTransform:"uppercase",marginBottom:10,opacity:.7}}>Poruka dana</p>
-          <p style={{fontSize:16,color:C.primaryDark,fontWeight:500,lineHeight:1.7,fontFamily:"'Instrument Serif',serif",fontStyle:"italic"}}>{PORUKE_DANA[Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0).getTime())/86400000)%PORUKE_DANA.length]}</p>
+      {/* ── Quote widget (full width) ── */}
+      <div style={{background:C.purpleLight,borderRadius:28,padding:"20px 22px",marginBottom:12,border:`1px solid ${C.purple}22`}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+          <div style={{width:26,height:26,borderRadius:8,background:C.purple+"22",display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={I.spark} size={12} stroke={C.purple} sw={1.8}/></div>
+          <p style={{fontSize:10,fontWeight:700,color:C.purple,letterSpacing:1,textTransform:"uppercase",opacity:.8}}>Poruka dana</p>
         </div>
+        <p className="serif italic" style={{fontSize:17,color:"#5A4060",lineHeight:1.75}}>{poruka}</p>
+      </div>
 
-        <div style={{display:"flex",gap:10,marginBottom:8}}>
-          <button onClick={onSOS} style={{flex:1,padding:"18px 16px",borderRadius:24,background:C.primaryGrad,border:"none",color:"#fff",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:10,boxShadow:`0 6px 24px rgba(122,158,142,.28)`,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:15}}>
-            <div style={{width:36,height:36,borderRadius:12,background:"rgba(255,255,255,.2)",display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={I.shield} size={18} stroke="#fff" sw={2}/></div>
-            SOS
-          </button>
-          <button onClick={onNoviUnos} style={{flex:1,padding:"18px 16px",borderRadius:24,background:C.bgCard,border:`1.5px solid ${C.border}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:10,boxShadow:`0 4px 16px ${C.shadow}`,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:15,color:C.text}}>
-            <div style={{width:36,height:36,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={I.plus} size={18} stroke={C.primary} sw={2.5}/></div>
-            Upiši
-          </button>
-        </div>
+      {/* ── Action widgets row ── */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+        <button onClick={onSOS} style={{background:C.primaryGrad,border:"none",borderRadius:24,padding:"18px 16px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"flex-start",gap:12,boxShadow:"0 8px 28px rgba(94,140,122,.30)",fontFamily:"'Plus Jakarta Sans',sans-serif",touchAction:"manipulation"}}>
+          <div style={{width:40,height:40,borderRadius:13,background:"rgba(255,255,255,.22)",display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={I.shield} size={20} stroke="#fff" sw={2}/></div>
+          <div style={{textAlign:"left"}}>
+            <p style={{fontSize:16,fontWeight:700,color:"#fff",marginBottom:2}}>SOS</p>
+            <p style={{fontSize:11,color:"rgba(255,255,255,.65)",fontWeight:600}}>Tehnika smirenja</p>
+          </div>
+        </button>
+        <button onClick={onNoviUnos} style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:24,padding:"18px 16px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"flex-start",gap:12,boxShadow:"0 4px 16px rgba(122,158,142,.08)",fontFamily:"'Plus Jakarta Sans',sans-serif",touchAction:"manipulation"}}>
+          <div style={{width:40,height:40,borderRadius:13,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={I.plus} size={20} stroke={C.primary} sw={2.5}/></div>
+          <div style={{textAlign:"left"}}>
+            <p style={{fontSize:16,fontWeight:700,color:C.text,marginBottom:2}}>Upiši</p>
+            <p style={{fontSize:11,color:C.textLight,fontWeight:600}}>Novi unos</p>
+          </div>
+        </button>
       </div>
     </div>
   );
