@@ -46,6 +46,7 @@ textarea.inp{resize:none;min-height:80px;line-height:1.65;}
 .dot{width:6px;height:6px;border-radius:50%;background:${C.textLight};animation:bounce 1.3s infinite;}
 .dot:nth-child(2){animation-delay:.18s}.dot:nth-child(3){animation-delay:.36s}
 @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(76,217,100,.5)}70%{box-shadow:0 0 0 6px rgba(76,217,100,0)}}
 .lbl{font-size:10px;font-weight:700;color:${C.textLight};letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:10px;}
 `;
 
@@ -691,12 +692,16 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
     <div style={{display:"flex",flexDirection:"column",height:"100%",flex:1,minHeight:0}}>
       <div style={{padding:"48px 20px 16px",background:C.primaryGrad,flexShrink:0}}>
         <div style={{display:"flex",alignItems:"center",gap:14}}>
-          <div style={{width:48,height:48,borderRadius:"50%",background:"rgba(255,255,255,.25)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-            <Ico d={I.spark} size={22} stroke="#fff" sw={1.6}/>
+          <div style={{width:50,height:50,borderRadius:"50%",background:"rgba(255,255,255,.22)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative"}}>
+            <Ico d={I.heart} size={22} stroke="#fff" sw={1.8}/>
+            <div style={{position:"absolute",bottom:1,right:1,width:13,height:13,borderRadius:"50%",background:"#4CD964",border:"2px solid rgba(168,90,116,.6)",animation:"pulse 2s infinite"}}/>
           </div>
           <div>
             <p style={{fontWeight:700,fontSize:18,color:"#fff",lineHeight:1}}>Mia</p>
-            <p style={{fontSize:12,color:"rgba(255,255,255,.75)",fontWeight:600,marginTop:3}}>● dostupna</p>
+            <div style={{display:"flex",alignItems:"center",gap:5,marginTop:4}}>
+              <div style={{width:7,height:7,borderRadius:"50%",background:"#4CD964",flexShrink:0}}/>
+              <p style={{fontSize:12,color:"rgba(255,255,255,.85)",fontWeight:600}}>dostupna</p>
+            </div>
           </div>
         </div>
       </div>
