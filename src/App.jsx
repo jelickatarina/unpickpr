@@ -689,12 +689,15 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   }
   return(
     <div style={{display:"flex",flexDirection:"column",height:"100%",flex:1,minHeight:0}}>
-      <div style={{padding:"52px 20px 14px",background:"rgba(255,255,255,.96)",borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
+      <div style={{padding:"48px 20px 16px",background:C.primaryGrad,flexShrink:0}}>
         <div style={{display:"flex",alignItems:"center",gap:14}}>
-          <div style={{width:46,height:46,borderRadius:"50%",background:`linear-gradient(135deg,${C.primaryLight},${C.purpleLight})`,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 4px 14px rgba(122,158,142,.18)`}}>
-            <Ico d={I.spark} size={20} stroke={C.primary} sw={1.5}/>
+          <div style={{width:48,height:48,borderRadius:"50%",background:"rgba(255,255,255,.25)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <Ico d={I.spark} size={22} stroke="#fff" sw={1.6}/>
           </div>
-          <div><p style={{fontWeight:700,fontSize:16}}>Mia</p><p style={{fontSize:12,color:C.green,fontWeight:700}}>● dostupna</p></div>
+          <div>
+            <p style={{fontWeight:700,fontSize:18,color:"#fff",lineHeight:1}}>Mia</p>
+            <p style={{fontSize:12,color:"rgba(255,255,255,.75)",fontWeight:600,marginTop:3}}>● dostupna</p>
+          </div>
         </div>
       </div>
       <div style={{flex:1,overflowY:"auto",padding:"20px 16px 10px",display:"flex",flexDirection:"column",gap:12,background:C.bg,minHeight:0}}>
