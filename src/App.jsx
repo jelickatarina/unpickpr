@@ -1068,74 +1068,106 @@ function Napredak({unosi,niz}){
   const resCount=unosi.filter(e=>e.ish==="res").length;
   const resP=total?Math.round(resCount/total*100):0;
 
-  if(total===0) return(
-    <div style={{paddingBottom:24}} className="fi">
-      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:16}}>
-        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:4}}>Statistike</p>
-        <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5}}>Napredak</h1>
+  const circumference=2*Math.PI*44;
+  const offset=circumference-(resP/100)*circumference;
+
+  const emptyState=(
+    <div style={{paddingBottom:90}} className="fi">
+      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:20}}>
+        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.5,textTransform:"uppercase",marginBottom:6}}>Napredak</p>
+        <h1 style={{fontSize:28,fontWeight:800,color:C.text,letterSpacing:-0.5}}>Tvoje statistike</h1>
       </div>
-      <div style={{textAlign:"center",padding:"56px 24px"}}>
-        <div style={{width:80,height:80,borderRadius:28,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}><Ico d={I.chart} size={36} stroke={C.primary} sw={1.5}/></div>
-        <h3 className="serif" style={{fontSize:24,marginBottom:8}}>Još nema podataka</h3>
-        <p style={{fontSize:14,color:C.textLight,fontWeight:500,lineHeight:1.7}}>Kada počneš da unosiš epizode,<br/>ovde ćeš videti svoje obrasce i napredak.</p>
+      <div style={{margin:"0 20px",borderRadius:28,background:C.primaryGrad,padding:"48px 24px",textAlign:"center",boxShadow:`0 8px 32px rgba(192,120,144,0.25)`}}>
+        <div style={{fontSize:48,marginBottom:16}}>📊</div>
+        <p style={{fontWeight:800,fontSize:18,color:"#fff",marginBottom:8}}>Još nema podataka</p>
+        <p style={{fontSize:14,color:"rgba(255,255,255,0.75)",lineHeight:1.7}}>Unesi prvu epizodu i<br/>pratićeš napredak ovde.</p>
       </div>
     </div>
   );
 
+  if(total===0) return emptyState;
+
   return(
-    <div style={{paddingBottom:24}} className="fi">
-      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:16}}>
-        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:4}}>Statistike</p>
-        <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5}}>Napredak</h1>
+    <div style={{paddingBottom:90}} className="fi">
+      {/* Header */}
+      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:20}}>
+        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.5,textTransform:"uppercase",marginBottom:6}}>Napredak</p>
+        <h1 style={{fontSize:28,fontWeight:800,color:C.text,letterSpacing:-0.5}}>Tvoje statistike</h1>
       </div>
-      <div style={{padding:"0 20px"}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}}>
-          {[
-            [niz===0?I.leaf:I.flame,niz===0?C.green:C.primary,niz===0?C.greenLight:C.primaryLight,String(niz),"Trenutni niz"],
-            [I.trophy,C.amber,C.amberLight,String(best),"Rekordni niz"],
-            [I.check,C.green,C.greenLight,`${resP}%`,"Odolelo"],
-            [I.journal,C.purple,C.purpleLight,String(total),"Ukupno unosa"]
-          ].map(([ico,clr,bg,v,l])=>(
-            <div key={l} style={{background:C.bgCard,borderRadius:24,padding:"20px 18px",boxShadow:`0 4px 20px rgba(122,158,142,0.08)`,border:`1px solid ${C.border}`}}>
-              <div style={{width:38,height:38,borderRadius:12,background:bg,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:12}}><Ico d={ico} size={18} stroke={clr} sw={2}/></div>
-              <div style={{fontSize:36,fontWeight:400,color:C.text,marginBottom:4,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{v}</div>
-              <div style={{fontSize:11,color:C.textLight,fontWeight:700,letterSpacing:0.8,textTransform:"uppercase"}}>{l}</div>
+
+      {/* Hero card */}
+      <div style={{margin:"0 20px 16px",borderRadius:28,background:C.primaryGrad,padding:"28px 24px",boxShadow:`0 8px 32px rgba(192,120,144,0.25)`,display:"flex",alignItems:"center",gap:20}}>
+        <div style={{position:"relative",flexShrink:0,width:100,height:100}}>
+          <svg width="100" height="100" style={{transform:"rotate(-90deg)"}}>
+            <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="8"/>
+            <circle cx="50" cy="50" r="44" fill="none" stroke="#fff" strokeWidth="8"
+              strokeDasharray={circumference} strokeDashoffset={offset}
+              strokeLinecap="round" style={{transition:"stroke-dashoffset .8s ease"}}/>
+          </svg>
+          <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+            <span style={{fontSize:24,fontWeight:900,color:"#fff",lineHeight:1}}>{resP}%</span>
+            <span style={{fontSize:10,color:"rgba(255,255,255,0.8)",fontWeight:700,letterSpacing:0.5}}>odolelo</span>
+          </div>
+        </div>
+        <div style={{flex:1}}>
+          <p style={{fontSize:13,color:"rgba(255,255,255,0.75)",fontWeight:600,marginBottom:4}}>Trenutni niz</p>
+          <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:12}}>
+            <span style={{fontSize:44,fontWeight:900,color:"#fff",lineHeight:1}}>{niz}</span>
+            <span style={{fontSize:28}}>🔥</span>
+          </div>
+          <div style={{display:"flex",gap:16}}>
+            <div>
+              <p style={{fontSize:11,color:"rgba(255,255,255,0.65)",fontWeight:600,marginBottom:2}}>Rekord</p>
+              <p style={{fontSize:18,fontWeight:800,color:"#fff"}}>{best} 🏆</p>
+            </div>
+            <div>
+              <p style={{fontSize:11,color:"rgba(255,255,255,0.65)",fontWeight:600,marginBottom:2}}>Ukupno</p>
+              <p style={{fontSize:18,fontWeight:800,color:"#fff"}}>{total}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mesečni grafikon */}
+      <div style={{margin:"0 20px 16px",background:C.bgCard,borderRadius:24,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`}}>
+        <p style={{fontSize:12,fontWeight:800,color:C.text,letterSpacing:0.2,marginBottom:20}}>Epizode po mesecu</p>
+        <div style={{display:"flex",alignItems:"flex-end",gap:6,height:120}}>
+          {meseci.map((m,i)=>{
+            const isCurrent=i===meseci.length-1;
+            const barH=m.br?Math.max(24,Math.round((m.br/maxBr)*96)):0;
+            return(
+              <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+                {m.br>0&&<span style={{fontSize:11,color:isCurrent?C.primary:C.textMid,fontWeight:800,lineHeight:1}}>{m.br}</span>}
+                <div style={{width:"100%",flex:1,display:"flex",alignItems:"flex-end"}}>
+                  <div style={{width:"100%",height:m.br?barH:3,background:isCurrent?C.primaryGrad:m.br?C.primary+"44":C.border,borderRadius:8,transition:"height .5s ease"}}/>
+                </div>
+                <span style={{fontSize:10,color:isCurrent?C.primary:C.textLight,fontWeight:isCurrent?800:600,letterSpacing:0.2}}>{m.mes}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Okidači */}
+      {topOki.length>0&&(
+        <div style={{margin:"0 20px",background:C.bgCard,borderRadius:24,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`}}>
+          <p style={{fontSize:12,fontWeight:800,color:C.text,letterSpacing:0.2,marginBottom:16}}>Najčešći okidači</p>
+          {topOki.map((o,i)=>(
+            <div key={o.l} style={{marginBottom:i<topOki.length-1?14:0}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <div style={{width:8,height:8,borderRadius:"50%",background:o.c,flexShrink:0}}/>
+                  <span style={{fontSize:14,color:C.text,fontWeight:600}}>{o.l}</span>
+                </div>
+                <span style={{fontSize:13,fontWeight:800,color:o.c}}>{o.p}%</span>
+              </div>
+              <div style={{height:6,background:C.bgMuted,borderRadius:100,overflow:"hidden"}}>
+                <div style={{height:"100%",width:`${o.p}%`,background:o.c,borderRadius:100,transition:"width .6s ease"}}/>
+              </div>
             </div>
           ))}
         </div>
-
-        <div style={{background:C.bgCard,borderRadius:24,padding:"20px",boxShadow:`0 4px 20px rgba(122,158,142,0.08)`,border:`1px solid ${C.border}`,marginBottom:16}}>
-          <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:16}}>Epizode po mesecu</p>
-          <div style={{display:"flex",alignItems:"flex-end",gap:8,height:110}}>
-            {meseci.map((m,i)=>{
-              const isCurrent=i===meseci.length-1;
-              const barH=m.br?Math.max(20,Math.round((m.br/maxBr)*86)):4;
-              return(
-                <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
-                  {m.br>0&&<span style={{fontSize:12,color:C.textMid,fontWeight:700,lineHeight:1}}>{m.br}</span>}
-                  <div style={{width:"100%",height:m.br?barH:4,background:isCurrent?C.green:C.primary+(i===meseci.length-2?"BB":"55"),borderRadius:"8px 8px 0 0",minHeight:4,transition:"height .4s"}}/>
-                  <span style={{fontSize:11,color:isCurrent?C.primary:C.textLight,fontWeight:isCurrent?700:600}}>{m.mes}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {topOki.length>0&&(
-          <div style={{background:C.bgCard,borderRadius:24,padding:"20px",boxShadow:`0 4px 20px rgba(122,158,142,0.08)`,border:`1px solid ${C.border}`}}>
-            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:16}}>Najčešći okidači</p>
-            {topOki.map(o=>(
-              <div key={o.l} style={{marginBottom:16}}>
-                <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-                  <span style={{fontSize:14,color:C.text,fontWeight:600}}>{o.l}</span>
-                  <span style={{fontSize:13,fontWeight:700,color:o.c}}>{o.p}%</span>
-                </div>
-                <div className="pb" style={{height:6}}><div className="pf" style={{width:`${o.p}%`,background:o.c}}/></div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }
