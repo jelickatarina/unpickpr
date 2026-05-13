@@ -596,12 +596,26 @@ PODACI O KORISNIKU (${ime}):
 Koristi ove podatke da personalizuješ podršku i pomogneš korisniku da prepozna obrasce.`;
 }
 
-function AIChat({ime,niz,unosi}){
-  const STORAGE_KEY="mia_poruke_v1";
+function AIChat({ime,niz,unosi,userId}){
   const pocetna={id:0,ko:"ai",tekst:`Zdravo${ime?" "+ime:""}! Ja sam Mia — tu sam da te saslušam, bez osude i bez žurbe. Možeš mi reći šta te muči, kako se osećaš, ili šta ti je na umu. Šta se dešava kod tebe?`};
-  const [poruke,setPoruke]=useState(()=>{try{const s=localStorage.getItem(STORAGE_KEY);return s?JSON.parse(s):[pocetna];}catch{return[pocetna];}});
+  const [poruke,setPoruke]=useState([pocetna]);
+  const [ucitan,setUcitan]=useState(false);
   const [unos,setUnos]=useState("");const [ucitava,setUcitava]=useState(false);const krajRef=useRef(null);
-  useEffect(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(poruke));}catch{}},[poruke]);
+
+  useEffect(()=>{
+    if(!userId)return;
+    supabase.from("profiles").select("chat_history").eq("id",userId).single().then(({data})=>{
+      if(data?.chat_history?.length) setPoruke(data.chat_history);
+      setUcitan(true);
+    });
+  },[userId]);
+
+  useEffect(()=>{
+    if(!userId||!ucitan)return;
+    const t=setTimeout(()=>{supabase.from("profiles").update({chat_history:poruke}).eq("id",userId);},600);
+    return()=>clearTimeout(t);
+  },[poruke,userId,ucitan]);
+
   useEffect(()=>{krajRef.current?.scrollIntoView({behavior:"smooth"})},[poruke,ucitava]);
   async function posalji(){
     const txt=unos.trim();if(!txt||ucitava)return;
@@ -1180,7 +1194,7 @@ export default function App(){
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
               {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
               {ekran==="bib"&&<Biblioteka/>}
-              {ekran==="chat"&&<AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi}/>}
+              {ekran==="chat"&&<AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id}/>}
             </div>
             <nav className="bnav">
               {NAV.map(n=>(
