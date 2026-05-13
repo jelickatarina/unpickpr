@@ -164,7 +164,7 @@ function Auth({onDone}){
           Your skin<br/><span style={{color:C.primary,fontWeight:800}}>deserves kindness.</span>
         </h1>
         <p style={{fontSize:15,color:C.textMid,lineHeight:1.7,fontWeight:500,marginBottom:32}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
-        <div style={{width:"100%",display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+        <div style={{width:"100%",display:"flex",flexDirection:"column",gap:10,marginBottom:20,textAlign:"left"}}>
           {[[I.chart,"Praćenje epizoda","Beleži epizode i prati obrasce"],[I.wind,"SOS alat u krizi","Tehnike za smirenje u trenutku"],[I.chat,"Mia — AI podrška","Uvek dostupna, bez osude"]].map(([ico,t,sub])=>(
             <div key={t} style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",borderRadius:18,background:C.bgCard,border:`1.5px solid ${C.border}`,boxShadow:`0 2px 12px ${C.shadow}`}}>
               <div style={{width:44,height:44,borderRadius:14,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 12px rgba(192,120,144,0.25)`}}>
