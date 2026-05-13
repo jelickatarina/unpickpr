@@ -636,40 +636,42 @@ function buildSys(ime,niz,unosi){
   if(niz>=7) obrasci.push(`Korisnik ima ${niz} dana čistog niza — to je ogroman uspeh vredan pohvale.`);
   if(ep===0&&res>0) obrasci.push("Ova nedelja je čista — ohrabri i pomozi da se taj zamah nastavi.");
 
-  return `Ti si Mia — topla, empatična AI drugarica u aplikaciji Unpick za osobe sa dermatilomanijom (kompulzivno čačkanje kože).
+  return `Ti si Mia — topla, pametna AI drugarica u aplikaciji Unpick za osobe sa dermatilomanijom. Znaš sve o korisnikovim obrascima i koristiš to da vodiš smislene razgovore.
 
-JEZIK: Isključivo srpski, ekavica. Nikad: "tjedan","trenutačno","također","ukoliko","kako bi". Uvek odgovaraj na srpskom bez obzira na jezik korisnika.
+JEZIK: Srpski, ekavica. Nikad: "tjedan","trenutačno","također","ukoliko","kako bi".
+ROD: Ženski za sebe. Rodno neutralno prema korisniku. Bez "draga/dragi".
 
-ROD: Ženski rod za sebe ("Primetila sam", "Rekla bih", "Tu sam").
+KORISNIKOV NAPREDAK (uvek imaj ovo u glavi i prirodno spominji):
+- Niz čistih dana: ${niz} dana 🔥 ${niz>=7?"— to je ogroman uspeh!":niz>=3?"— svaki dan se računa.":""}
+- Ova nedelja: ${ep} epizoda, ${pok} teških pokušaja, ${res} puta je odolelo
+- Ukupno unosa u dnevniku: ${(unosi||[]).length} — to je ${(unosi||[]).length>10?"ozbiljna posvećenost sebi":(unosi||[]).length>3?"dobar početak":"hrabar prvi korak"}
+- Najčešći okidači: ${topOk.length?topOk.join(", "):"još se prikupljaju"}
+- Kritične situacije/mesta: ${topLok.length?topLok.join(", "):"—"}
+- Prosečan intenzitet impulsa: ${prosecniInt}/10
+${obrasci.length?obrasci.map(o=>"- "+o).join("\n"):""}
 
-OBRAĆANJE: Bez "draga/dragi". Koristi ime ili "ti". Rodno neutralno prema korisniku.
+KAKO VODIŠ RAZGOVOR:
 
-KAKO DA POMOGNEŠ — razlikuj situacije:
+1. AKTIVNO PREPOZNAJ OBRASCE — Ako korisnik pomene okidač koji se poklapa sa njegovim podacima, reaguj na to: "Primetila sam da se ${topOk[0]||"stres"} pojavljuje kod tebe često — da li je i sad to bio slučaj?"
 
-1. KORISNIK DELI OSEĆANJA ili priča šta se desilo → Prvo pokaži da si čula i razumeš (1 rečenica). Postavi jedno konkretno pitanje da bolje razumeš situaciju. Ne davaj savete dok ne razumeš problem.
+2. PODSEĆI NA NAPREDAK — Prirodno (ne na silu) upleći napredak u razgovor. Npr: "Već imaš ${niz} dana niza — to znači da si prošla/o kroz teške trenutke i izašla/o na drugu stranu. Ovo je još jedan takav trenutak."
 
-2. KORISNIK TRAŽI SAVЕТ ili pita "šta da radim" / "kako da se smirim" / "pomozi mi" → Odmah daj 2-3 konkretne, korisne tehnike ili korake. Ne pitaj šta bi pomoglo — odmah deluj. Budi direktna.
+3. VODI KA RAZUMEVANJU — Postavi pitanja koja pomažu korisniku da SAM/A otkrije obrasce. Ne daj gotove odgovore uvek — pitaj: "Šta misliš, šta je pokrenulo impuls ovog puta?", "Da li si primetila/o neku sličnost sa prošli put?"
 
-3. KORISNIK PRIJAVLJUJE USPEH ili napredak → Iskreno je pohvali, naglasi koliko je to zaista teško i vredno. Pitaj kako je uspela/o da izdrži.
+4. SITUACIJE:
+   - DELI OSEĆANJA → Čuj, pokaži da razumeš, postavi jedno pitanje koje produbljuje razgovor
+   - TRAŽI POMOĆ/SAVЕТ → Odmah daj 2-3 konkretne tehnike, budi direktna
+   - USPEH/ODOLENJE → Pohvali iskreno i specifično, pitaj kako je uspela/o
+   - EPIZODA → Bez osude, normalizuj, istraži okidač zajedno
+   - KRIZA/JAK IMPULS → Odmah tehnika: "Hajde odmah — stisni obe šake čvrsto 30 sekundi. Brojiš sa mnom?" + podsetiti na SOS dugme gore
 
-4. KORISNIK IMA EPIZODU ili kaže da je upravo čačkao/la → Bez osude. Normalizuj, objasni da je to deo procesa, pomozi da razume šta je okidač bio.
+TEHNIKE (predloži kada je pravo vreme):
+- Disanje 4-7-8: udah 4s, zadrži 7s, izdah 8s
+- 5-4-3-2-1: 5 vidiš, 4 dodiruješ, 3 čuješ, 2 mirišeš, 1 ukus
+- Zamenska radnja: kocka leda, gumena narukvica, krema na ruke
+- Odlaganje: "Samo 5 minuta — impuls prolazi sam"
 
-KONKRETNE TEHNIKE koje možeš predložiti (kada je prikladno):
-- Dijafragmalno disanje: 4 sekunde udah, 7 zadrži, 8 izdah
-- Tehnika 5-4-3-2-1: 5 stvari koje vidiš, 4 koje dodiruješ, 3 zvuka, 2 mirisa, 1 ukus
-- Zamenska radnja: stiskanje kocke leda, gumena narukvica, krema na ruke
-- Odlaganje impulsa: "Sačekaj samo 5 minuta" — impuls prolazi
-- Pisanje u dnevnik (unutar aplikacije)
-
-PODACI O KORISNIKU (${ime}):
-- Niz čistih dana: ${niz} 🔥
-- Ova nedelja: ${ep} epizoda, ${pok} pokušaja, ${res} odoljevanja
-- Najčešći okidači: ${topOk.length?topOk.join(", "):"još uvek se prikupljaju podaci"}
-- Kritične lokacije: ${topLok.length?topLok.join(", "):"—"}
-- Prosečan intenzitet: ${prosecniInt}/10
-${obrasci.length?"\nOBRASCI:\n"+obrasci.map(o=>"- "+o).join("\n"):""}
-
-OGRANIČENJA: Ne pominjaj bazu, API, tehničke detalje. Odgovaraj u 2-4 rečenice — kratko i korisno. Ne zamenjuješ stručnu terapiju, ali si uvek tu kao podrška.`;
+Odgovaraj u 2-4 rečenice. Ne pominjaj tehničke detalje. Budi kao pametna, brižna drugarica koja dobro poznaje korisnika.`;
 }
 
 function AIChat({ime,niz,unosi,userId,onSOS}){
@@ -698,9 +700,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
       const raw=data.choices?.[0]?.message?.content||"";
       if(!raw){console.error("Groq prazan odgovor:",JSON.stringify(data));throw new Error("prazan odgovor");}
       const aiTekst=raw.replace(/\[SOS_DUGME\]/g,"").trim();
-      const krizaRec=/jak impuls|ho[cć]u da [cč]a[cč]k|ne mogu da se zaustavim|ne mogu da se kontroli[sš]em|pomozi mi sad|hitno mi treba|trenutno mi je veoma te[sš]ko|imam impuls|osećam jak|ne mogu da odolim/i;
-      const imasSOS=krizaRec.test(txt);
-      const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:imasSOS}];
+      const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst}];
       setPoruke(npp);porRef.current=npp;
       localStorage.setItem(LS,JSON.stringify(npp));
     }catch(e){console.error("posalji catch:",e?.message);const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu — "+( e?.message||"proveri internet vezu.")}];setPoruke(npp);porRef.current=npp;localStorage.setItem(LS,JSON.stringify(npp));}
@@ -708,16 +708,20 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   }
   return(
     <div style={{display:"flex",flexDirection:"column",height:"100%",flex:1,minHeight:0}}>
-      <div style={{paddingTop:"max(42px,env(safe-area-inset-top))",paddingBottom:8,paddingLeft:16,paddingRight:16,background:C.bgCard,borderBottom:`1px solid ${C.border}`,flexShrink:0,boxShadow:`0 2px 8px ${C.shadow}`}}>
+      <div style={{paddingTop:"max(42px,env(safe-area-inset-top))",paddingBottom:10,paddingLeft:16,paddingRight:16,background:C.bgCard,borderBottom:`1px solid ${C.border}`,flexShrink:0,boxShadow:`0 2px 8px ${C.shadow}`}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
           <div style={{width:38,height:38,borderRadius:"50%",background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative",boxShadow:`0 4px 10px ${C.primary}44`}}>
             <Ico d={I.heart} size={17} stroke="#fff" sw={1.8}/>
             <div style={{position:"absolute",bottom:1,right:1,width:10,height:10,borderRadius:"50%",background:"#4CD964",border:"2px solid #fff",animation:"pulse 2s infinite"}}/>
           </div>
-          <div>
+          <div style={{flex:1}}>
             <p style={{fontWeight:700,fontSize:15,color:C.text,lineHeight:1,marginBottom:3}}>Mia</p>
             <p style={{fontSize:11,color:C.textLight,fontWeight:500}}>AI podrška · uvek tu</p>
           </div>
+          <button onClick={onSOS} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:100,background:C.red+"15",border:`1.5px solid ${C.red}40`,cursor:"pointer",flexShrink:0}}>
+            <div style={{width:7,height:7,borderRadius:"50%",background:C.red,animation:"pulse 2s infinite"}}/>
+            <span style={{fontSize:13,fontWeight:800,color:C.red,letterSpacing:0.3}}>SOS</span>
+          </button>
         </div>
       </div>
       <div style={{flex:1,overflowY:"auto",padding:"20px 16px 10px",display:"flex",flexDirection:"column",gap:12,background:C.bg,minHeight:0}}>
@@ -725,16 +729,8 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
           <div key={p.id} style={{display:"flex",flexDirection:"column",alignItems:p.ko==="user"?"flex-end":"flex-start"}}>
             {p.ko==="ai"&&<div style={{display:"flex",alignItems:"flex-end",gap:8}}>
               <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginBottom:2}}><Ico d={I.heart} size={14} stroke={C.primary} sw={1.8}/></div>
-              <div style={{display:"flex",flexDirection:"column",gap:8,maxWidth:"84%"}}>
+              <div style={{maxWidth:"84%"}}>
                 <div className="bba">{p.tekst}</div>
-                {p.sos&&<button onClick={onSOS} style={{alignSelf:"flex-start",background:C.primaryLight,border:`1.5px solid ${C.primary}50`,borderRadius:100,padding:"9px 16px 9px 10px",cursor:"pointer",display:"flex",alignItems:"center",gap:8,fontFamily:"'Plus Jakarta Sans',sans-serif",animation:"sosPulse 2s infinite"}}>
-                  <div style={{width:26,height:26,borderRadius:"50%",background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.leaf} size={12} stroke="#fff" sw={2.2}/></div>
-                  <div>
-                    <span style={{fontSize:13,fontWeight:700,color:C.primaryDark,display:"block",lineHeight:1}}>SOS</span>
-                    <span style={{fontSize:10,color:C.textLight,fontWeight:600,letterSpacing:.3}}>pritisni</span>
-                  </div>
-                  <Ico d={I.chev} size={14} stroke={C.primary} sw={2.5}/>
-                </button>}
               </div>
             </div>}
             {p.ko==="user"&&<div className="bbu">{p.tekst}</div>}
