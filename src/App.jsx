@@ -208,7 +208,7 @@ function Auth({onDone}){
           return;
         }
         const {data:profile}=await supabase.from("profiles").select("name").eq("id",data.user.id).single();
-        onDone({ime:profile?.name||data.user.user_metadata?.name||em,registeredAt:data.user.created_at});
+        onDone({ime:profile?.name||data.user.user_metadata?.name||em,registeredAt:data.user.created_at,id:data.user.id});
       }else{
         const {data,error}=await supabase.auth.signUp({email:em.trim(),password:loz,options:{data:{name:ime.trim()}}});
         if(error){
@@ -218,7 +218,7 @@ function Auth({onDone}){
         }
         await supabase.from("profiles").upsert({id:data.user.id,name:ime.trim()});
         if(data.session){
-          onDone({ime:ime.trim(),registeredAt:data.user.created_at});
+          onDone({ime:ime.trim(),registeredAt:data.user.created_at,id:data.user.id});
         }else{
           setUspeh("Proveri email i potvrdi nalog, pa se prijavi.");
           setTimeout(()=>{setMode("l");setUspeh("");setLoz("");setLoz2("");},4000);
@@ -691,18 +691,14 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   }
   return(
     <div style={{display:"flex",flexDirection:"column",height:"100%",flex:1,minHeight:0}}>
-      <div style={{paddingTop:"max(44px,env(safe-area-inset-top))",paddingBottom:10,paddingLeft:16,paddingRight:16,background:C.bgCard,borderBottom:`1px solid ${C.border}`,flexShrink:0,boxShadow:`0 2px 10px ${C.shadow}`}}>
+      <div style={{paddingTop:"max(42px,env(safe-area-inset-top))",paddingBottom:8,paddingLeft:16,paddingRight:16,background:C.bgCard,borderBottom:`1px solid ${C.border}`,flexShrink:0,boxShadow:`0 2px 8px ${C.shadow}`}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
-          <div style={{width:40,height:40,borderRadius:"50%",background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative",boxShadow:`0 4px 12px ${C.primary}44`}}>
-            <Ico d={I.heart} size={18} stroke="#fff" sw={1.8}/>
-            <div style={{position:"absolute",bottom:1,right:1,width:11,height:11,borderRadius:"50%",background:"#4CD964",border:"2px solid #fff",animation:"pulse 2s infinite"}}/>
+          <div style={{width:38,height:38,borderRadius:"50%",background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative",boxShadow:`0 4px 10px ${C.primary}44`}}>
+            <Ico d={I.heart} size={17} stroke="#fff" sw={1.8}/>
+            <div style={{position:"absolute",bottom:1,right:1,width:10,height:10,borderRadius:"50%",background:"#4CD964",border:"2px solid #fff",animation:"pulse 2s infinite"}}/>
           </div>
           <div>
-            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
-              <p style={{fontWeight:700,fontSize:15,color:C.text,lineHeight:1}}>Mia</p>
-              <span style={{width:6,height:6,borderRadius:"50%",background:"#4CD964",display:"inline-block"}}/>
-              <p style={{fontSize:12,color:"#3DAA5C",fontWeight:600}}>dostupna</p>
-            </div>
+            <p style={{fontWeight:700,fontSize:15,color:C.text,lineHeight:1,marginBottom:3}}>Mia</p>
             <p style={{fontSize:11,color:C.textLight,fontWeight:500}}>AI podrška · uvek tu</p>
           </div>
         </div>
