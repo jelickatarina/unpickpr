@@ -1055,19 +1055,7 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
 
 function Napredak({unosi,niz}){
   const OKI_BOJE=[C.primary,C.purple,C.amber,C.green,C.textLight];
-
-  // epizode po mesecu — poslednjih 6 meseci
-  const meseci=Array.from({length:6},(_,i)=>{
-    const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-5+i);
-    const mes=d.toLocaleString("sr",{month:"short"});
-    const br=unosi.filter(e=>{
-      if(!e.ts) return false;
-      const ed=new Date(e.ts);
-      return ed.getMonth()===d.getMonth()&&ed.getFullYear()===d.getFullYear()&&(e.ish==="ep"||e.ish==="try");
-    }).length;
-    return {mes,br};
-  });
-  const maxBr=Math.max(...meseci.map(m=>m.br),1);
+  const total=unosi.length;
 
   // rekordni niz
   function calcBest(){
@@ -1075,39 +1063,70 @@ function Napredak({unosi,niz}){
     if(!withTs.length) return 0;
     const badSet=new Set(withTs.filter(e=>e.ish==="try"||e.ish==="ep").map(e=>{const d=new Date(e.ts);return`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;}));
     const start=new Date(withTs[0].ts);const today=new Date();
-    const total=Math.floor((today-start)/86400000)+1;
+    const tot=Math.floor((today-start)/86400000)+1;
     let best=0,cur=0;
-    for(let i=0;i<total;i++){
+    for(let i=0;i<tot;i++){
       const d=new Date(start.getTime()+i*86400000);
       const k=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
       if(!badSet.has(k)){cur++;best=Math.max(best,cur);}else cur=0;
     }
     return best;
   }
-
-  // najčešći okidači
-  const okCounts={};
-  unosi.forEach(e=>{(Array.isArray(e.ok)?e.ok:[e.ok]).filter(Boolean).forEach(o=>{okCounts[o]=(okCounts[o]||0)+1;});});
-  const totalOk=Object.values(okCounts).reduce((a,b)=>a+b,0);
-  const topOki=Object.entries(okCounts).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([l,n],i)=>({l,p:Math.round(n/totalOk*100),c:OKI_BOJE[i]}));
-
-  const total=unosi.length;
   const best=calcBest();
   const resCount=unosi.filter(e=>e.ish==="res").length;
   const resP=total?Math.round(resCount/total*100):0;
 
-  // poslednjih 7 dana za sedmični pregled
+  // 7-day calendar
+  const dani=["ned","pon","uto","sre","čet","pet","sub"];
   const sedmica=Array.from({length:7},(_,i)=>{
     const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-6+i);
-    const dUnosi=unosi.filter(e=>e.ts&&new Date(e.ts).toDateString()===d.toDateString());
-    const hasEp=dUnosi.some(e=>e.ish==="ep");
-    const hasTry=dUnosi.some(e=>e.ish==="try");
-    const hasRes=dUnosi.some(e=>e.ish==="res");
+    const du=unosi.filter(e=>e.ts&&new Date(e.ts).toDateString()===d.toDateString());
+    const hasEp=du.some(e=>e.ish==="ep");
+    const hasTry=du.some(e=>e.ish==="try");
+    const hasRes=du.some(e=>e.ish==="res");
     const isToday=i===6;
-    const dani=["ned","pon","uto","sre","čet","pet","sub"];
-    const status=hasEp?"ep":hasTry?"try":hasRes?"res":dUnosi.length?"res":"none";
+    const status=hasEp?"ep":hasTry?"try":hasRes?"res":"none";
     return{dan:dani[d.getDay()],status,isToday};
   });
+
+  // this week vs last week (episodes+attempts)
+  const now=Date.now();
+  const thisWkEp=unosi.filter(e=>e.ts&&e.ts>=now-7*86400000&&(e.ish==="ep"||e.ish==="try")).length;
+  const lastWkEp=unosi.filter(e=>e.ts&&e.ts>=now-14*86400000&&e.ts<now-7*86400000&&(e.ish==="ep"||e.ish==="try")).length;
+
+  // 8-week bar chart (episodes per week)
+  const sedmice=Array.from({length:8},(_,i)=>{
+    const s=now-(8-i)*7*86400000,e2=now-(7-i)*7*86400000;
+    const ep=unosi.filter(u=>u.ts&&u.ts>=s&&u.ts<e2&&(u.ish==="ep"||u.ish==="try")).length;
+    const res=unosi.filter(u=>u.ts&&u.ts>=s&&u.ts<e2&&u.ish==="res").length;
+    const d=new Date(s);
+    return{ep,res,label:`${d.getDate()}.${d.getMonth()+1}`,isLast:i===7};
+  });
+  const maxSed=Math.max(...sedmice.map(s=>s.ep+s.res),1);
+
+  // time of day for episodes
+  const tod={jutro:0,popodne:0,vece:0,noc:0};
+  unosi.filter(e=>e.ts&&(e.ish==="ep"||e.ish==="try")).forEach(e=>{
+    const h=new Date(e.ts).getHours();
+    if(h>=6&&h<12)tod.jutro++;else if(h>=12&&h<18)tod.popodne++;else if(h>=18&&h<22)tod.vece++;else tod.noc++;
+  });
+  const todTotal=Object.values(tod).reduce((a,b)=>a+b,0)||1;
+  const todMax=Math.max(...Object.values(tod));
+  const epTotal=unosi.filter(e=>e.ish==="ep"||e.ish==="try").length;
+
+  // triggers
+  const okCounts={};
+  unosi.forEach(e=>{(Array.isArray(e.ok)?e.ok:[e.ok]).filter(Boolean).forEach(o=>{okCounts[o]=(okCounts[o]||0)+1;});});
+  const totalOk=Object.values(okCounts).reduce((a,b)=>a+b,0)||1;
+  const topOki=Object.entries(okCounts).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([l,n],i)=>({l,p:Math.round(n/totalOk*100),c:OKI_BOJE[i]}));
+
+  // dynamic insight message
+  let insight,insightBg,insightC;
+  if(thisWkEp===0&&total>0){insight="Bez epizoda ovog sedmica";insightBg=C.greenLight;insightC=C.green;}
+  else if(thisWkEp<lastWkEp&&lastWkEp>0){const d=lastWkEp-thisWkEp;insight=`${d} manje epizod${d===1?"a":"a"} nego prošle sedmice`;insightBg=C.greenLight;insightC=C.green;}
+  else if(niz>=7){insight=`${niz} dana niza — sjajno`;insightBg=C.greenLight;insightC=C.green;}
+  else if(thisWkEp>lastWkEp&&lastWkEp>0){insight="Teža sedmica — svaki pokušaj se računa";insightBg=C.amberLight;insightC=C.amber;}
+  else{insight="Pratiš sebe — to je već napredak";insightBg=C.primaryLight;insightC=C.primary;}
 
   if(total===0) return(
     <div style={{paddingBottom:90}} className="fi">
@@ -1115,8 +1134,8 @@ function Napredak({unosi,niz}){
         <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.5,textTransform:"uppercase",marginBottom:6}}>Napredak</p>
         <h1 style={{fontSize:28,fontWeight:800,color:C.text,letterSpacing:-0.5}}>Tvoje statistike</h1>
       </div>
-      <div style={{margin:"0 20px",borderRadius:28,background:C.bgCard,padding:"40px 24px",textAlign:"center",border:`1px solid ${C.border}`}}>
-        <div style={{width:64,height:64,borderRadius:20,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}><Ico d={I.chart} size={28} stroke={C.primary} sw={1.8}/></div>
+      <div style={{margin:"0 20px",borderRadius:24,background:C.bgCard,padding:"40px 24px",textAlign:"center",border:`1px solid ${C.border}`}}>
+        <div style={{width:60,height:60,borderRadius:18,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 16px"}}><Ico d={I.chart} size={26} stroke={C.primary} sw={1.8}/></div>
         <p style={{fontWeight:700,fontSize:17,color:C.text,marginBottom:8}}>Još nema podataka</p>
         <p style={{fontSize:14,color:C.textLight,lineHeight:1.7}}>Unesi prvu epizodu i pratićeš napredak ovde.</p>
       </div>
@@ -1125,108 +1144,152 @@ function Napredak({unosi,niz}){
 
   return(
     <div style={{paddingBottom:90}} className="fi">
-      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:20}}>
-        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.5,textTransform:"uppercase",marginBottom:6}}>Napredak</p>
-        <h1 style={{fontSize:28,fontWeight:800,color:C.text,letterSpacing:-0.5}}>Tvoje statistike</h1>
+
+      {/* Header + insight */}
+      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:20,paddingRight:20,paddingBottom:16}}>
+        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.5,textTransform:"uppercase",marginBottom:4}}>Napredak</p>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
+          <h1 style={{fontSize:28,fontWeight:800,color:C.text,letterSpacing:-0.5,lineHeight:1}}>Tvoje statistike</h1>
+        </div>
+        <div style={{marginTop:12,background:insightBg,borderRadius:14,padding:"10px 14px",display:"flex",alignItems:"center",gap:8}}>
+          <div style={{width:7,height:7,borderRadius:"50%",background:insightC,flexShrink:0}}/>
+          <span style={{fontSize:13,fontWeight:700,color:insightC,lineHeight:1.3}}>{insight}</span>
+        </div>
       </div>
 
-      {/* Sedmični pregled */}
-      <div style={{margin:"0 20px 12px",borderRadius:24,background:C.bgCard,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`}}>
-        <p style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:16}}>Ova sedmica</p>
-        <div style={{display:"flex",gap:6,marginBottom:16}}>
+      {/* Sekcija 1 — 7-day calendar */}
+      <div style={{margin:"0 20px 10px",background:C.bgCard,borderRadius:24,padding:"18px",border:`1px solid ${C.border}`}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+          <p style={{fontSize:13,fontWeight:700,color:C.text}}>Ova sedmica</p>
+          <div style={{display:"flex",gap:10}}>
+            {[{c:C.red,l:"Epizoda"},{c:C.amber,l:"Pokušaj"},{c:C.green,l:"Odolelo"}].map(x=>(
+              <div key={x.l} style={{display:"flex",alignItems:"center",gap:4}}>
+                <div style={{width:6,height:6,borderRadius:"50%",background:x.c}}/>
+                <span style={{fontSize:9,color:C.textLight,fontWeight:600}}>{x.l}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{display:"flex",gap:5}}>
           {sedmica.map((d,i)=>{
             const bg=d.status==="ep"?C.red:d.status==="try"?C.amber:d.status==="res"?C.green:d.isToday?C.primaryLight:C.bgMuted;
-            const txt=d.status==="ep"||d.status==="try"||d.status==="res"?"#fff":d.isToday?C.primary:C.textLight;
-            const icon=d.status==="ep"?"✕":d.status==="try"?"~":d.status==="res"?"✓":"";
+            const fg=d.status!=="none"?"#fff":d.isToday?C.primary:C.textLight;
+            const ico=d.status==="ep"?"✕":d.status==="try"?"∼":d.status==="res"?"✓":d.isToday?"·":"";
             return(
               <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:5}}>
                 <div style={{width:"100%",aspectRatio:"1",borderRadius:10,background:bg,border:d.isToday&&d.status==="none"?`2px solid ${C.primary}`:"2px solid transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  <span style={{fontSize:11,fontWeight:800,color:txt}}>{icon}</span>
+                  <span style={{fontSize:13,fontWeight:800,color:fg,lineHeight:1}}>{ico}</span>
                 </div>
-                <span style={{fontSize:9,fontWeight:d.isToday?800:500,color:d.isToday?C.primary:C.textLight,textTransform:"uppercase",letterSpacing:0.5}}>{d.dan}</span>
+                <span style={{fontSize:9,fontWeight:d.isToday?800:500,color:d.isToday?C.primary:C.textLight,textTransform:"uppercase",letterSpacing:0.3}}>{d.dan}</span>
               </div>
             );
           })}
         </div>
-        <div style={{display:"flex",gap:16,paddingTop:12,borderTop:`1px solid ${C.border}`}}>
+        <div style={{display:"flex",marginTop:14,paddingTop:14,borderTop:`1px solid ${C.border}`}}>
           {[
-            {l:"Epizode",v:sedmica.filter(d=>d.status==="ep").length,c:C.red},
-            {l:"Pokušaji",v:sedmica.filter(d=>d.status==="try").length,c:C.amber},
+            {l:"Epizoda",v:sedmica.filter(d=>d.status==="ep").length,c:C.red},
+            {l:"Pokušaja",v:sedmica.filter(d=>d.status==="try").length,c:C.amber},
             {l:"Odolelo",v:sedmica.filter(d=>d.status==="res").length,c:C.green},
-          ].map(s=>(
-            <div key={s.l} style={{flex:1,textAlign:"center"}}>
-              <p style={{fontSize:20,fontWeight:900,color:s.c,lineHeight:1,marginBottom:2}}>{s.v}</p>
-              <p style={{fontSize:10,fontWeight:600,color:C.textLight,textTransform:"uppercase",letterSpacing:0.5}}>{s.l}</p>
+          ].map((s,i)=>(
+            <div key={s.l} style={{flex:1,textAlign:"center",borderRight:i<2?`1px solid ${C.border}`:"none"}}>
+              <p style={{fontSize:22,fontWeight:900,color:s.v>0?s.c:C.textLight,lineHeight:1,marginBottom:3}}>{s.v}</p>
+              <p style={{fontSize:9,fontWeight:600,color:C.textLight,textTransform:"uppercase",letterSpacing:0.4}}>{s.l}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* 3 mini statistike */}
-      <div style={{margin:"0 20px 12px",display:"flex",gap:10}}>
+      {/* Sekcija 2 — 8-week bar trend */}
+      <div style={{margin:"0 20px 10px",background:C.bgCard,borderRadius:24,padding:"18px",border:`1px solid ${C.border}`}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16}}>
+          <div>
+            <p style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:2}}>Trend po sedmicama</p>
+            <p style={{fontSize:11,color:C.textLight}}>poslednjih 8 sedmica</p>
+          </div>
+          <div style={{display:"flex",gap:10}}>
+            <div style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:2,background:C.red+"99"}}/><span style={{fontSize:9,color:C.textLight,fontWeight:600}}>Ep</span></div>
+            <div style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:2,background:C.green+"99"}}/><span style={{fontSize:9,color:C.textLight,fontWeight:600}}>Res</span></div>
+          </div>
+        </div>
+        <div style={{display:"flex",gap:4,alignItems:"flex-end",height:80}}>
+          {sedmice.map((s,i)=>{
+            const hEp=s.ep>0?Math.max((s.ep/maxSed)*68,6):0;
+            const hRes=s.res>0?Math.max((s.res/maxSed)*68,4):0;
+            return(
+              <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
+                <div style={{width:"100%",display:"flex",flexDirection:"column",justifyContent:"flex-end",height:72,gap:1}}>
+                  {s.ep>0&&<div style={{width:"100%",height:hEp,background:s.isLast?C.red:C.red+"66",borderRadius:"4px 4px 0 0"}}/>}
+                  {s.res>0&&<div style={{width:"100%",height:hRes,background:s.isLast?C.green:C.green+"66",borderRadius:s.ep>0?"0 0 0 0":"4px 4px 0 0"}}/>}
+                  {s.ep===0&&s.res===0&&<div style={{width:"100%",height:3,background:C.bgMuted,borderRadius:2}}/>}
+                </div>
+                <span style={{fontSize:8,fontWeight:s.isLast?700:400,color:s.isLast?C.primary:C.textLight}}>{s.isLast?"ova":s.label}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Sekcija 3 — key numbers */}
+      <div style={{margin:"0 20px 10px",display:"flex",gap:8}}>
         {[
-          {v:String(best),l:"Rekord",e:"🏆",bg:C.amberLight,c:C.amber},
-          {v:`${resP}%`,l:"Odolelo",e:"✅",bg:C.greenLight,c:C.green},
-          {v:String(total),l:"Unosa",e:"📓",bg:C.purpleLight,c:C.purple},
+          {v:String(niz),l:"Trenutni niz",sub:"dana",bg:C.primaryLight,c:C.primary},
+          {v:String(best),l:"Rekord",sub:"dana",bg:C.amberLight,c:C.amber},
+          {v:`${resP}%`,l:"Odolelo",sub:"ukupno",bg:C.greenLight,c:C.green},
         ].map(s=>(
-          <div key={s.l} style={{flex:1,background:s.bg,borderRadius:20,padding:"16px 12px",textAlign:"center"}}>
-            <div style={{fontSize:18,marginBottom:6}}>{s.e}</div>
-            <p style={{fontSize:22,fontWeight:900,color:C.text,lineHeight:1,marginBottom:3}}>{s.v}</p>
-            <p style={{fontSize:10,fontWeight:700,color:s.c,letterSpacing:0.8,textTransform:"uppercase"}}>{s.l}</p>
+          <div key={s.l} style={{flex:1,background:s.bg,borderRadius:20,padding:"14px 8px",textAlign:"center"}}>
+            <p style={{fontSize:24,fontWeight:900,color:C.text,lineHeight:1,marginBottom:2}}>{s.v}</p>
+            <p style={{fontSize:9,fontWeight:700,color:s.c,letterSpacing:0.5,textTransform:"uppercase",lineHeight:1.3}}>{s.l}</p>
           </div>
         ))}
       </div>
 
-      {/* Linijski grafikon */}
-      <div style={{margin:"0 20px 12px",background:C.bgCard,borderRadius:24,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`}}>
-        <p style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:16}}>Epizode po mesecu</p>
-        {(()=>{
-          const W=280,H=80,pad=8;
-          const vals=meseci.map(m=>m.br);
-          const vmax=Math.max(...vals,1);
-          const pts=vals.map((v,i)=>([pad+(i/(meseci.length-1))*(W-pad*2), H-pad-(v/vmax)*(H-pad*2)]));
-          const poly=pts.map(p=>p.join(",")).join(" ");
-          const area=[`${pts[0][0]},${H}`,poly,`${pts[pts.length-1][0]},${H}`].join(" ");
-          return(
-            <svg width="100%" viewBox={`0 0 ${W} ${H+20}`} style={{overflow:"visible"}}>
-              <defs>
-                <linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={C.primary} stopOpacity="0.15"/>
-                  <stop offset="100%" stopColor={C.primary} stopOpacity="0"/>
-                </linearGradient>
-              </defs>
-              <polygon points={area} fill="url(#lg)"/>
-              <polyline points={poly} fill="none" stroke={C.primary} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/>
-              {pts.map(([x,y],i)=>{
-                const isCur=i===pts.length-1;
-                return(
-                  <g key={i}>
-                    <circle cx={x} cy={y} r={isCur?5:3} fill={isCur?C.primary:C.bgCard} stroke={C.primary} strokeWidth={isCur?0:1.5}/>
-                    {vals[i]>0&&<text x={x} y={y-8} textAnchor="middle" fontSize="10" fontWeight="700" fill={C.textMid}>{vals[i]}</text>}
-                    <text x={x} y={H+16} textAnchor="middle" fontSize="10" fontWeight={isCur?700:500} fill={isCur?C.primary:C.textLight}>{meseci[i].mes}</text>
-                  </g>
-                );
-              })}
-            </svg>
-          );
-        })()}
-      </div>
+      {/* Sekcija 4 — doba dana (samo kad ima dovoljno podataka) */}
+      {epTotal>=4&&(
+        <div style={{margin:"0 20px 10px",background:C.bgCard,borderRadius:24,padding:"18px",border:`1px solid ${C.border}`}}>
+          <p style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:2}}>Kada se najčešće dešava</p>
+          <p style={{fontSize:11,color:C.textLight,marginBottom:18}}>doba dana tokom epizoda i pokušaja</p>
+          <div style={{display:"flex",gap:8,alignItems:"flex-end"}}>
+            {[
+              {k:"jutro",l:"Jutro",t:"6–12h",v:tod.jutro},
+              {k:"popodne",l:"Podne",t:"12–18h",v:tod.popodne},
+              {k:"vece",l:"Veče",t:"18–22h",v:tod.vece},
+              {k:"noc",l:"Noć",t:"22–6h",v:tod.noc},
+            ].map(t=>{
+              const isTop=t.v===todMax&&t.v>0;
+              const barH=t.v>0?Math.max((t.v/todMax)*60,8):4;
+              return(
+                <div key={t.k} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:0}}>
+                  {isTop&&<span style={{fontSize:9,fontWeight:700,color:C.primary,marginBottom:4}}>najčešće</span>}
+                  <div style={{display:"flex",flexDirection:"column",justifyContent:"flex-end",height:64,width:"100%"}}>
+                    <div style={{width:"100%",height:barH,background:isTop?C.primary:t.v>0?C.primary+"44":C.bgMuted,borderRadius:"6px 6px 0 0"}}/>
+                  </div>
+                  <div style={{width:"100%",height:1,background:C.border,marginBottom:8}}/>
+                  <p style={{fontSize:10,fontWeight:isTop?800:500,color:isTop?C.text:C.textMid,marginBottom:2,textAlign:"center"}}>{t.l}</p>
+                  <p style={{fontSize:9,color:C.textLight,textAlign:"center"}}>{t.t}</p>
+                  {t.v>0&&<p style={{fontSize:11,fontWeight:700,color:isTop?C.primary:C.textMid,marginTop:4}}>{Math.round(t.v/todTotal*100)}%</p>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
-      {/* Okidači */}
+      {/* Sekcija 5 — okidači */}
       {topOki.length>0&&(
-        <div style={{margin:"0 20px",background:C.bgCard,borderRadius:24,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`}}>
-          <p style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:16}}>Najčešći okidači</p>
+        <div style={{margin:"0 20px",background:C.bgCard,borderRadius:24,padding:"18px",border:`1px solid ${C.border}`}}>
+          <p style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:2}}>Najčešći okidači</p>
+          <p style={{fontSize:11,color:C.textLight,marginBottom:16}}>šta prethodi epizodama</p>
           {topOki.map((o,i)=>(
             <div key={o.l} style={{marginBottom:i<topOki.length-1?14:0}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
                 <div style={{display:"flex",alignItems:"center",gap:8}}>
-                  <div style={{width:8,height:8,borderRadius:"50%",background:o.c,flexShrink:0}}/>
+                  <div style={{width:7,height:7,borderRadius:"50%",background:o.c,flexShrink:0}}/>
                   <span style={{fontSize:14,color:C.text,fontWeight:600}}>{o.l}</span>
                 </div>
                 <span style={{fontSize:13,fontWeight:800,color:o.c}}>{o.p}%</span>
               </div>
-              <div style={{height:6,background:C.bgMuted,borderRadius:100,overflow:"hidden"}}>
-                <div style={{height:"100%",width:`${o.p}%`,background:o.c,borderRadius:100,transition:"width .6s ease"}}/>
+              <div style={{height:5,background:C.bgMuted,borderRadius:100,overflow:"hidden"}}>
+                <div style={{height:"100%",width:`${o.p}%`,background:o.c,borderRadius:100}}/>
               </div>
             </div>
           ))}
