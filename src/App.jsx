@@ -709,7 +709,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
     setPoruke(np);porRef.current=np;setUnos("");setUcitava(true);
     if(!GROQ_KEY){const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna — nedostaje VITE_GROQ_API_KEY u .env fajlu."}];setPoruke(npp);porRef.current=npp;setUcitava(false);return;}
     try{
-      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})});
+      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.1-8b-instant",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})});
       const data=await res.json();
       if(!res.ok||data.error){console.error("Groq API greška:",JSON.stringify(data.error||data));throw new Error(data.error?.message||"API greška "+res.status);}
       const raw=data.choices?.[0]?.message?.content||"";
@@ -719,7 +719,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
       const npp=[...np,{id:aiId,ko:"ai",tekst:aiTekst}];
       snimi(npp);
       // SOS detekcija u pozadini — ne blokira čuvanje
-      fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:3,messages:[{role:"system",content:"Odgovori samo sa DA ili NE. DA samo ako korisnik opisuje jak, aktivan impuls da čačka kožu koji se dešava UPRAVO SAD ili kaže da je u akutnoj krizi. NE za sve ostalo."},{role:"user",content:txt}]})})
+      fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.1-8b-instant",max_tokens:3,messages:[{role:"system",content:"Odgovori samo sa DA ili NE. DA samo ako korisnik opisuje jak, aktivan impuls da čačka kožu koji se dešava UPRAVO SAD ili kaže da je u akutnoj krizi. NE za sve ostalo."},{role:"user",content:txt}]})})
         .then(r=>r.json()).then(d=>{
           const jeste=(d.choices?.[0]?.message?.content||"").trim().toUpperCase().startsWith("DA");
           if(jeste){
