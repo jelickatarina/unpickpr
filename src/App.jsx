@@ -670,16 +670,11 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   const [unos,setUnos]=useState("");const [ucitava,setUcitava]=useState(false);const krajRef=useRef(null);
   const porRef=useRef([pocetna]);
 
-  async function sacuvaj(p){
-    if(!userId)return;
-    await supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id"});
-  }
+  const LS=`unpick_chat_${userId}`;
 
   useEffect(()=>{
     if(!userId)return;
-    supabase.from("profiles").select("chat_history").eq("id",userId).single().then(({data})=>{
-      if(data?.chat_history?.length){setPoruke(data.chat_history);porRef.current=data.chat_history;}
-    });
+    try{const p=JSON.parse(localStorage.getItem(LS)||"[]");if(p.length>1){setPoruke(p);porRef.current=p;}}catch{}
   },[userId]);
 
   useEffect(()=>{krajRef.current?.scrollIntoView({behavior:"smooth"})},[poruke,ucitava]);
@@ -697,7 +692,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
       const imasSOS=krizaRec.test(txt);
       const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:imasSOS}];
       setPoruke(npp);porRef.current=npp;
-      await sacuvaj(npp);
+      localStorage.setItem(LS,JSON.stringify(npp));
     }catch{const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu. Proveri internet vezu."}];setPoruke(npp);porRef.current=npp;}
     finally{setUcitava(false);}
   }
