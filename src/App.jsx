@@ -1095,36 +1095,48 @@ function Napredak({unosi,niz}){
         <h1 style={{fontSize:28,fontWeight:800,color:C.text,letterSpacing:-0.5}}>Tvoje statistike</h1>
       </div>
 
-      {/* Hero card */}
-      <div style={{margin:"0 20px 16px",borderRadius:28,background:C.primaryGrad,padding:"28px 24px",boxShadow:`0 8px 32px rgba(192,120,144,0.25)`,display:"flex",alignItems:"center",gap:20}}>
-        <div style={{position:"relative",flexShrink:0,width:100,height:100}}>
-          <svg width="100" height="100" style={{transform:"rotate(-90deg)"}}>
-            <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="8"/>
-            <circle cx="50" cy="50" r="44" fill="none" stroke="#fff" strokeWidth="8"
-              strokeDasharray={circumference} strokeDashoffset={offset}
-              strokeLinecap="round" style={{transition:"stroke-dashoffset .8s ease"}}/>
-          </svg>
-          <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-            <span style={{fontSize:24,fontWeight:900,color:"#fff",lineHeight:1}}>{resP}%</span>
-            <span style={{fontSize:10,color:"rgba(255,255,255,0.8)",fontWeight:700,letterSpacing:0.5}}>odolelo</span>
+      {/* Stat cards */}
+      <div style={{margin:"0 20px 16px",display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+        {/* Niz */}
+        <div style={{background:C.bgCard,borderRadius:24,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`}}>
+          <div style={{width:36,height:36,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:14}}>
+            <span style={{fontSize:18}}>🔥</span>
+          </div>
+          <p style={{fontSize:32,fontWeight:900,color:C.text,lineHeight:1,marginBottom:4}}>{niz}</p>
+          <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:0.8,textTransform:"uppercase"}}>Trenutni niz</p>
+        </div>
+        {/* Odolelo % + ring */}
+        <div style={{background:C.bgCard,borderRadius:24,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`,display:"flex",flexDirection:"column",justifyContent:"space-between"}}>
+          <div style={{position:"relative",width:64,height:64,marginBottom:10}}>
+            <svg width="64" height="64" style={{transform:"rotate(-90deg)"}}>
+              <circle cx="32" cy="32" r="26" fill="none" stroke={C.border} strokeWidth="6"/>
+              <circle cx="32" cy="32" r="26" fill="none" stroke={C.primary} strokeWidth="6"
+                strokeDasharray={2*Math.PI*26} strokeDashoffset={(2*Math.PI*26)*(1-resP/100)}
+                strokeLinecap="round"/>
+            </svg>
+            <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
+              <span style={{fontSize:13,fontWeight:900,color:C.primary}}>{resP}%</span>
+            </div>
+          </div>
+          <div>
+            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:0.8,textTransform:"uppercase"}}>Odolelo</p>
           </div>
         </div>
-        <div style={{flex:1}}>
-          <p style={{fontSize:13,color:"rgba(255,255,255,0.75)",fontWeight:600,marginBottom:4}}>Trenutni niz</p>
-          <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:12}}>
-            <span style={{fontSize:44,fontWeight:900,color:"#fff",lineHeight:1}}>{niz}</span>
-            <span style={{fontSize:28}}>🔥</span>
+        {/* Rekord */}
+        <div style={{background:C.amberLight,borderRadius:24,padding:"20px",border:`1px solid ${C.amber}22`,boxShadow:`0 2px 16px ${C.shadow}`}}>
+          <div style={{width:36,height:36,borderRadius:12,background:"rgba(196,168,112,0.2)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:14}}>
+            <span style={{fontSize:18}}>🏆</span>
           </div>
-          <div style={{display:"flex",gap:16}}>
-            <div>
-              <p style={{fontSize:11,color:"rgba(255,255,255,0.65)",fontWeight:600,marginBottom:2}}>Rekord</p>
-              <p style={{fontSize:18,fontWeight:800,color:"#fff"}}>{best} 🏆</p>
-            </div>
-            <div>
-              <p style={{fontSize:11,color:"rgba(255,255,255,0.65)",fontWeight:600,marginBottom:2}}>Ukupno</p>
-              <p style={{fontSize:18,fontWeight:800,color:"#fff"}}>{total}</p>
-            </div>
+          <p style={{fontSize:32,fontWeight:900,color:C.text,lineHeight:1,marginBottom:4}}>{best}</p>
+          <p style={{fontSize:11,fontWeight:700,color:C.amber,letterSpacing:0.8,textTransform:"uppercase"}}>Rekordni niz</p>
+        </div>
+        {/* Ukupno */}
+        <div style={{background:C.purpleLight,borderRadius:24,padding:"20px",border:`1px solid ${C.purple}22`,boxShadow:`0 2px 16px ${C.shadow}`}}>
+          <div style={{width:36,height:36,borderRadius:12,background:"rgba(168,144,192,0.2)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:14}}>
+            <Ico d={I.journal} size={18} stroke={C.purple} sw={2}/>
           </div>
+          <p style={{fontSize:32,fontWeight:900,color:C.text,lineHeight:1,marginBottom:4}}>{total}</p>
+          <p style={{fontSize:11,fontWeight:700,color:C.purple,letterSpacing:0.8,textTransform:"uppercase"}}>Ukupno unosa</p>
         </div>
       </div>
 
