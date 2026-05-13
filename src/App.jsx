@@ -586,7 +586,7 @@ function AIChat({ime,niz,unosi}){
     setPoruke(np);setUnos("");setUcitava(true);
     if(!GROQ_KEY){setPoruke(v=>[...v,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna — nedostaje VITE_GROQ_API_KEY u .env fajlu."}]);setUcitava(false);return;}
     try{
-      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.1-8b-instant",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})});
+      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})});
       const data=await res.json();
       setPoruke(v=>[...v,{id:Date.now()+1,ko:"ai",tekst:data.choices?.[0]?.message?.content||"Žao mi je, pokušaj ponovo."}]);
     }catch{setPoruke(v=>[...v,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu. Proveri internet vezu."}]);}
