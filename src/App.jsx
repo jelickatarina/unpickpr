@@ -672,13 +672,12 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
 
   const lsKey=userId?`chat_${userId}`:null;
 
-  async function sacuvaj(p){
-    if(lsKey) localStorage.setItem(lsKey,JSON.stringify(p));
-    if(!userId) return;
-    supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id"}).then(({error})=>{
-      if(error) console.warn("cloud sync greška:",error.message);
-    });
-  }
+  // čuvaj automatski svaki put kad se poruke promene
+  useEffect(()=>{
+    if(!lsKey||poruke.length<=1) return;
+    localStorage.setItem(lsKey,JSON.stringify(poruke));
+    supabase.from("profiles").upsert({id:userId,chat_history:poruke},{onConflict:"id"}).catch(()=>{});
+  },[poruke]);
 
   useEffect(()=>{
     if(!userId) return;
@@ -712,7 +711,6 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
       const imasSOS=(klasData.choices?.[0]?.message?.content||"").trim().toUpperCase().startsWith("DA");
       const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:imasSOS}];
       setPoruke(npp);porRef.current=npp;
-      sacuvaj(npp);
     }catch(e){console.error("posalji greška:",e);const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu. Proveri internet vezu."}];setPoruke(npp);porRef.current=npp;}
     finally{setUcitava(false);}
   }
