@@ -30,8 +30,8 @@ body{background:${C.bg};}
 .inp{width:100%;padding:16px 20px;border-radius:18px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;color:${C.text};outline:none;transition:all .18s;font-weight:500;}
 .inp:focus{border-color:${C.primary};box-shadow:0 0 0 4px ${C.primaryLight};}
 textarea.inp{resize:none;min-height:80px;line-height:1.65;}
-.bnav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:${C.bgCard};backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:100px;box-shadow:0 8px 40px rgba(42,36,32,0.13),0 2px 8px rgba(42,36,32,0.06);display:flex;z-index:100;padding:8px;gap:2px;border:1px solid ${C.border};}
-.ni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 16px;cursor:pointer;background:none;border:none;border-radius:90px;transition:all .2s;}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid ${C.border};border-radius:20px 20px 0 0;display:flex;z-index:100;padding:8px 4px env(safe-area-inset-bottom,10px);gap:0;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;cursor:pointer;background:none;border:none;border-radius:14px;flex:1;transition:all .2s;}
 .ni.active{background:${C.primaryLight};}
 .tag{display:inline-block;padding:4px 11px;border-radius:100px;font-size:11px;font-weight:700;}
 .fi{animation:fi .25s cubic-bezier(.4,0,.2,1);}
@@ -849,7 +849,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
       </div>
 
       {/* ── BOTTOM SECTION: white panel ── */}
-      <div style={{padding:"24px 20px 20px",display:"flex",flexDirection:"column",gap:16}}>
+      <div style={{padding:"12px 20px 20px",display:"flex",flexDirection:"column",gap:12}}>
 
         {/* Week strip */}
         <div style={{background:C.bgCard,borderRadius:22,padding:"16px 18px",border:`1px solid ${C.border}`}}>
@@ -1296,7 +1296,7 @@ export default function App(){
           <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto"}} className="fi"><NoviUnos onSacuvaj={handleSacuvajUnos} onOtkazi={()=>{setPriUnos(false);setEditUnos(null);}} editData={editUnos}/></div>
         ):(
           <>
-            <div style={{paddingBottom:ekran==="chat"?0:76,overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 72px)":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
+            <div style={{paddingBottom:ekran==="chat"?0:70,overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 64px)":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
               {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
               {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
