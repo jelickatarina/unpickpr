@@ -798,8 +798,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
             <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2}}>
               {niz===0
                 ?<><Ico d={I.leaf} size={28} stroke={C.primary} sw={1.8}/><p style={{fontSize:13,fontWeight:700,color:C.textMid}}>Počni!</p></>
-                :<><span style={{fontSize:52,fontWeight:400,color:C.text,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{niz}</span>
-                  <span style={{fontSize:22,lineHeight:1}}>🔥</span></>
+                :<div style={{display:"flex",alignItems:"center",gap:6}}><span style={{fontSize:52,fontWeight:400,color:C.text,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{niz}</span><span style={{fontSize:26,lineHeight:1}}>🔥</span></div>
               }
             </div>
           </div>
@@ -832,12 +831,6 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
           </div>
         </div>
 
-        {/* Quote */}
-        <div style={{padding:"4px 6px 4px 20px",borderLeft:`3px solid ${C.primary}`,position:"relative"}}>
-          <p style={{fontSize:11,fontWeight:700,color:C.primary,letterSpacing:1,textTransform:"uppercase",marginBottom:8,opacity:.75}}>Poruka dana</p>
-          <p className="serif italic" style={{fontSize:17,color:C.text,lineHeight:1.75}}>{poruka}</p>
-        </div>
-
         {/* Action buttons */}
         <div style={{display:"flex",gap:12}}>
           <button onClick={onSOS} style={{flex:1,background:C.primaryGrad,border:"none",borderRadius:20,padding:"18px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,boxShadow:`0 8px 28px ${C.primary}44`,fontFamily:"'Plus Jakarta Sans',sans-serif",touchAction:"manipulation"}}>
@@ -854,6 +847,15 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
               <p style={{fontSize:11,color:C.textLight,fontWeight:600,marginTop:3}}>Novi unos</p>
             </div>
           </button>
+        </div>
+
+        {/* Quote — last element */}
+        <div style={{background:C.bgCard,borderRadius:22,padding:"22px 22px 20px",border:`1px solid ${C.border}`}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
+            <span style={{fontSize:28,lineHeight:1,color:C.primary,fontFamily:"'Instrument Serif',serif",opacity:.4}}>"</span>
+            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase"}}>Poruka dana</p>
+          </div>
+          <p style={{fontSize:17,color:C.text,lineHeight:1.8,fontFamily:"'Instrument Serif',serif",fontWeight:400}}>{poruka}</p>
         </div>
       </div>
     </div>
