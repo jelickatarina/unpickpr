@@ -648,7 +648,7 @@ STIL: Topla, strpljiva, bez osude. Razlikuj dve situacije:
 1. Korisnik DELI osećanja ili priča o problemima → slušaj, postavi jedno pitanje da bolje razumeš.
 2. Korisnik TRAŽI POMOĆ ili SAVЕТ (pita "kako da se smirim", "šta da radim", "pomozi mi") → NE pitaj šta bi mu pomoglo. Odmah daj konkretne ideje, tehnike, korake. Budi direktna i korisna.
 
-SOS PRAVILO: Tag [SOS_DUGME] dodaj SAMO kada korisnik opisuje aktivan, jak impuls da čačka UPRAVO SAD, ili kaže da je u krizi u ovom trenutku (npr. "ne mogu da se zaustavim", "imam jak impuls", "hoću da čačkam sad", "ne mogu više"). Za opštu tugu, razgovor o osećanjima, ili priče o prošlim epizodama — NE dodavaj tag. Tag ide na kraj poruke, tačno ovako: [SOS_DUGME]
+VAŽNO: Nikada ne dodavaj tagove, oznake ili specijalne tokene u odgovor. Odgovaraj samo normalnim tekstom.
 
 OBRASCI (koristi ovo da bi davala personalizovane uvide):
 ${obrasci.length?obrasci.map(o=>"- "+o).join("\n"):"- Nema dovoljno podataka za obrasce još uvek."}
@@ -692,8 +692,9 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
       const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})});
       const data=await res.json();
       const raw=data.choices?.[0]?.message?.content||"Žao mi je, pokušaj ponovo.";
-      const imasSOS=raw.includes("[SOS_DUGME]");
-      const aiTekst=raw.replace("[SOS_DUGME]","").trim();
+      const aiTekst=raw.replace(/\[SOS_DUGME\]/g,"").trim();
+      const krizaRec=/ne mogu da se zaustavim|imam jak impuls|ho[cć]u da [cč]a[cč]kam|ne mogu vi[sš]e|ne mogu da se kontroli[sš]em|hitno mi treba pomo[cć]/i;
+      const imasSOS=krizaRec.test(txt);
       const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:imasSOS}];
       setPoruke(npp);porRef.current=npp;
       await sacuvaj(npp);
