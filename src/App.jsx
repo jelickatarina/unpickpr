@@ -670,22 +670,28 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   const [unos,setUnos]=useState("");const [ucitava,setUcitava]=useState(false);const krajRef=useRef(null);
   const porRef=useRef([pocetna]);
 
+  const lsKey=userId?`chat_${userId}`:null;
+
   async function sacuvaj(p){
-    if(!userId){console.warn("sacuvaj: nema userId");return;}
-    const {error}=await supabase.from("profiles").update({chat_history:p}).eq("id",userId);
-    if(error){
-      console.warn("update nije uspeo, probam upsert:",error.message);
-      const {error:e2}=await supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id"});
-      if(e2) console.error("sacuvaj upsert greška:",e2.message,e2.code);
-    }
+    if(lsKey) localStorage.setItem(lsKey,JSON.stringify(p));
+    if(!userId) return;
+    supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id"}).then(({error})=>{
+      if(error) console.warn("cloud sync greška:",error.message);
+    });
   }
 
   useEffect(()=>{
-    if(!userId){console.warn("load: nema userId");return;}
-    supabase.from("profiles").select("chat_history").eq("id",userId).single().then(({data,error})=>{
-      if(error) console.error("load greška:",error.message,error.code);
-      if(data?.chat_history?.length){setPoruke(data.chat_history);porRef.current=data.chat_history;}
-      else console.log("load: nema istorije za",userId);
+    if(!userId) return;
+    const key=`chat_${userId}`;
+    const local=localStorage.getItem(key);
+    if(local){
+      try{const p=JSON.parse(local);if(p?.length){setPoruke(p);porRef.current=p;return;}}catch{}
+    }
+    supabase.from("profiles").select("chat_history").eq("id",userId).single().then(({data})=>{
+      if(data?.chat_history?.length){
+        setPoruke(data.chat_history);porRef.current=data.chat_history;
+        localStorage.setItem(key,JSON.stringify(data.chat_history));
+      }
     });
   },[userId]);
 
