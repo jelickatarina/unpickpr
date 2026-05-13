@@ -692,16 +692,13 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
     <div style={{display:"flex",flexDirection:"column",height:"100%",flex:1,minHeight:0}}>
       <div style={{padding:"48px 20px 16px",background:C.primaryGrad,flexShrink:0}}>
         <div style={{display:"flex",alignItems:"center",gap:14}}>
-          <div style={{width:50,height:50,borderRadius:"50%",background:"rgba(255,255,255,.22)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative"}}>
-            <Ico d={I.heart} size={22} stroke="#fff" sw={1.8}/>
-            <div style={{position:"absolute",bottom:1,right:1,width:13,height:13,borderRadius:"50%",background:"#4CD964",border:"2px solid rgba(168,90,116,.6)",animation:"pulse 2s infinite"}}/>
+          <div style={{width:52,height:52,borderRadius:"50%",background:"rgba(255,255,255,.22)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative"}}>
+            <Ico d={I.heart} size={23} stroke="#fff" sw={1.8}/>
+            <div style={{position:"absolute",bottom:2,right:2,width:12,height:12,borderRadius:"50%",background:"#4CD964",border:"2.5px solid #B85A80",animation:"pulse 2s infinite"}}/>
           </div>
           <div>
-            <p style={{fontWeight:700,fontSize:18,color:"#fff",lineHeight:1}}>Mia</p>
-            <div style={{display:"flex",alignItems:"center",gap:5,marginTop:4}}>
-              <div style={{width:7,height:7,borderRadius:"50%",background:"#4CD964",flexShrink:0}}/>
-              <p style={{fontSize:12,color:"rgba(255,255,255,.85)",fontWeight:600}}>dostupna</p>
-            </div>
+            <p style={{fontWeight:700,fontSize:18,color:"#fff",lineHeight:1,marginBottom:5}}>Mia</p>
+            <p style={{fontSize:12,color:"rgba(255,255,255,.8)",fontWeight:600}}>dostupna</p>
           </div>
         </div>
       </div>
@@ -709,7 +706,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
         {poruke.map(p=>(
           <div key={p.id} style={{display:"flex",flexDirection:"column",alignItems:p.ko==="user"?"flex-end":"flex-start"}}>
             {p.ko==="ai"&&<div style={{display:"flex",alignItems:"flex-end",gap:8}}>
-              <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginBottom:2}}><Ico d={I.spark} size={14} stroke={C.primary} sw={1.5}/></div>
+              <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginBottom:2}}><Ico d={I.heart} size={14} stroke={C.primary} sw={1.8}/></div>
               <div style={{display:"flex",flexDirection:"column",gap:8,maxWidth:"84%"}}>
                 <div className="bba">{p.tekst}</div>
                 {p.sos&&<button onClick={onSOS} style={{alignSelf:"flex-start",background:C.primaryGrad,color:"#fff",border:"none",borderRadius:14,padding:"10px 18px",fontSize:13,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:"pointer",boxShadow:"0 4px 16px rgba(122,158,142,.30)",display:"flex",alignItems:"center",gap:8}}><Ico d={I.shield} size={15} stroke="#fff" sw={2}/>Otvori SOS tehnike</button>}
@@ -719,7 +716,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
           </div>
         ))}
         {ucitava&&<div style={{display:"flex",alignItems:"flex-end",gap:8}}>
-          <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.spark} size={14} stroke={C.primary} sw={1.5}/></div>
+          <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.heart} size={14} stroke={C.primary} sw={1.8}/></div>
           <div className="bba"><div className="typing"><div className="dot"/><div className="dot"/><div className="dot"/></div></div>
         </div>}
         <div ref={krajRef}/>
