@@ -842,7 +842,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
         </div>
         <div className="card fi" style={{marginBottom:14,background:`linear-gradient(135deg,${C.primaryLight} 0%,${C.purpleLight} 100%)`,border:`1px solid ${C.border}`}}>
           <span className="lbl">PORUKA DANA</span>
-          <p style={{fontSize:15,color:C.primaryDark,fontWeight:600,lineHeight:1.65,fontFamily:"'Instrument Serif',serif",fontStyle:"italic"}}>"{PORUKE_DANA[Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0).getTime())/86400000)%PORUKE_DANA.length]}"</p>
+          <p style={{fontSize:15,color:C.primaryDark,fontWeight:600,lineHeight:1.65,fontFamily:"'Instrument Serif',serif",fontStyle:"italic"}}>{PORUKE_DANA[Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0).getTime())/86400000)%PORUKE_DANA.length]}</p>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}}>
           <button onClick={onSOS} style={{height:130,borderRadius:24,background:C.primaryGrad,border:"none",color:"#fff",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,position:"relative",overflow:"hidden",boxShadow:"0 8px 32px rgba(196,113,74,.42)"}}>
@@ -859,12 +859,6 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
             </div>
             <div><p style={{fontSize:15,fontWeight:700,color:C.text,textAlign:"center"}}>Upiši epizodu</p><p style={{fontSize:11,color:C.textLight,textAlign:"center",fontWeight:500}}>Dodaj u dnevnik</p></div>
           </button>
-        </div>
-        <div className="card fi" style={{background:`linear-gradient(135deg,${C.amberLight},${C.bgMuted})`,boxShadow:"none",border:`1px solid ${C.border}`}}>
-          <div style={{display:"flex",gap:14,alignItems:"flex-start"}}>
-            <div style={{width:40,height:40,borderRadius:14,background:"rgba(196,144,64,.15)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.leaf} size={20} stroke={C.amber} sw={1.8}/></div>
-            <div><span className="lbl" style={{color:C.amber}}>PORUKA DANA</span><p style={{fontSize:14,color:C.textMid,lineHeight:1.75,fontWeight:500}}>Svaki trenutak u kom odabereš drugačije jeste trenutak ozdravljenja.</p></div>
-          </div>
         </div>
       </div>
     </div>
