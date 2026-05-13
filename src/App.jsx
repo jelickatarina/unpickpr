@@ -584,16 +584,6 @@ PODACI O KORISNIKU (${ime}):
 - Ukupno unosa: ${(unosi||[]).length}
 
 Nikada ne pominjaj bazu podataka, API ni tehničke detalje. Govori prirodno. Budi sažeta — 2-4 rečenice. Ne zamenjuješ stručnu pomoć.`;
-
-PODACI O KORISNIKU (${ime}):
-- Trenutni niz čistih dana (vatrica): ${niz}
-- Ova nedelja: ${ep} epizoda, ${pok} pokušaja, ${res} uspešnih odoljevanja
-- Najčešći okidači: ${topOk.length?topOk.join(", "):"nema podataka"}
-- Najčešće lokacije: ${topLok.length?topLok.join(", "):"nema podataka"}
-- Prosečan intenzitet impulsa: ${prosecniInt}/10
-- Ukupno unosa: ${(unosi||[]).length}
-
-Koristi ove podatke da personalizuješ podršku i pomogneš korisniku da prepozna obrasce.`;
 }
 
 function AIChat({ime,niz,unosi,userId}){
