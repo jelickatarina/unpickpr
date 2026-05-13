@@ -740,7 +740,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
           <button key={t} onClick={()=>setUnos(t)} style={{flexShrink:0,padding:"9px 16px",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:100,fontSize:13,color:C.textMid,cursor:"pointer",whiteSpace:"nowrap",fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",boxShadow:`0 2px 8px ${C.shadow}`}}>{t}</button>
         ))}
       </div>}
-      <div style={{padding:"10px 16px",paddingBottom:"calc(14px + env(safe-area-inset-bottom,0px))",background:"rgba(255,255,255,.92)",backdropFilter:"blur(20px)",borderTop:`1px solid ${C.border}`,display:"flex",gap:10,alignItems:"flex-end",flexShrink:0}}>
+      <div style={{padding:"10px 16px 14px",background:"rgba(255,255,255,.92)",backdropFilter:"blur(20px)",borderTop:`1px solid ${C.border}`,display:"flex",gap:10,alignItems:"flex-end",flexShrink:0}}>
         <textarea className="inp" placeholder="Napiši poruku..." value={unos} onChange={e=>setUnos(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();posalji()}}} rows={1} style={{flex:1,minHeight:"auto",resize:"none",padding:"12px 14px",borderRadius:14,lineHeight:1.5}}/>
         <button onClick={posalji} disabled={!unos.trim()||ucitava} style={{width:46,height:46,borderRadius:"50%",background:unos.trim()&&!ucitava?C.primaryGrad:C.border,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:unos.trim()?"pointer":"default",flexShrink:0,transition:"all .2s",boxShadow:unos.trim()&&!ucitava?"0 4px 16px rgba(122,158,142,.30)":"none"}}>
           <Ico d={I.send} size={18} stroke="#fff" sw={2}/>
@@ -1315,7 +1315,7 @@ export default function App(){
           <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto"}} className="fi"><NoviUnos onSacuvaj={handleSacuvajUnos} onOtkazi={()=>{setPriUnos(false);setEditUnos(null);}} editData={editUnos}/></div>
         ):(
           <>
-            <div style={{paddingBottom:ekran==="chat"?0:"calc(70px + env(safe-area-inset-bottom,0px))",overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 64px - env(safe-area-inset-bottom,0px))":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
+            <div style={{paddingBottom:ekran==="chat"?0:"calc(70px + env(safe-area-inset-bottom,0px))",overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 63px - env(safe-area-inset-bottom,0px))":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
               {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
               {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
