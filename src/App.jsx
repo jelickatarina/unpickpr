@@ -79,7 +79,38 @@ const I={
   target:["M12 22a10 10 0 100-20 10 10 0 000 20z","M12 16a4 4 0 100-8 4 4 0 000 8z","M12 12h.01"],
 };
 
-const RAS=["😔","😕","😐","🙂","😊"],RAS_N=["Teško","Loše","Okej","Dobro","Sjajno"];
+const PORUKE_DANA=[
+  "Svaki dan bez čačkanja je pobeda — čak i kada se čini mala.",
+  "Tvoje ruke mogu naučiti nove navike. Strpljenje je ključ.",
+  "Impuls prolazi. Ti ostaješ.",
+  "Nije bitno koliko puta si pao, već koliko puta si ustao.",
+  "Telo te nosi — daj mu malo ljubaznosti danas.",
+  "Jedan trenutak odoljevanja gradi sledeći.",
+  "Primetiti okidač je već polovina posla.",
+  "Briga o sebi nije sebičnost — to je hrabrost.",
+  "Progres nije linearan. I to je u redu.",
+  "Tvoj mozak se menja svaki put kada odoluješ impulsu.",
+  "Danas je novi dan, nova šansa.",
+  "Ono što osećaš je stvarno. I proći će.",
+  "Ne moraš biti savršen/a da bi napravio/la napredak.",
+  "Traženje pomoći je snaga, ne slabost.",
+  "Svaka vatrica je dokaz tvoje snage.",
+  "Pauziranje pre reakcije — to je supermoć.",
+  "Tvoje ruke zaslužuju nežnost.",
+  "Malo bolje svaki dan — to je sve što treba.",
+  "Okidači su informacije, ne presude.",
+  "Prava promena se gradi u tihim trenucima.",
+  "Ne boriš se sama/sam.",
+  "Svaki impuls koji prođe slabi sledeći.",
+  "Imaš više snage nego što misliš.",
+  "Zaustavi se, udahni, izdrži.",
+  "Danas možeš odabrati drugačije.",
+  "Put ozdravljenja nije pravan — i to je normalno.",
+  "Telo pamti brigu. Pokloni mu je danas.",
+  "Jedna sekunda odoljevanja vodi drugu.",
+  "Krenuo/la si. To je najteži korak.",
+  "Nisi definisan/a navikom — ti je menjаš.",
+];
 const EMOCIJE=[["😰","Anksiozna"],["😢","Tužna"],["😤","Ljuta"],["😶","Utrnula"],["😴","Umorna"],["😐","Neutralna"],["😌","Mirna"],["😊","Dobro"]];
 const LOK=["🛋️ Dnevna","🛁 Kupatilo","🍳 Kuhinja","🛏️ Spavaća","💼 Posao","🚗 Auto","🌳 Napolju","📱 Krevet"];
 const OKI=["Stres","Umor","Ogledalo","Dosada","Ekrani","Tuga","Učenje","Jelo","Ostalo"];
@@ -670,7 +701,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   );
 }
 
-function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
+function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
   const [izvestaj,setIzvestaj]=useState(null);
   const h=new Date().getHours();
   const pozdrav=h<12?"Dobro jutro":h<18?"Dobar dan":"Dobro veče";
@@ -809,16 +840,9 @@ function Pocetna({ime,niz,onSOS,ras,onRas,onNoviUnos,onLogout,unosi}){
             ))}
           </div>
         </div>
-        <div className="card fi" style={{marginBottom:14}}>
-          <span className="lbl">KAKO SE OSEĆAŠ DANAS?</span>
-          <div style={{display:"flex",gap:6}}>
-            {RAS.map((r,i)=>(
-              <button key={i} className={`emb${ras===i?" on":""}`} onClick={()=>onRas(i)}>
-                <div style={{fontSize:24,marginBottom:5}}>{r}</div>
-                <div style={{fontSize:10,color:ras===i?C.primary:C.textLight,fontWeight:700}}>{RAS_N[i]}</div>
-              </button>
-            ))}
-          </div>
+        <div className="card fi" style={{marginBottom:14,background:`linear-gradient(135deg,${C.primaryLight} 0%,${C.purpleLight} 100%)`,border:`1px solid ${C.border}`}}>
+          <span className="lbl">PORUKA DANA</span>
+          <p style={{fontSize:15,color:C.primaryDark,fontWeight:600,lineHeight:1.65,fontFamily:"'Instrument Serif',serif",fontStyle:"italic"}}>"{PORUKE_DANA[Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0).getTime())/86400000)%PORUKE_DANA.length]}"</p>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}}>
           <button onClick={onSOS} style={{height:130,borderRadius:24,background:C.primaryGrad,border:"none",color:"#fff",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,position:"relative",overflow:"hidden",boxShadow:"0 8px 32px rgba(196,113,74,.42)"}}>
@@ -1106,7 +1130,7 @@ const NAV=[{id:"poc",l:"Početna",ico:"home"},{id:"dnv",l:"Dnevnik",ico:"journal
 export default function App(){
   const [faza,setFaza]=useState("loading");const [kor,setKor]=useState(null);const [ekran,setEkran]=useState("poc");
   const [priSOS,setPriSOS]=useState(false);const [priUnos,setPriUnos]=useState(false);const [editUnos,setEditUnos]=useState(null);
-  const [ras,setRas]=useState(null);const [noviUnosi,setNoviUnosi]=useState([]);
+  const [noviUnosi,setNoviUnosi]=useState([]);
 
   useEffect(()=>{
     supabase.auth.getSession().then(({data:{session}})=>{
@@ -1190,7 +1214,7 @@ export default function App(){
         ):(
           <>
             <div style={{paddingBottom:ekran==="chat"?0:76,overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 72px)":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
-              {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} onSOS={()=>setPriSOS(true)} ras={ras} onRas={setRas} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
+              {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
               {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
               {ekran==="bib"&&<Biblioteka/>}
