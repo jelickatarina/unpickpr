@@ -537,21 +537,51 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
   );
 }
 
-const SYS=`Ti si Mia, topla AI drugarica unutar aplikacije Unpick za podršku osobama sa dermatilomanijom. Slušaš bez osude, pružaš podršku, predlažeš tehnike kada je prikladno. Uvek govori u ženskom rodu. Koristi srpski. Budi sažeta — do 3-4 rečenice. Ne zamenjuješ stručnu pomoć.`;
+const GROQ_KEY=import.meta.env.VITE_GROQ_API_KEY||"";
 
-function AIChat(){
-  const [poruke,setPoruke]=useState([{id:0,ko:"ai",tekst:"Zdravo! Ja sam Mia. Tu sam da razgovaramo — o teškim trenucima, napretku, ili jednostavno kada ti treba neko da te sasluša. Kako ti je danas?"}]);
+function buildSys(ime,niz,unosi){
+  const today=new Date();today.setHours(0,0,0,0);
+  const sedmicaDana=Array.from({length:7},(_,i)=>{
+    const d=new Date(today.getTime()-i*86400000);
+    const uns=(unosi||[]).filter(e=>e.ts&&e.ts>=d.getTime()&&e.ts<d.getTime()+86400000);
+    return uns;
+  }).flat();
+  const ep=sedmicaDana.filter(e=>e.ish==="ep").length;
+  const pok=sedmicaDana.filter(e=>e.ish==="try").length;
+  const res=sedmicaDana.filter(e=>e.ish==="res").length;
+  const okidaci=[...(unosi||[]).flatMap(e=>Array.isArray(e.ok)?e.ok:[e.ok]).filter(Boolean)];
+  const okFreq={};okidaci.forEach(o=>{okFreq[o]=(okFreq[o]||0)+1;});
+  const topOk=Object.entries(okFreq).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>k);
+  const lokFreq={};(unosi||[]).forEach(e=>{if(e.lok)lokFreq[e.lok]=(lokFreq[e.lok]||0)+1;});
+  const topLok=Object.entries(lokFreq).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k])=>k);
+  const prosecniInt=unosi?.length?Math.round((unosi||[]).reduce((s,e)=>s+(e.int||0),0)/unosi.length):0;
+  return `Ti si Mia, topla AI drugarica unutar aplikacije Unpick za podršku osobama sa dermatilomanijom (skin picking). Slušaš bez osude, pružaš podršku, predlažeš tehnike kada je prikladno. Uvek govori u ženskom rodu. Koristi srpski. Budi sažeta — do 3-4 rečenice. Ne zamenjuješ stručnu pomoć.
+
+PODACI O KORISNIKU (${ime}):
+- Trenutni niz čistih dana (vatrica): ${niz}
+- Ova nedelja: ${ep} epizoda, ${pok} pokušaja, ${res} uspešnih odoljevanja
+- Najčešći okidači: ${topOk.length?topOk.join(", "):"nema podataka"}
+- Najčešće lokacije: ${topLok.length?topLok.join(", "):"nema podataka"}
+- Prosečan intenzitet impulsa: ${prosecniInt}/10
+- Ukupno unosa: ${(unosi||[]).length}
+
+Koristi ove podatke da personalizuješ podršku i pomogneš korisniku da prepozna obrasce.`;
+}
+
+function AIChat({ime,niz,unosi}){
+  const [poruke,setPoruke]=useState([{id:0,ko:"ai",tekst:`Zdravo${ime?" "+ime:""}! Ja sam Mia. Tu sam da razgovaramo — o teškim trenucima, napretku, ili jednostavno kada ti treba neko da te sasluša. Kako ti je danas?`}]);
   const [unos,setUnos]=useState("");const [ucitava,setUcitava]=useState(false);const krajRef=useRef(null);
   useEffect(()=>{krajRef.current?.scrollIntoView({behavior:"smooth"})},[poruke,ucitava]);
   async function posalji(){
     const txt=unos.trim();if(!txt||ucitava)return;
     const np=[...poruke,{id:Date.now(),ko:"user",tekst:txt}];
     setPoruke(np);setUnos("");setUcitava(true);
+    if(!GROQ_KEY){setPoruke(v=>[...v,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna — nedostaje VITE_GROQ_API_KEY u .env fajlu."}]);setUcitava(false);return;}
     try{
-      const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:SYS,messages:np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))})});
+      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.1-8b-instant",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})});
       const data=await res.json();
-      setPoruke(v=>[...v,{id:Date.now()+1,ko:"ai",tekst:data.content?.find(b=>b.type==="text")?.text||"Žao mi je, pokušaj ponovo."}]);
-    }catch{setPoruke(v=>[...v,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu."}]);}
+      setPoruke(v=>[...v,{id:Date.now()+1,ko:"ai",tekst:data.choices?.[0]?.message?.content||"Žao mi je, pokušaj ponovo."}]);
+    }catch{setPoruke(v=>[...v,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu. Proveri internet vezu."}]);}
     finally{setUcitava(false);}
   }
   return(
@@ -1119,7 +1149,7 @@ export default function App(){
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
               {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
               {ekran==="bib"&&<Biblioteka/>}
-              {ekran==="chat"&&<AIChat/>}
+              {ekran==="chat"&&<AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi}/>}
             </div>
             <nav className="bnav">
               {NAV.map(n=>(
