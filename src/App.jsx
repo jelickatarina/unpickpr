@@ -718,9 +718,9 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
             <p style={{fontWeight:700,fontSize:15,color:C.text,lineHeight:1,marginBottom:3}}>Mia</p>
             <p style={{fontSize:11,color:C.textLight,fontWeight:500}}>AI podrška · uvek tu</p>
           </div>
-          <button onClick={onSOS} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:100,background:C.red+"15",border:`1.5px solid ${C.red}40`,cursor:"pointer",flexShrink:0}}>
-            <div style={{width:7,height:7,borderRadius:"50%",background:C.red,animation:"pulse 2s infinite"}}/>
-            <span style={{fontSize:13,fontWeight:800,color:C.red,letterSpacing:0.3}}>SOS</span>
+          <button onClick={onSOS} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 16px",borderRadius:100,background:C.red,border:"none",cursor:"pointer",flexShrink:0,boxShadow:`0 4px 12px ${C.red}55`}}>
+            <div style={{width:7,height:7,borderRadius:"50%",background:"rgba(255,255,255,0.8)",animation:"pulse 2s infinite"}}/>
+            <span style={{fontSize:13,fontWeight:800,color:"#fff",letterSpacing:0.5}}>SOS</span>
           </button>
         </div>
       </div>
