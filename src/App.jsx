@@ -155,7 +155,7 @@ function Auth({onDone}){
 
   if(mode==="w") return(
     <div className="fi" style={{minHeight:"100vh",background:C.bg,display:"flex",flexDirection:"column"}}>
-      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"flex-start",justifyContent:"center",paddingTop:`max(60px,${SAT})`,paddingLeft:32,paddingRight:32,paddingBottom:32,textAlign:"left"}}>
+      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",paddingTop:`max(60px,${SAT})`,paddingLeft:32,paddingRight:32,paddingBottom:32,textAlign:"center"}}>
         <div style={{width:72,height:72,borderRadius:24,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 12px 36px rgba(192,120,144,.28)`,marginBottom:24}}>
           <Ico d={I.leaf} size={32} stroke="#fff" sw={1.8}/>
         </div>
@@ -179,7 +179,7 @@ function Auth({onDone}){
         </div>
       </div>
       <div style={{padding:"0 28px 52px",display:"flex",flexDirection:"column",gap:10}}>
-        <button onClick={()=>{setMode("r");reset();}} className="btn-p">Počni besplatno</button>
+        <button onClick={()=>{setMode("r");reset();}} className="btn-p">Počni</button>
         <button onClick={()=>{setMode("l");reset();}} className="btn-o">Već imam nalog</button>
       </div>
     </div>
