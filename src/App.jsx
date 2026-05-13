@@ -671,14 +671,17 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   const porRef=useRef([pocetna]);
 
   async function sacuvaj(p){
-    if(!userId)return;
-    await supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id"});
+    if(!userId){console.warn("sacuvaj: nema userId");return;}
+    const {error}=await supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id"});
+    if(error) console.error("sacuvaj greška:",error.message,error.code);
   }
 
   useEffect(()=>{
-    if(!userId)return;
-    supabase.from("profiles").select("chat_history").eq("id",userId).single().then(({data})=>{
+    if(!userId){console.warn("load: nema userId");return;}
+    supabase.from("profiles").select("chat_history").eq("id",userId).single().then(({data,error})=>{
+      if(error) console.error("load greška:",error.message,error.code);
       if(data?.chat_history?.length){setPoruke(data.chat_history);porRef.current=data.chat_history;}
+      else console.log("load: nema istorije za",userId);
     });
   },[userId]);
 
