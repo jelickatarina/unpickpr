@@ -117,6 +117,7 @@ const EMOCIJE=[["😰","Anksiozna"],["😢","Tužna"],["😤","Ljuta"],["😶","
 const LOK=["🛋️ Dnevna","🛁 Kupatilo","🍳 Kuhinja","🛏️ Spavaća","💼 Posao","🚗 Auto","🌳 Napolju","📱 Krevet"];
 const OKI=["Stres","Umor","Ogledalo","Dosada","Ekrani","Tuga","Učenje","Jelo","Ostalo"];
 
+const SAT="env(safe-area-inset-top,0px)";
 function safeParseOk(v){if(!v)return[];try{const p=JSON.parse(v);return Array.isArray(p)?p:[v];}catch{return v?[v]:[];}}
 function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
 
@@ -148,7 +149,7 @@ function Auth({onDone}){
 
   if(mode==="w") return(
     <div className="fi" style={{minHeight:"100vh",background:C.bg,display:"flex",flexDirection:"column"}}>
-      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"60px 32px 32px",textAlign:"center"}}>
+      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",paddingTop:`max(60px,${SAT})`,paddingLeft:32,paddingRight:32,paddingBottom:32,textAlign:"center"}}>
         <div style={{width:80,height:80,borderRadius:28,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 12px 36px rgba(122,158,142,.32)`,marginBottom:28}}>
           <Ico d={I.leaf} size={36} stroke="#fff" sw={1.8}/>
         </div>
@@ -234,7 +235,7 @@ function Auth({onDone}){
 
   return(
     <div className="fi" style={{minHeight:"100vh",background:C.bg}}>
-      <div style={{padding:"56px 28px 24px"}}>
+      <div style={{paddingTop:`max(56px,${SAT})`,paddingLeft:28,paddingRight:28,paddingBottom:24}}>
         <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:C.bgCard,border:`1px solid ${C.border}`,borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",marginBottom:32,padding:"8px 16px",boxShadow:`0 2px 8px ${C.shadow}`}}>
           <Ico d={I.back} size={14} stroke={C.textMid} sw={2}/> Nazad
         </button>
@@ -357,12 +358,12 @@ function SOS({onZatvori}){
   },[dk,alat,faza]);
   useEffect(()=>{if(disSek<=0&&alat==="dis"&&faza==="alat")setDk(d=>d+1);},[disSek]);
   const fmt=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
-  const W=({ch})=><div style={{minHeight:"100vh",padding:"32px 24px 48px",background:C.bg}} className="fi">{ch}</div>;
+  const W=({ch})=><div style={{minHeight:"100vh",paddingTop:`max(32px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:48,background:C.bg}} className="fi">{ch}</div>;
   const XBtn=()=><div style={{display:"flex",justifyContent:"flex-end",marginBottom:24}}><button style={{background:C.bgMuted,border:"none",borderRadius:50,width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}} onClick={onZatvori}><Ico d={I.x} size={16} stroke={C.textMid} sw={2}/></button></div>;
   const ALATI=[{id:"dis",icon:I.leaf,l:"Vežba disanja",op:"4-7-8 tehnika"},{id:"taj",icon:I.spark,l:"Čekaj 5 minuta",op:"Impulsi prolaze"},{id:"ruke",icon:I.shield,l:"Zaposli ruke",op:"Alternativne aktivnosti"},{id:"uzem",icon:I.heart,l:"Uzemljenje",op:"5-4-3-2-1 tehnika"},{id:"meh",icon:I.plus,l:"Prsni mehuriće",op:"Igrica"},{id:"boj",icon:I.spark,l:"Igra boja",op:"Igrica"}];
 
   if(faza==="izb") return(
-    <div style={{minHeight:"100vh",padding:"32px 24px 48px",background:C.bg}} className="fi">
+    <div style={{minHeight:"100vh",paddingTop:`max(32px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:48,background:C.bg}} className="fi">
       <div style={{display:"flex",justifyContent:"flex-end",marginBottom:24}}><button style={{background:C.bgMuted,border:"none",borderRadius:50,width:40,height:40,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}} onClick={onZatvori}><Ico d={I.x} size={16} stroke={C.textMid} sw={2}/></button></div>
       <h2 className="serif" style={{fontSize:26,marginBottom:4,letterSpacing:-0.3}}>Šta danas probamo?</h2>
       <p style={{fontSize:14,color:C.textMid,marginBottom:20,fontWeight:500}}>Tehnika smirenja ili igrica za distrakciju</p>
@@ -382,7 +383,7 @@ function SOS({onZatvori}){
     const kor=[{l:"Udahni...",d:4,c:C.primary},{l:"Zadrži...",d:7,c:C.purple},{l:"Izdahni...",d:8,c:C.green}];
     const BackBtn=()=><button className="btn-g" style={{alignSelf:"flex-start",marginBottom:8}} onClick={()=>setFaza("izb")}><Ico d={I.back} size={16} stroke={C.textMid}/> Nazad</button>;
     if(alat==="dis"){const cur=kor[dk%3];const prog=Math.max(0,disSek/cur.d);const r=80;const circ=2*Math.PI*r;return(
-      <div style={{minHeight:"100vh",padding:"40px 24px 48px",background:C.bg,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:24}} className="fi">
+      <div style={{minHeight:"100vh",paddingTop:`max(40px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:48,background:C.bg,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:24}} className="fi">
         <BackBtn/>
         <h3 className="serif" style={{fontSize:26,letterSpacing:-0.3}}>4 · 7 · 8 Disanje</h3>
         <div style={{position:"relative",width:196,height:196}}>
@@ -403,7 +404,7 @@ function SOS({onZatvori}){
       </div>
     );}
     if(alat==="taj"){const TOTAL=300;const prog=tajmer/TOTAL;const r=80;const circ=2*Math.PI*r;const done=tAkt&&tajmer===0;return(
-      <div style={{minHeight:"100vh",padding:"40px 24px 48px",background:C.bg,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:28}} className="fi">
+      <div style={{minHeight:"100vh",paddingTop:`max(40px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:48,background:C.bg,textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:28}} className="fi">
         <BackBtn/>
         <div>
           <h3 className="serif" style={{fontSize:30,letterSpacing:-0.5,marginBottom:6}}>{done?"Uspela si!":"Čekaj malo"}</h3>
@@ -431,7 +432,7 @@ function SOS({onZatvori}){
       </div>
     );}
     if(alat==="ruke") return(
-      <div style={{minHeight:"100vh",padding:"32px 24px 48px",background:C.bg}} className="fi">
+      <div style={{minHeight:"100vh",paddingTop:`max(32px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:48,background:C.bg}} className="fi">
         <BackBtn/>
         <h3 className="serif" style={{fontSize:26,marginBottom:20,letterSpacing:-0.3}}>Zaposli ruke</h3>
         {["Nanesite kremu za ruke","Držite kocku leda","Pritisnite nokte u dlan","Klikćite hemijsku","Kuckajte prstima o sto","Masirajte sopstvene ruke"].map(a=><div key={a} className="card" style={{marginBottom:10,fontSize:14,fontWeight:500}}>{a}</div>)}
@@ -439,7 +440,7 @@ function SOS({onZatvori}){
       </div>
     );
     if(alat==="uzem") return(
-      <div style={{minHeight:"100vh",padding:"32px 24px 48px",background:C.bg}} className="fi">
+      <div style={{minHeight:"100vh",paddingTop:`max(32px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:48,background:C.bg}} className="fi">
         <BackBtn/>
         <h3 className="serif" style={{fontSize:26,marginBottom:6,letterSpacing:-0.3}}>5-4-3-2-1 Uzemljenje</h3>
         <p style={{color:C.textMid,fontSize:14,marginBottom:22,fontWeight:500}}>Primeti šta je oko tebe, upravo sada.</p>
@@ -452,12 +453,12 @@ function SOS({onZatvori}){
         <div style={{height:16}}/><button className="btn-p" onClick={()=>onZatvori()}>Završila sam →</button>
       </div>
     );
-    if(alat==="meh") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Prsni mehuriće</h3><Mehurici onDone={()=>onZatvori()}/></div>);
-    if(alat==="boj") return(<div style={{minHeight:"100vh",padding:"28px 24px 48px",background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Igra boja</h3><Boje onDone={()=>onZatvori()}/></div>);
+    if(alat==="meh") return(<div style={{minHeight:"100vh",paddingTop:`max(28px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:48,background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Prsni mehuriće</h3><Mehurici onDone={()=>onZatvori()}/></div>);
+    if(alat==="boj") return(<div style={{minHeight:"100vh",paddingTop:`max(28px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:48,background:C.bg}} className="fi"><BackBtn/><h3 className="serif" style={{fontSize:24,marginBottom:20,textAlign:"center"}}>Igra boja</h3><Boje onDone={()=>onZatvori()}/></div>);
   }
 
   return(
-    <div style={{minHeight:"100vh",padding:"40px 24px 48px",background:C.bg,display:"flex",flexDirection:"column",alignItems:"center",gap:16}} className="fi">
+    <div style={{minHeight:"100vh",paddingTop:`max(40px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:48,background:C.bg,display:"flex",flexDirection:"column",alignItems:"center",gap:16}} className="fi">
       <div style={{width:72,height:72,borderRadius:"50%",background:C.amberLight,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:4}}><Ico d={I.heart} size={34} stroke={C.amber} sw={1.8}/></div>
       <h2 className="serif" style={{fontSize:30,letterSpacing:-0.3}}>Kako je prošlo?</h2>
       <p style={{color:C.textMid,fontSize:14,fontWeight:500}}>Nema pogrešnog odgovora.</p>
@@ -493,7 +494,7 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
   return(
     <div style={{minHeight:"100vh",background:C.bg}} className="fi">
       {/* Header */}
-      <div style={{padding:"44px 20px 12px",display:"flex",alignItems:"center",gap:14,borderBottom:`1px solid ${C.border}`,background:C.bg,position:"sticky",top:0,zIndex:10}}>
+      <div style={{paddingTop:`max(44px,${SAT})`,paddingLeft:20,paddingRight:20,paddingBottom:12,display:"flex",alignItems:"center",gap:14,borderBottom:`1px solid ${C.border}`,background:C.bg,position:"sticky",top:0,zIndex:10}}>
         <button className="btn-g" onClick={onOtkazi} style={{padding:0,flexShrink:0}}><Ico d={I.back} size={22} stroke={C.textMid}/></button>
         <h2 className="serif" style={{fontSize:22,letterSpacing:-0.3,flex:1}}>{editData?"Izmeni unos":"Novi unos"}</h2>
         <button
@@ -821,7 +822,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
       )}
 
       {/* ── TOP SECTION: gradient hero ── */}
-      <div style={{background:`linear-gradient(160deg,${C.primaryLight} 0%,${C.bg} 55%)`,padding:"52px 22px 32px",position:"relative",overflow:"hidden"}}>
+      <div style={{background:`linear-gradient(160deg,${C.primaryLight} 0%,${C.bg} 55%)`,paddingTop:`max(52px,${SAT})`,paddingLeft:22,paddingRight:22,paddingBottom:32,position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",top:-60,right:-60,width:200,height:200,borderRadius:"50%",background:C.primary+"0D"}}/>
 
         {/* Header row */}
@@ -939,7 +940,7 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
 
   return(
     <div style={{paddingBottom:20}} className="fi">
-      <div style={{padding:"60px 24px 16px"}}>
+      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:16}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div>
             <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:4}}>Moj dnevnik</p>
@@ -1057,7 +1058,7 @@ function Napredak({unosi,niz}){
 
   if(total===0) return(
     <div style={{paddingBottom:24}} className="fi">
-      <div style={{padding:"60px 24px 16px"}}>
+      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:16}}>
         <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:4}}>Statistike</p>
         <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5}}>Napredak</h1>
       </div>
@@ -1071,7 +1072,7 @@ function Napredak({unosi,niz}){
 
   return(
     <div style={{paddingBottom:24}} className="fi">
-      <div style={{padding:"60px 24px 16px"}}>
+      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:16}}>
         <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:4}}>Statistike</p>
         <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5}}>Napredak</h1>
       </div>
@@ -1170,7 +1171,7 @@ const kBoja=k=>k==="Edukacija"?[C.purpleLight,C.purple]:k==="Tehnika"?[C.primary
 function Clanak({clanak,onNazad}){
   const [b,f]=kBoja(clanak.k);
   return(
-    <div style={{padding:"56px 20px 48px"}} className="fi">
+    <div style={{paddingTop:`max(56px,${SAT})`,paddingLeft:20,paddingRight:20,paddingBottom:48}} className="fi">
       <button className="btn-g" style={{marginBottom:24}} onClick={onNazad}><Ico d={I.back} size={18} stroke={C.textMid}/> Biblioteka</button>
       <div style={{display:"flex",gap:16,alignItems:"center",marginBottom:30}}>
         <div style={{width:64,height:64,borderRadius:20,background:b,display:"flex",alignItems:"center",justifyContent:"center",fontSize:32,flexShrink:0}}>{clanak.e}</div>
@@ -1198,7 +1199,7 @@ function Biblioteka(){
   if(otvoren!==null) return<Clanak clanak={CLANCI[otvoren]} onNazad={()=>setOtvoren(null)}/>;
   return(
     <div style={{paddingBottom:20}} className="fi">
-      <div style={{padding:"60px 24px 16px"}}>
+      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:16}}>
         <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:4}}>Resursi</p>
         <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5}}>Biblioteka</h1>
       </div>
