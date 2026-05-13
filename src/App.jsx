@@ -1130,27 +1130,35 @@ function Napredak({unosi,niz}){
         <h1 style={{fontSize:28,fontWeight:800,color:C.text,letterSpacing:-0.5}}>Tvoje statistike</h1>
       </div>
 
-      {/* Streak hero */}
-      <div style={{margin:"0 20px 12px",borderRadius:28,background:C.primaryGrad,padding:"24px",boxShadow:`0 8px 28px rgba(192,120,144,0.28)`}}>
-        <p style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.7)",letterSpacing:1.5,textTransform:"uppercase",marginBottom:8}}>Trenutni niz</p>
-        <div style={{display:"flex",alignItems:"flex-end",gap:10,marginBottom:20}}>
-          <span style={{fontSize:56,fontWeight:900,color:"#fff",lineHeight:1}}>{niz}</span>
-          <span style={{fontSize:32,marginBottom:6}}>🔥</span>
-          {niz>0&&<span style={{fontSize:13,color:"rgba(255,255,255,0.75)",fontWeight:600,marginBottom:10}}>{niz===1?"dan":"dana"}</span>}
-        </div>
-        <div style={{display:"flex",gap:0}}>
+      {/* Sedmični pregled */}
+      <div style={{margin:"0 20px 12px",borderRadius:24,background:C.bgCard,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`}}>
+        <p style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:16}}>Ova sedmica</p>
+        <div style={{display:"flex",gap:6,marginBottom:16}}>
           {sedmica.map((d,i)=>{
-            const bg=d.status==="ep"?"rgba(255,255,255,0.15)":d.status==="try"?"rgba(255,255,255,0.25)":d.status==="res"?"rgba(255,255,255,0.55)":d.isToday?"rgba(255,255,255,0.1)":"rgba(255,255,255,0.07)";
-            const dot=d.status==="ep"?"#ff8fa3":d.status==="try"?"#ffd166":d.status==="res"?"#fff":d.isToday?"rgba(255,255,255,0.4)":"transparent";
+            const bg=d.status==="ep"?C.red:d.status==="try"?C.amber:d.status==="res"?C.green:d.isToday?C.primaryLight:C.bgMuted;
+            const txt=d.status==="ep"||d.status==="try"||d.status==="res"?"#fff":d.isToday?C.primary:C.textLight;
+            const icon=d.status==="ep"?"✕":d.status==="try"?"~":d.status==="res"?"✓":"";
             return(
-              <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
-                <div style={{width:32,height:32,borderRadius:10,background:bg,border:d.isToday?"2px solid rgba(255,255,255,0.6)":"2px solid transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  {d.status!=="none"&&<div style={{width:8,height:8,borderRadius:"50%",background:dot}}/>}
+              <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:5}}>
+                <div style={{width:"100%",aspectRatio:"1",borderRadius:10,background:bg,border:d.isToday&&d.status==="none"?`2px solid ${C.primary}`:"2px solid transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  <span style={{fontSize:11,fontWeight:800,color:txt}}>{icon}</span>
                 </div>
-                <span style={{fontSize:9,fontWeight:d.isToday?800:600,color:d.isToday?"#fff":"rgba(255,255,255,0.55)",textTransform:"uppercase",letterSpacing:0.5}}>{d.dan}</span>
+                <span style={{fontSize:9,fontWeight:d.isToday?800:500,color:d.isToday?C.primary:C.textLight,textTransform:"uppercase",letterSpacing:0.5}}>{d.dan}</span>
               </div>
             );
           })}
+        </div>
+        <div style={{display:"flex",gap:16,paddingTop:12,borderTop:`1px solid ${C.border}`}}>
+          {[
+            {l:"Epizode",v:sedmica.filter(d=>d.status==="ep").length,c:C.red},
+            {l:"Pokušaji",v:sedmica.filter(d=>d.status==="try").length,c:C.amber},
+            {l:"Odolelo",v:sedmica.filter(d=>d.status==="res").length,c:C.green},
+          ].map(s=>(
+            <div key={s.l} style={{flex:1,textAlign:"center"}}>
+              <p style={{fontSize:20,fontWeight:900,color:s.c,lineHeight:1,marginBottom:2}}>{s.v}</p>
+              <p style={{fontSize:10,fontWeight:600,color:C.textLight,textTransform:"uppercase",letterSpacing:0.5}}>{s.l}</p>
+            </div>
+          ))}
         </div>
       </div>
 
