@@ -661,7 +661,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
 
   async function sacuvaj(p){
     if(!userId)return;
-    await supabase.from("profiles").upsert({id:userId,chat_history:p});
+    await supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id"});
   }
 
   useEffect(()=>{
@@ -691,15 +691,19 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   }
   return(
     <div style={{display:"flex",flexDirection:"column",height:"100%",flex:1,minHeight:0}}>
-      <div style={{padding:"env(safe-area-inset-top,44px) 20px 10px",background:C.primaryGrad,flexShrink:0,borderRadius:"0 0 20px 20px"}}>
-        <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:34,height:34,borderRadius:"50%",background:"rgba(255,255,255,.22)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative"}}>
-            <Ico d={I.heart} size={15} stroke="#fff" sw={1.8}/>
-            <div style={{position:"absolute",bottom:0,right:0,width:9,height:9,borderRadius:"50%",background:"#4CD964",border:"2px solid #B85A80",animation:"pulse 2s infinite"}}/>
+      <div style={{paddingTop:"max(44px,env(safe-area-inset-top))",paddingBottom:10,paddingLeft:16,paddingRight:16,background:C.bgCard,borderBottom:`1px solid ${C.border}`,flexShrink:0,boxShadow:`0 2px 10px ${C.shadow}`}}>
+        <div style={{display:"flex",alignItems:"center",gap:12}}>
+          <div style={{width:40,height:40,borderRadius:"50%",background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative",boxShadow:`0 4px 12px ${C.primary}44`}}>
+            <Ico d={I.heart} size={18} stroke="#fff" sw={1.8}/>
+            <div style={{position:"absolute",bottom:1,right:1,width:11,height:11,borderRadius:"50%",background:"#4CD964",border:"2px solid #fff",animation:"pulse 2s infinite"}}/>
           </div>
-          <div style={{display:"flex",alignItems:"center",gap:8}}>
-            <p style={{fontWeight:700,fontSize:15,color:"#fff",lineHeight:1}}>Mia</p>
-            <p style={{fontSize:11,color:"rgba(255,255,255,.7)",fontWeight:600}}>● dostupna</p>
+          <div>
+            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
+              <p style={{fontWeight:700,fontSize:15,color:C.text,lineHeight:1}}>Mia</p>
+              <span style={{width:6,height:6,borderRadius:"50%",background:"#4CD964",display:"inline-block"}}/>
+              <p style={{fontSize:12,color:"#3DAA5C",fontWeight:600}}>dostupna</p>
+            </div>
+            <p style={{fontSize:11,color:C.textLight,fontWeight:500}}>AI podrška · uvek tu</p>
           </div>
         </div>
       </div>
