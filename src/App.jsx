@@ -682,9 +682,24 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
 
   const LS=`unpick_chat_${userId}`;
 
+  function snimi(p){
+    setPoruke(p);porRef.current=p;
+    localStorage.setItem(LS,JSON.stringify(p));
+    if(userId) supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id"}).catch(()=>{});
+  }
+
   useEffect(()=>{
     if(!userId)return;
-    try{const p=JSON.parse(localStorage.getItem(LS)||"[]");if(p.length>1){setPoruke(p);porRef.current=p;}}catch{}
+    // prvo Supabase (cross-device), fallback localStorage
+    supabase.from("profiles").select("chat_history").eq("id",userId).single().then(({data})=>{
+      if(data?.chat_history?.length>1){
+        snimi(data.chat_history);
+      } else {
+        try{const p=JSON.parse(localStorage.getItem(LS)||"[]");if(p.length>1){snimi(p);}}catch{}
+      }
+    }).catch(()=>{
+      try{const p=JSON.parse(localStorage.getItem(LS)||"[]");if(p.length>1){snimi(p);}}catch{}
+    });
   },[userId]);
 
   useEffect(()=>{krajRef.current?.scrollIntoView({behavior:"smooth"})},[poruke,ucitava]);
@@ -700,10 +715,19 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
       const raw=data.choices?.[0]?.message?.content||"";
       if(!raw){console.error("Groq prazan odgovor:",JSON.stringify(data));throw new Error("prazan odgovor");}
       const aiTekst=raw.replace(/\[SOS_DUGME\]/g,"").trim();
-      const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst}];
-      setPoruke(npp);porRef.current=npp;
-      localStorage.setItem(LS,JSON.stringify(npp));
-    }catch(e){console.error("posalji catch:",e?.message);const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu — "+( e?.message||"proveri internet vezu.")}];setPoruke(npp);porRef.current=npp;localStorage.setItem(LS,JSON.stringify(npp));}
+      const aiId=Date.now()+1;
+      const npp=[...np,{id:aiId,ko:"ai",tekst:aiTekst}];
+      snimi(npp);
+      // SOS detekcija u pozadini — ne blokira čuvanje
+      fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:3,messages:[{role:"system",content:"Odgovori samo sa DA ili NE. DA samo ako korisnik opisuje jak, aktivan impuls da čačka kožu koji se dešava UPRAVO SAD ili kaže da je u akutnoj krizi. NE za sve ostalo."},{role:"user",content:txt}]})})
+        .then(r=>r.json()).then(d=>{
+          const jeste=(d.choices?.[0]?.message?.content||"").trim().toUpperCase().startsWith("DA");
+          if(jeste){
+            const azurirano=porRef.current.map(m=>m.id===aiId?{...m,sos:true}:m);
+            snimi(azurirano);
+          }
+        }).catch(()=>{});
+    }catch(e){console.error("posalji catch:",e?.message);snimi([...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu — "+(e?.message||"proveri internet vezu.")}]);}
     finally{setUcitava(false);}
   }
   return(
@@ -729,8 +753,12 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
           <div key={p.id} style={{display:"flex",flexDirection:"column",alignItems:p.ko==="user"?"flex-end":"flex-start"}}>
             {p.ko==="ai"&&<div style={{display:"flex",alignItems:"flex-end",gap:8}}>
               <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginBottom:2}}><Ico d={I.heart} size={14} stroke={C.primary} sw={1.8}/></div>
-              <div style={{maxWidth:"84%"}}>
+              <div style={{display:"flex",flexDirection:"column",gap:8,maxWidth:"84%"}}>
                 <div className="bba">{p.tekst}</div>
+                {p.sos&&<button onClick={onSOS} style={{alignSelf:"flex-start",display:"flex",alignItems:"center",gap:8,padding:"9px 16px 9px 12px",borderRadius:100,background:C.red,border:"none",cursor:"pointer",boxShadow:`0 4px 12px ${C.red}55`}}>
+                  <div style={{width:7,height:7,borderRadius:"50%",background:"rgba(255,255,255,0.8)",animation:"pulse 2s infinite"}}/>
+                  <span style={{fontSize:13,fontWeight:800,color:"#fff"}}>Otvori SOS tehnike</span>
+                </button>}
               </div>
             </div>}
             {p.ko==="user"&&<div className="bbu">{p.tekst}</div>}
