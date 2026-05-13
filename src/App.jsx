@@ -2,14 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
 
 const C = {
-  bg:"#F6F6FB",bgCard:"#FFFFFF",bgMuted:"#EFEFFA",
-  primary:"#6C63FF",primaryGrad:"linear-gradient(135deg,#8B85FF 0%,#5A52E0 100%)",
-  primaryLight:"#EEECFF",primaryDark:"#3D35B5",
-  purple:"#5A9A7E",purpleLight:"#E4F5EE",
-  text:"#17153B",textMid:"#5B5675",textLight:"#9D99B5",
-  green:"#4A9268",greenLight:"#E2F4EC",
-  amber:"#B08830",amberLight:"#FBF3DC",
-  red:"#D94F4F",border:"#E4E2F5",shadow:"rgba(108,99,255,0.07)",
+  bg:"#F9F6F1",bgCard:"#FFFFFF",bgMuted:"#F0EDE5",
+  primary:"#7A9E8E",primaryGrad:"linear-gradient(135deg,#96B8A8 0%,#5E8C7A 100%)",
+  primaryLight:"#E6F2EE",primaryDark:"#3D6858",
+  purple:"#C09EB8",purpleLight:"#F5EDF2",
+  text:"#2A2420",textMid:"#7A6E66",textLight:"#B0A89E",
+  green:"#6A9E7E",greenLight:"#E4F0EA",
+  amber:"#C4A050",amberLight:"#FAF2DC",
+  red:"#C47070",border:"#E8E2D8",shadow:"rgba(122,158,142,0.09)",
 };
 const fonts=`@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');`;
 const css=`
@@ -18,11 +18,11 @@ body{background:${C.bg};}
 .app{font-family:'Plus Jakarta Sans',sans-serif;background:${C.bg};min-height:100vh;max-width:390px;margin:0 auto;position:relative;color:${C.text};overflow-x:hidden;}
 .serif{font-family:'Instrument Serif',serif;}
 .italic{font-style:italic;}
-.btn-p{background:${C.primaryGrad};color:#fff;border:none;border-radius:16px;padding:17px 28px;font-size:16px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;width:100%;transition:all .18s;box-shadow:0 4px 22px rgba(108,99,255,.32);touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.btn-p{background:${C.primaryGrad};color:#fff;border:none;border-radius:16px;padding:17px 28px;font-size:16px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;width:100%;transition:all .18s;box-shadow:0 4px 20px rgba(122,158,142,.35);touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .btn-p:active{transform:scale(.98);}
 .btn-o{background:transparent;color:${C.primary};border:1.5px solid ${C.border};border-radius:16px;padding:15px 28px;font-size:15px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;width:100%;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .btn-g{background:transparent;color:${C.textMid};border:none;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;padding:6px;display:flex;align-items:center;gap:6px;font-weight:500;touch-action:manipulation;}
-.card{background:${C.bgCard};border-radius:24px;box-shadow:0 2px 14px ${C.shadow},0 1px 3px rgba(108,99,255,.04);padding:20px;}
+.card{background:${C.bgCard};border-radius:24px;box-shadow:0 2px 16px rgba(122,158,142,0.08),0 1px 4px rgba(42,36,32,.03);padding:20px;}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:100px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:13px;color:${C.textMid};cursor:pointer;transition:all .16s;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;}
 .chip.on{border-color:${C.primary};background:${C.primaryLight};color:${C.primaryDark};}
 .cr{display:block;width:100%;text-align:left;padding:16px 20px;border-radius:16px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:15px;color:${C.textMid};cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:10px;transition:all .16s;font-weight:500;}
@@ -30,7 +30,7 @@ body{background:${C.bg};}
 .inp{width:100%;padding:15px 18px;border-radius:16px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;color:${C.text};outline:none;transition:all .18s;font-weight:500;}
 .inp:focus{border-color:${C.primary};box-shadow:0 0 0 4px ${C.primaryLight};}
 textarea.inp{resize:none;min-height:80px;line-height:1.65;}
-.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:rgba(246,246,251,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid ${C.border};display:flex;z-index:100;padding:6px 8px calc(env(safe-area-inset-bottom,0px) + 8px);gap:4px;}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:rgba(249,246,241,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid ${C.border};display:flex;z-index:100;padding:6px 8px calc(env(safe-area-inset-bottom,0px) + 8px);gap:4px;}
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px 6px;cursor:pointer;background:none;border:none;border-radius:14px;transition:all .18s;}
 .ni.active{background:${C.primaryLight};}
 .tag{display:inline-block;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;}
@@ -40,7 +40,7 @@ textarea.inp{resize:none;min-height:80px;line-height:1.65;}
 .pf{height:100%;background:${C.primaryGrad};border-radius:100px;transition:width .4s ease;}
 .emb{background:${C.bgMuted};border:2px solid transparent;border-radius:18px;padding:13px 6px;cursor:pointer;transition:all .16s;text-align:center;flex:1;}
 .emb.on{border-color:${C.primary};background:${C.primaryLight};}
-.bbu{background:${C.primaryGrad};color:#fff;border-radius:22px 22px 6px 22px;padding:13px 17px;font-size:14px;line-height:1.6;max-width:78%;align-self:flex-end;box-shadow:0 4px 20px rgba(108,99,255,.28);font-weight:500;}
+.bbu{background:${C.primaryGrad};color:#fff;border-radius:22px 22px 6px 22px;padding:13px 17px;font-size:14px;line-height:1.6;max-width:78%;align-self:flex-end;box-shadow:0 4px 18px rgba(122,158,142,.28);font-weight:500;}
 .bba{background:${C.bgCard};box-shadow:0 2px 12px ${C.shadow};color:${C.text};border-radius:22px 22px 22px 6px;padding:13px 17px;font-size:14px;line-height:1.6;max-width:84%;align-self:flex-start;font-weight:500;}
 .typing{display:flex;gap:5px;padding:13px 17px;align-items:center;}
 .dot{width:7px;height:7px;border-radius:50%;background:${C.textLight};animation:bounce 1.3s infinite;}
@@ -150,7 +150,7 @@ function Auth({onDone}){
         <div style={{position:"absolute",top:-100,right:-80,width:300,height:300,borderRadius:"50%",background:`radial-gradient(circle,${C.primaryLight} 0%,transparent 70%)`,pointerEvents:"none"}}/>
         <div style={{position:"absolute",top:30,right:20,width:100,height:100,borderRadius:"50%",background:C.primaryLight,opacity:.7,pointerEvents:"none"}}/>
         <div style={{position:"relative",display:"inline-flex",alignItems:"center",gap:10,marginBottom:40}}>
-          <div style={{width:42,height:42,borderRadius:14,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 6px 20px rgba(108,99,255,.35)`}}>
+          <div style={{width:42,height:42,borderRadius:14,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 6px 20px rgba(122,158,142,.35)`}}>
             <Ico d={I.leaf} size={20} stroke="#fff" sw={2}/>
           </div>
           <span style={{color:C.textLight,fontSize:11,fontWeight:700,letterSpacing:2.5,textTransform:"uppercase"}}>Unpick</span>
@@ -241,7 +241,7 @@ function Auth({onDone}){
           <Ico d={I.back} size={16} stroke={C.textLight} sw={2}/> Nazad
         </button>
         <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16,position:"relative"}}>
-          <div style={{width:36,height:36,borderRadius:12,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 4px 14px rgba(108,99,255,.30)`}}>
+          <div style={{width:36,height:36,borderRadius:12,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 4px 14px rgba(122,158,142,.30)`}}>
             <Ico d={I.leaf} size={17} stroke="#fff" sw={2}/>
           </div>
           <span style={{color:C.textLight,fontSize:11,fontWeight:700,letterSpacing:2,textTransform:"uppercase"}}>Unpick</span>
@@ -300,7 +300,7 @@ function Mehurici({onDone}){
     <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:16}}>
       <p style={{fontSize:14,color:C.textMid,fontWeight:500}}>Pritisni svaki mehurić!</p>
       <div style={{width:290,height:250,background:C.primaryLight,borderRadius:28,position:"relative",overflow:"hidden"}}>
-        {ms.map(m=>!m.p&&<button key={m.id} onClick={()=>{setMs(v=>v.map(x=>x.id===m.id?{...x,p:true}:x));setN(v=>v+1)}} style={{position:"absolute",left:`${m.x}%`,top:`${m.y}%`,width:54,height:54,borderRadius:"50%",background:C.bgCard,border:`2px solid ${C.primary}`,fontSize:24,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transform:"translate(-50%,-50%)",boxShadow:`0 4px 16px rgba(108,99,255,.18)`}}>{m.e}</button>)}
+        {ms.map(m=>!m.p&&<button key={m.id} onClick={()=>{setMs(v=>v.map(x=>x.id===m.id?{...x,p:true}:x));setN(v=>v+1)}} style={{position:"absolute",left:`${m.x}%`,top:`${m.y}%`,width:54,height:54,borderRadius:"50%",background:C.bgCard,border:`2px solid ${C.primary}`,fontSize:24,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transform:"translate(-50%,-50%)",boxShadow:`0 4px 16px rgba(122,158,142,.18)`}}>{m.e}</button>)}
         {svi&&<div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:44}}>🎉</span><p style={{fontWeight:700,color:C.primaryDark,fontSize:16,marginTop:10}}>Sve si prsnula!</p></div>}
       </div>
       <p style={{fontSize:20,fontWeight:400,color:C.primary,fontFamily:"'Instrument Serif',serif"}}>{n} / {ms.length}</p>
@@ -661,7 +661,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
     <div style={{display:"flex",flexDirection:"column",height:"100%",flex:1,minHeight:0}}>
       <div style={{padding:"52px 20px 14px",background:"rgba(255,255,255,.96)",borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
         <div style={{display:"flex",alignItems:"center",gap:14}}>
-          <div style={{width:46,height:46,borderRadius:"50%",background:`linear-gradient(135deg,${C.primaryLight},${C.purpleLight})`,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 4px 14px rgba(108,99,255,.18)`}}>
+          <div style={{width:46,height:46,borderRadius:"50%",background:`linear-gradient(135deg,${C.primaryLight},${C.purpleLight})`,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 4px 14px rgba(122,158,142,.18)`}}>
             <Ico d={I.spark} size={20} stroke={C.primary} sw={1.5}/>
           </div>
           <div><p style={{fontWeight:700,fontSize:16}}>Mia</p><p style={{fontSize:12,color:C.green,fontWeight:700}}>● dostupna</p></div>
@@ -674,7 +674,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
               <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginBottom:2}}><Ico d={I.spark} size={14} stroke={C.primary} sw={1.5}/></div>
               <div style={{display:"flex",flexDirection:"column",gap:8,maxWidth:"84%"}}>
                 <div className="bba">{p.tekst}</div>
-                {p.sos&&<button onClick={onSOS} style={{alignSelf:"flex-start",background:C.primaryGrad,color:"#fff",border:"none",borderRadius:14,padding:"10px 18px",fontSize:13,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:"pointer",boxShadow:"0 4px 16px rgba(108,99,255,.30)",display:"flex",alignItems:"center",gap:8}}><Ico d={I.shield} size={15} stroke="#fff" sw={2}/>Otvori SOS tehnike</button>}
+                {p.sos&&<button onClick={onSOS} style={{alignSelf:"flex-start",background:C.primaryGrad,color:"#fff",border:"none",borderRadius:14,padding:"10px 18px",fontSize:13,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:"pointer",boxShadow:"0 4px 16px rgba(122,158,142,.30)",display:"flex",alignItems:"center",gap:8}}><Ico d={I.shield} size={15} stroke="#fff" sw={2}/>Otvori SOS tehnike</button>}
               </div>
             </div>}
             {p.ko==="user"&&<div className="bbu">{p.tekst}</div>}
@@ -693,7 +693,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
       </div>}
       <div style={{padding:"10px 16px 14px",background:"rgba(255,255,255,.92)",backdropFilter:"blur(20px)",borderTop:`1px solid ${C.border}`,display:"flex",gap:10,alignItems:"flex-end",flexShrink:0}}>
         <textarea className="inp" placeholder="Napiši poruku..." value={unos} onChange={e=>setUnos(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();posalji()}}} rows={1} style={{flex:1,minHeight:"auto",resize:"none",padding:"12px 14px",borderRadius:14,lineHeight:1.5}}/>
-        <button onClick={posalji} disabled={!unos.trim()||ucitava} style={{width:46,height:46,borderRadius:"50%",background:unos.trim()&&!ucitava?C.primaryGrad:C.border,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:unos.trim()?"pointer":"default",flexShrink:0,transition:"all .2s",boxShadow:unos.trim()&&!ucitava?"0 4px 16px rgba(108,99,255,.30)":"none"}}>
+        <button onClick={posalji} disabled={!unos.trim()||ucitava} style={{width:46,height:46,borderRadius:"50%",background:unos.trim()&&!ucitava?C.primaryGrad:C.border,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:unos.trim()?"pointer":"default",flexShrink:0,transition:"all .2s",boxShadow:unos.trim()&&!ucitava?"0 4px 16px rgba(122,158,142,.30)":"none"}}>
           <Ico d={I.send} size={18} stroke="#fff" sw={2}/>
         </button>
       </div>
@@ -734,7 +734,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
       {izvestaj!==null&&(
         <div style={{position:"fixed",inset:0,zIndex:200,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={()=>setIzvestaj(null)}>
           <div style={{position:"absolute",inset:0,background:"rgba(30,20,16,.45)",backdropFilter:"blur(4px)"}}/>
-          <div onClick={e=>e.stopPropagation()} style={{position:"relative",background:C.bg,borderRadius:"28px 28px 0 0",padding:"24px 24px 48px",maxHeight:"75vh",overflowY:"auto",boxShadow:"0 -8px 40px rgba(80,40,10,.18)"}} className="fi">
+          <div onClick={e=>e.stopPropagation()} style={{position:"relative",background:C.bg,borderRadius:"28px 28px 0 0",padding:"24px 24px 48px",maxHeight:"75vh",overflowY:"auto",boxShadow:"0 -8px 40px rgba(42,36,32,.18)"}} className="fi">
             <div style={{width:36,height:4,borderRadius:2,background:C.border,margin:"0 auto 20px"}}/>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
               <h3 className="serif" style={{fontSize:22,letterSpacing:-0.3}}>{weekData[izvestaj].naziv}</h3>
@@ -845,7 +845,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
           <p style={{fontSize:15,color:C.primaryDark,fontWeight:600,lineHeight:1.65,fontFamily:"'Instrument Serif',serif",fontStyle:"italic"}}>{PORUKE_DANA[Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0).getTime())/86400000)%PORUKE_DANA.length]}</p>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}}>
-          <button onClick={onSOS} style={{height:130,borderRadius:24,background:C.primaryGrad,border:"none",color:"#fff",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,position:"relative",overflow:"hidden",boxShadow:"0 8px 32px rgba(108,99,255,.36)"}}>
+          <button onClick={onSOS} style={{height:130,borderRadius:24,background:C.primaryGrad,border:"none",color:"#fff",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,position:"relative",overflow:"hidden",boxShadow:"0 8px 32px rgba(122,158,142,.36)"}}>
             <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,.14)"}}/>
             <div style={{position:"absolute",bottom:-30,left:-20,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,.08)"}}/>
             <div style={{width:50,height:50,borderRadius:"50%",background:"rgba(255,255,255,.22)",display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -875,7 +875,7 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
       <div style={{padding:"60px 24px 20px",background:`linear-gradient(160deg,${C.primaryLight} 0%,${C.bg} 70%)`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
           <div><h1 className="serif" style={{fontSize:32,letterSpacing:-0.5}}>Dnevnik</h1><p style={{fontSize:13,color:C.textLight,fontWeight:600,marginTop:2}}>{noviUnosi.length} {noviUnosi.length===1?"unos":noviUnosi.length<5?"unosa":"unosa"}</p></div>
-          <button onClick={onDodaj} style={{width:48,height:48,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:`0 4px 18px rgba(108,99,255,.35)`}}>
+          <button onClick={onDodaj} style={{width:48,height:48,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:`0 4px 18px rgba(122,158,142,.35)`}}>
             <Ico d={I.plus} size={22} stroke="#fff" sw={2.5}/>
           </button>
         </div>
@@ -1188,7 +1188,7 @@ export default function App(){
     <><style>{fonts}{css}</style>
     <div className="app" style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh"}}>
       <div style={{textAlign:"center"}}>
-        <div style={{width:52,height:52,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px",boxShadow:"0 8px 28px rgba(108,99,255,.35)"}}>
+        <div style={{width:52,height:52,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px",boxShadow:"0 8px 28px rgba(122,158,142,.35)"}}>
           <Ico d={I.leaf} size={26} stroke="#fff" sw={2}/>
         </div>
         <p style={{color:C.textMid,fontWeight:600,fontSize:15}}>Učitava se...</p>
