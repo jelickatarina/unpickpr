@@ -491,7 +491,7 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
   return(
     <div style={{minHeight:"100vh",background:C.bg}} className="fi">
       {/* Header */}
-      <div style={{padding:"52px 20px 16px",display:"flex",alignItems:"center",gap:14,borderBottom:`1px solid ${C.border}`,background:C.bg,position:"sticky",top:0,zIndex:10}}>
+      <div style={{padding:"44px 20px 12px",display:"flex",alignItems:"center",gap:14,borderBottom:`1px solid ${C.border}`,background:C.bg,position:"sticky",top:0,zIndex:10}}>
         <button className="btn-g" onClick={onOtkazi} style={{padding:0,flexShrink:0}}><Ico d={I.back} size={22} stroke={C.textMid}/></button>
         <h2 className="serif" style={{fontSize:22,letterSpacing:-0.3,flex:1}}>{editData?"Izmeni unos":"Novi unos"}</h2>
         <button
@@ -542,12 +542,20 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
         </div>
 
         {/* Lokacija */}
-        <div>
-          <span className="lbl">LOKACIJA <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
-          <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
-            {LOK.map(l=><button key={l} className={`chip${u.lok===l?" on":""}`} onClick={()=>setU(v=>({...v,lok:v.lok===l?"":l}))} style={{fontSize:13}}>{l}</button>)}
-          </div>
-        </div>
+        {(()=>{
+          const lokOstaloAkt=u.lok==="Ostalo"||u.lok.startsWith("Ostalo:");
+          const lokOstaloTekst=u.lok.startsWith("Ostalo:")?u.lok.slice(7):"";
+          return(
+            <div>
+              <span className="lbl">LOKACIJA <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
+              <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:lokOstaloAkt?10:0}}>
+                {LOK.map(l=><button key={l} className={`chip${u.lok===l?" on":""}`} onClick={()=>setU(v=>({...v,lok:v.lok===l?"":l}))} style={{fontSize:13}}>{l}</button>)}
+                <button className={`chip${lokOstaloAkt?" on":""}`} onClick={()=>setU(v=>({...v,lok:lokOstaloAkt?"":"Ostalo"}))} style={{fontSize:13}}>Ostalo</button>
+              </div>
+              {lokOstaloAkt&&<input className="inp" placeholder="Gde si bio/la?" value={lokOstaloTekst} onChange={e=>{const t=e.target.value;setU(v=>({...v,lok:t?"Ostalo:"+t:"Ostalo"}));}}/>}
+            </div>
+          );
+        })()}
 
         {/* Emocije */}
         <div>
