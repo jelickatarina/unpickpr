@@ -599,34 +599,35 @@ Koristi ove podatke da personalizuješ podršku i pomogneš korisniku da prepozn
 function AIChat({ime,niz,unosi,userId}){
   const pocetna={id:0,ko:"ai",tekst:`Zdravo${ime?" "+ime:""}! Ja sam Mia — tu sam da te saslušam, bez osude i bez žurbe. Možeš mi reći šta te muči, kako se osećaš, ili šta ti je na umu. Šta se dešava kod tebe?`};
   const [poruke,setPoruke]=useState([pocetna]);
-  const [ucitan,setUcitan]=useState(false);
   const [unos,setUnos]=useState("");const [ucitava,setUcitava]=useState(false);const krajRef=useRef(null);
+  const porRef=useRef([pocetna]);
+
+  async function sacuvaj(p){
+    if(!userId)return;
+    await supabase.from("profiles").update({chat_history:p}).eq("id",userId);
+  }
 
   useEffect(()=>{
     if(!userId)return;
     supabase.from("profiles").select("chat_history").eq("id",userId).single().then(({data})=>{
-      if(data?.chat_history?.length) setPoruke(data.chat_history);
-      setUcitan(true);
+      if(data?.chat_history?.length){setPoruke(data.chat_history);porRef.current=data.chat_history;}
     });
   },[userId]);
-
-  useEffect(()=>{
-    if(!userId||!ucitan)return;
-    const t=setTimeout(()=>{supabase.from("profiles").update({chat_history:poruke}).eq("id",userId);},600);
-    return()=>clearTimeout(t);
-  },[poruke,userId,ucitan]);
 
   useEffect(()=>{krajRef.current?.scrollIntoView({behavior:"smooth"})},[poruke,ucitava]);
   async function posalji(){
     const txt=unos.trim();if(!txt||ucitava)return;
     const np=[...poruke,{id:Date.now(),ko:"user",tekst:txt}];
-    setPoruke(np);setUnos("");setUcitava(true);
-    if(!GROQ_KEY){setPoruke(v=>[...v,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna — nedostaje VITE_GROQ_API_KEY u .env fajlu."}]);setUcitava(false);return;}
+    setPoruke(np);porRef.current=np;setUnos("");setUcitava(true);
+    if(!GROQ_KEY){const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna — nedostaje VITE_GROQ_API_KEY u .env fajlu."}];setPoruke(npp);porRef.current=npp;setUcitava(false);return;}
     try{
       const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})});
       const data=await res.json();
-      setPoruke(v=>[...v,{id:Date.now()+1,ko:"ai",tekst:data.choices?.[0]?.message?.content||"Žao mi je, pokušaj ponovo."}]);
-    }catch{setPoruke(v=>[...v,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu. Proveri internet vezu."}]);}
+      const aiTekst=data.choices?.[0]?.message?.content||"Žao mi je, pokušaj ponovo.";
+      const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst}];
+      setPoruke(npp);porRef.current=npp;
+      await sacuvaj(npp);
+    }catch{const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu. Proveri internet vezu."}];setPoruke(npp);porRef.current=npp;}
     finally{setUcitava(false);}
   }
   return(
