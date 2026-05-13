@@ -1315,7 +1315,7 @@ export default function App(){
           <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto"}} className="fi"><NoviUnos onSacuvaj={handleSacuvajUnos} onOtkazi={()=>{setPriUnos(false);setEditUnos(null);}} editData={editUnos}/></div>
         ):(
           <>
-            <div style={{paddingBottom:ekran==="chat"?0:"calc(70px + env(safe-area-inset-bottom,0px))",overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 60px - env(safe-area-inset-bottom,10px))":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
+            <div style={{paddingBottom:ekran==="chat"?0:"calc(70px + env(safe-area-inset-bottom,0px))",overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 64px - env(safe-area-inset-bottom,0px))":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
               {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
               {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
