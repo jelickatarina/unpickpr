@@ -709,7 +709,14 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
               <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginBottom:2}}><Ico d={I.heart} size={14} stroke={C.primary} sw={1.8}/></div>
               <div style={{display:"flex",flexDirection:"column",gap:8,maxWidth:"84%"}}>
                 <div className="bba">{p.tekst}</div>
-                {p.sos&&<button onClick={onSOS} style={{alignSelf:"flex-start",background:C.primaryGrad,color:"#fff",border:"none",borderRadius:14,padding:"10px 18px",fontSize:13,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:"pointer",boxShadow:"0 4px 16px rgba(122,158,142,.30)",display:"flex",alignItems:"center",gap:8}}><Ico d={I.shield} size={15} stroke="#fff" sw={2}/>Otvori SOS tehnike</button>}
+                {p.sos&&<button onClick={onSOS} style={{alignSelf:"stretch",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"13px 14px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,fontFamily:"'Plus Jakarta Sans',sans-serif",textAlign:"left",boxShadow:`0 2px 12px ${C.shadow}`}}>
+                  <div style={{width:40,height:40,borderRadius:13,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 12px ${C.primary}44`}}><Ico d={I.shield} size={18} stroke="#fff" sw={2}/></div>
+                  <div style={{flex:1}}>
+                    <p style={{fontSize:14,fontWeight:700,color:C.text,lineHeight:1,marginBottom:3}}>SOS tehnike</p>
+                    <p style={{fontSize:12,color:C.textLight,fontWeight:500}}>Vežbe disanja i smirenja</p>
+                  </div>
+                  <Ico d={I.chev} size={16} stroke={C.textLight} sw={2}/>
+                </button>}
               </div>
             </div>}
             {p.ko==="user"&&<div className="bbu">{p.tekst}</div>}
