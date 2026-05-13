@@ -799,7 +799,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
               {niz===0
                 ?<><Ico d={I.leaf} size={28} stroke={C.primary} sw={1.8}/><p style={{fontSize:13,fontWeight:700,color:C.textMid}}>Počni!</p></>
                 :<><span style={{fontSize:52,fontWeight:400,color:C.text,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{niz}</span>
-                  <span style={{fontSize:12,color:C.textLight,fontWeight:700,letterSpacing:.5}}>DANA 🔥</span></>
+                  <span style={{fontSize:22,lineHeight:1}}>🔥</span></>
               }
             </div>
           </div>
