@@ -206,7 +206,7 @@ function Auth({onDone}){
           return;
         }
         const {data:profile}=await supabase.from("profiles").select("name").eq("id",data.user.id).single();
-        onDone({ime:profile?.name||data.user.user_metadata?.name||em});
+        onDone({ime:profile?.name||data.user.user_metadata?.name||em,registeredAt:data.user.created_at});
       }else{
         const {data,error}=await supabase.auth.signUp({email:em.trim(),password:loz,options:{data:{name:ime.trim()}}});
         if(error){
@@ -216,7 +216,7 @@ function Auth({onDone}){
         }
         await supabase.from("profiles").upsert({id:data.user.id,name:ime.trim()});
         if(data.session){
-          onDone({ime:ime.trim()});
+          onDone({ime:ime.trim(),registeredAt:data.user.created_at});
         }else{
           setUspeh("Proveri email i potvrdi nalog, pa se prijavi.");
           setTimeout(()=>{setMode("l");setUspeh("");setLoz("");setLoz2("");},4000);
