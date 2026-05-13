@@ -672,8 +672,12 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
 
   async function sacuvaj(p){
     if(!userId){console.warn("sacuvaj: nema userId");return;}
-    const {error}=await supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id"});
-    if(error) console.error("sacuvaj greška:",error.message,error.code);
+    const {error}=await supabase.from("profiles").update({chat_history:p}).eq("id",userId);
+    if(error){
+      console.warn("update nije uspeo, probam upsert:",error.message);
+      const {error:e2}=await supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id"});
+      if(e2) console.error("sacuvaj upsert greška:",e2.message,e2.code);
+    }
   }
 
   useEffect(()=>{
@@ -692,17 +696,18 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
     setPoruke(np);porRef.current=np;setUnos("");setUcitava(true);
     if(!GROQ_KEY){const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna — nedostaje VITE_GROQ_API_KEY u .env fajlu."}];setPoruke(npp);porRef.current=npp;setUcitava(false);return;}
     try{
-      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})});
-      const data=await res.json();
+      const [res,klasRes]=await Promise.all([
+        fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})}),
+        fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:3,messages:[{role:"system",content:"Odgovori samo sa DA ili NE. DA znači: korisnik opisuje jak impuls da čačka kožu koji se dešava UPRAVO SAD, ili je u akutnoj krizi u ovom trenutku. NE znači sve ostalo."},{role:"user",content:txt}]})})
+      ]);
+      const [data,klasData]=await Promise.all([res.json(),klasRes.json()]);
       const raw=data.choices?.[0]?.message?.content||"Žao mi je, pokušaj ponovo.";
       const aiTekst=raw.replace(/\[SOS_DUGME\]/g,"").trim();
-      const klasRes=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:3,messages:[{role:"system",content:"Odgovori samo sa DA ili NE. DA znači: korisnik opisuje jak impuls da čačka kožu koji se dešava UPRAVO SAD, ili je u akutnoj krizi u ovom trenutku. NE znači: priča o prošlim iskustvima, deli osećanja, traži savete, ili razgovara generalno."},{role:"user",content:txt}]})});
-      const klasData=await klasRes.json();
       const imasSOS=(klasData.choices?.[0]?.message?.content||"").trim().toUpperCase().startsWith("DA");
       const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:imasSOS}];
       setPoruke(npp);porRef.current=npp;
-      await sacuvaj(npp);
-    }catch{const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu. Proveri internet vezu."}];setPoruke(npp);porRef.current=npp;}
+      sacuvaj(npp);
+    }catch(e){console.error("posalji greška:",e);const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu. Proveri internet vezu."}];setPoruke(npp);porRef.current=npp;}
     finally{setUcitava(false);}
   }
   return(
