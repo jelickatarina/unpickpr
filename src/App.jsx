@@ -472,88 +472,109 @@ function SOS({onZatvori}){
 }
 
 function NoviUnos({onSacuvaj,onOtkazi,editData}){
-  const [k,setK]=useState(1);
   const [saving,setSaving]=useState(false);
   const [u,setU]=useState(editData?{int:editData.int||5,ok:editData.ok||[],lok:editData.lok||"",epre:editData.epre||"",epost:editData.epost||"",ish:editData.ish||"",bel:editData.bel||"",slike:editData.slike||[]}:{int:5,ok:[],lok:"",epre:"",epost:"",ish:"",bel:"",slike:[]});
-  const N=5;
-  const Hdr=({title})=>(
-    <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:24}}>
-      <button className="btn-g" onClick={k>1?()=>setK(v=>v-1):onOtkazi} style={{padding:0}}><Ico d={I.back} size={20} stroke={C.textMid}/></button>
-      <div style={{flex:1}}>
-        <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{fontSize:14,fontWeight:700}}>{title}</span><span style={{fontSize:12,color:C.textLight,fontWeight:600}}>{k}/{N}</span></div>
-        <div className="pb"><div className="pf" style={{width:`${(k/N)*100}%`}}/></div>
-      </div>
-    </div>
-  );
+
   function toggleOk(o){
     if(o==="Ostalo"){setU(v=>({...v,ok:v.ok.includes("Ostalo")||v.ok.some(x=>x.startsWith("Ostalo:"))?v.ok.filter(x=>x!=="Ostalo"&&!x.startsWith("Ostalo:")):v.ok.includes("Ostalo")?v.ok:[...v.ok,"Ostalo"]}));return;}
     setU(v=>({...v,ok:v.ok.includes(o)?v.ok.filter(x=>x!==o):[...v.ok,o]}));
   }
   const ostaloAkt=u.ok.includes("Ostalo")||u.ok.some(x=>x.startsWith("Ostalo:"));
   const ostaloTekst=u.ok.find(x=>x.startsWith("Ostalo:"))?.slice(7)||"";
+
+  const ishodi=[
+    {v:"res",l:"Odolela/o",sub:"Impuls je prošao",c:C.green,bg:C.greenLight},
+    {v:"try",l:"Pokušala/o",sub:"Bilo je teško",c:C.amber,bg:C.amberLight},
+    {v:"ep", l:"Epizoda",   sub:"Desilo se",      c:C.red,  bg:C.red+"14"},
+  ];
+
   return(
-    <div style={{padding:"56px 24px 40px",minHeight:"100vh"}} className="fi">
-      {k===1&&<><Hdr title={editData?"Izmena unosa":"Novi unos"}/>
-        <h3 className="serif" style={{fontSize:26,marginBottom:20,letterSpacing:-0.3}}>Šta se desilo?</h3>
-        <span className="lbl">JAK IMPULS</span>
-        <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:8}}>
-          <input type="range" min={1} max={10} value={u.int} onChange={e=>setU(v=>({...v,int:+e.target.value}))} style={{flex:1,accentColor:C.primary}}/>
-          <span style={{fontSize:30,fontWeight:400,color:C.primary,minWidth:32,fontFamily:"'Instrument Serif',serif"}}>{u.int}</span>
+    <div style={{minHeight:"100vh",background:C.bg}} className="fi">
+      {/* Header */}
+      <div style={{padding:"52px 20px 16px",display:"flex",alignItems:"center",gap:14,borderBottom:`1px solid ${C.border}`,background:C.bg,position:"sticky",top:0,zIndex:10}}>
+        <button className="btn-g" onClick={onOtkazi} style={{padding:0,flexShrink:0}}><Ico d={I.back} size={22} stroke={C.textMid}/></button>
+        <h2 className="serif" style={{fontSize:22,letterSpacing:-0.3,flex:1}}>{editData?"Izmeni unos":"Novi unos"}</h2>
+        <button
+          disabled={!u.ish||saving}
+          onClick={()=>{if(!u.ish||saving)return;setSaving(true);onSacuvaj(u);}}
+          style={{background:u.ish?C.primaryGrad:"transparent",color:u.ish?"#fff":C.textLight,border:u.ish?"none":`1.5px solid ${C.border}`,borderRadius:100,padding:"9px 20px",fontSize:13,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:u.ish?"pointer":"default",transition:"all .2s",opacity:saving?0.6:1,flexShrink:0}}
+        >Sačuvaj</button>
+      </div>
+
+      <div style={{padding:"20px 20px 80px",display:"flex",flexDirection:"column",gap:22,overflowY:"auto"}}>
+
+        {/* Ishod — required */}
+        <div>
+          <span className="lbl">KAKAV JE BIO ISHOD?</span>
+          <div style={{display:"flex",flexDirection:"column",gap:8}}>
+            {ishodi.map(({v,l,sub,c,bg})=>(
+              <button key={v} onClick={()=>setU(x=>({...x,ish:v}))} style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",borderRadius:18,border:`2px solid ${u.ish===v?c:C.border}`,background:u.ish===v?bg:C.bgCard,cursor:"pointer",textAlign:"left",transition:"all .15s",fontFamily:"inherit"}}>
+                <div style={{width:32,height:32,borderRadius:10,background:u.ish===v?c+"22":C.bgMuted,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                  <Ico d={v==="res"?I.check:v==="try"?I.spark:I.x} size={15} stroke={u.ish===v?c:C.textLight} sw={2.5}/>
+                </div>
+                <div>
+                  <p style={{fontWeight:700,fontSize:15,color:u.ish===v?c:C.text,lineHeight:1}}>{l}</p>
+                  <p style={{fontSize:12,color:C.textLight,fontWeight:500,marginTop:3}}>{sub}</p>
+                </div>
+                {u.ish===v&&<div style={{marginLeft:"auto",width:20,height:20,borderRadius:"50%",background:c,display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={I.check} size={10} stroke="#fff" sw={3}/></div>}
+              </button>
+            ))}
+          </div>
         </div>
-        <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:C.textLight,fontWeight:600,marginBottom:24}}><span>Jedva primetio</span><span>Nepodnošljiv</span></div>
-        <span className="lbl">OKIDAČI <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(može više)</span></span>
-        <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:ostaloAkt?12:20}}>
-          {OKI.map(o=><button key={o} className={`chip${(o==="Ostalo"?ostaloAkt:u.ok.includes(o))?" on":""}`} onClick={()=>toggleOk(o)} style={{padding:"8px 14px"}}>{o}</button>)}
+
+        {/* Intenzitet */}
+        <div>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:10}}>
+            <span className="lbl" style={{marginBottom:0}}>JAK IMPULS</span>
+            <span style={{fontSize:26,fontWeight:400,color:C.primary,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{u.int}</span>
+          </div>
+          <input type="range" min={1} max={10} value={u.int} onChange={e=>setU(v=>({...v,int:+e.target.value}))} style={{width:"100%",accentColor:C.primary}}/>
+          <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:C.textLight,fontWeight:600,marginTop:4}}><span>Jedva primetno</span><span>Nepodnošljivo</span></div>
         </div>
-        {ostaloAkt&&<input className="inp" placeholder="Opiši okidač..." autoFocus value={ostaloTekst} onChange={e=>{const t=e.target.value;setU(v=>({...v,ok:[...v.ok.filter(x=>x!=="Ostalo"&&!x.startsWith("Ostalo:")),t?"Ostalo:"+t:"Ostalo"]}));}} style={{marginBottom:20}}/>}
-        <span className="lbl">LOKACIJA</span>
-        <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:28}}>
-          {LOK.map(l=><button key={l} className={`chip${u.lok===l?" on":""}`} onClick={()=>setU(v=>({...v,lok:l}))} style={{padding:"8px 12px",fontSize:13}}>{l}</button>)}
+
+        {/* Okidači */}
+        <div>
+          <span className="lbl">OKIDAČI <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
+          <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:ostaloAkt?10:0}}>
+            {OKI.map(o=><button key={o} className={`chip${(o==="Ostalo"?ostaloAkt:u.ok.includes(o))?" on":""}`} onClick={()=>toggleOk(o)}>{o}</button>)}
+          </div>
+          {ostaloAkt&&<input className="inp" placeholder="Opiši okidač..." value={ostaloTekst} onChange={e=>{const t=e.target.value;setU(v=>({...v,ok:[...v.ok.filter(x=>x!=="Ostalo"&&!x.startsWith("Ostalo:")),t?"Ostalo:"+t:"Ostalo"]}));}} style={{marginTop:8}}/>}
         </div>
-        <button className="btn-p" onClick={()=>setK(2)}>Nastavi →</button>
-      </>}
-      {k===2&&<><Hdr title="Emocije"/>
-        <h3 className="serif" style={{fontSize:26,marginBottom:20,letterSpacing:-0.3}}>Tvoje emocije</h3>
-        <span className="lbl">PRE</span>
-        <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:22}}>
-          {EMOCIJE.map(([e,l])=><button key={l} className={`chip${u.epre===l?" on":""}`} onClick={()=>setU(v=>({...v,epre:l}))}><span>{e}</span>{l}</button>)}
+
+        {/* Lokacija */}
+        <div>
+          <span className="lbl">LOKACIJA <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
+          <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+            {LOK.map(l=><button key={l} className={`chip${u.lok===l?" on":""}`} onClick={()=>setU(v=>({...v,lok:v.lok===l?"":l}))} style={{fontSize:13}}>{l}</button>)}
+          </div>
         </div>
-        <span className="lbl">POSLE</span>
-        <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:28}}>
-          {EMOCIJE.map(([e,l])=><button key={l+"p"} className={`chip${u.epost===l?" on":""}`} onClick={()=>setU(v=>({...v,epost:l}))}><span>{e}</span>{l}</button>)}
+
+        {/* Emocije */}
+        <div>
+          <span className="lbl">EMOCIJE <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
+          <div style={{display:"flex",gap:10,marginBottom:10}}>
+            <div style={{flex:1}}>
+              <p style={{fontSize:11,color:C.textLight,fontWeight:600,marginBottom:6}}>Pre</p>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                {EMOCIJE.map(([e,l])=><button key={l} onClick={()=>setU(v=>({...v,epre:v.epre===l?"":l}))} style={{padding:"6px 10px",borderRadius:100,border:`1.5px solid ${u.epre===l?C.primary:C.border}`,background:u.epre===l?C.primaryLight:C.bgCard,fontSize:13,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>{e}</button>)}
+              </div>
+            </div>
+            <div style={{flex:1}}>
+              <p style={{fontSize:11,color:C.textLight,fontWeight:600,marginBottom:6}}>Posle</p>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                {EMOCIJE.map(([e,l])=><button key={l+"p"} onClick={()=>setU(v=>({...v,epost:v.epost===l?"":l}))} style={{padding:"6px 10px",borderRadius:100,border:`1.5px solid ${u.epost===l?C.primary:C.border}`,background:u.epost===l?C.primaryLight:C.bgCard,fontSize:13,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>{e}</button>)}
+              </div>
+            </div>
+          </div>
         </div>
-        <button className="btn-p" onClick={()=>setK(3)}>Nastavi →</button>
-      </>}
-      {k===3&&<><Hdr title="Ishod"/>
-        <h3 className="serif" style={{fontSize:26,marginBottom:20,letterSpacing:-0.3}}>Kakav je bio ishod?</h3>
-        {[["res","Odolela sam impulsu"],["try","Pokušala sam, ali nije išlo"],["ep","Imala sam epizodu"]].map(([v,l])=><button key={v} className={`cr${u.ish===v?" on":""}`} onClick={()=>setU(x=>({...x,ish:v}))}>{l}</button>)}
-        <div style={{height:18}}/><button className="btn-p" onClick={()=>setK(4)} disabled={!u.ish} style={{opacity:u.ish?1:0.4}}>Nastavi →</button>
-      </>}
-      {k===4&&<><Hdr title="Fotografija"/>
-        <h3 className="serif" style={{fontSize:26,marginBottom:6,letterSpacing:-0.3}}>Dodaj fotografiju</h3>
-        <p style={{fontSize:14,color:C.textMid,marginBottom:20,fontWeight:500}}>Opciono — ostaje privatno</p>
-        <label style={{display:"block",border:`2px dashed ${C.border}`,borderRadius:22,padding:"30px 20px",textAlign:"center",cursor:"pointer",background:C.bgMuted,marginBottom:14}}>
-          <input type="file" accept="image/*" multiple style={{display:"none"}} onChange={e=>{Promise.all(Array.from(e.target.files).map(f=>new Promise(res=>{const r=new FileReader();r.onload=ev=>res(ev.target.result);r.readAsDataURL(f)}))).then(urls=>setU(v=>({...v,slike:[...v.slike,...urls]})))}}/>
-          <div style={{marginBottom:10}}><Ico d={I.camera} size={36} stroke={C.primary} sw={1.5}/></div>
-          <p style={{fontWeight:700,color:C.primary,marginBottom:4}}>Dodaj slike</p>
-          <p style={{fontSize:13,color:C.textLight}}>Tapni da odabereš iz galerije</p>
-        </label>
-        {u.slike.length>0&&<div style={{display:"flex",gap:10,flexWrap:"wrap",marginBottom:14}}>{u.slike.map((s,i)=><div key={i} style={{position:"relative"}}><img src={s} alt="" style={{width:80,height:80,borderRadius:14,objectFit:"cover"}}/><button onClick={()=>setU(v=>({...v,slike:v.slike.filter((_,j)=>j!==i)}))} style={{position:"absolute",top:-6,right:-6,width:22,height:22,borderRadius:"50%",background:C.red,color:"#fff",border:"none",fontSize:11,cursor:"pointer"}}>✕</button></div>)}</div>}
-        <button className="btn-p" onClick={()=>setK(5)}>Nastavi →</button>
-        <button className="btn-g" style={{width:"100%",marginTop:8,justifyContent:"center"}} onClick={()=>setK(5)}>Preskoči</button>
-      </>}
-      {k===5&&<><Hdr title="Beleška"/>
-        <h3 className="serif" style={{fontSize:26,marginBottom:6,letterSpacing:-0.3}}>Beleška</h3>
-        <p style={{fontSize:14,color:C.textMid,marginBottom:16,fontWeight:500}}>Šta se dešavalo? (opciono)</p>
-        <textarea className="inp" placeholder="Piši slobodno..." value={u.bel} onChange={e=>setU(v=>({...v,bel:e.target.value}))} style={{marginBottom:18}}/>
-        <div className="card" style={{background:C.bgMuted,boxShadow:"none",marginBottom:20}}>
-          <span className="lbl">PREGLED</span>
-          {[["Impuls",`${u.int}/10`],["Okidači",u.ok.length?u.ok.join(", "):"—"],["Lokacija",u.lok||"—"],["Pre",u.epre||"—"],["Posle",u.epost||"—"]].map(([kk,vv])=>(
-            <div key={kk} style={{display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:7}}><span style={{color:C.textLight,fontWeight:600}}>{kk}</span><span style={{fontWeight:700,color:C.textMid,textAlign:"right",maxWidth:"60%"}}>{vv}</span></div>
-          ))}
+
+        {/* Beleška */}
+        <div>
+          <span className="lbl">BELEŠKA <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
+          <textarea className="inp" placeholder="Šta se dešavalo?" value={u.bel} onChange={e=>setU(v=>({...v,bel:e.target.value}))} style={{minHeight:80}}/>
         </div>
-        <button className="btn-p" disabled={saving} style={{opacity:saving?0.6:1}} onClick={()=>{if(saving)return;setSaving(true);onSacuvaj(u);}}>{editData?"Sačuvaj izmene":"Sačuvaj unos"}</button>
-      </>}
+
+      </div>
     </div>
   );
 }
