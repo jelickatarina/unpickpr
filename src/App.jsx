@@ -731,12 +731,15 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
   const nedAmber=weekData.filter(w=>w.s==="ž").length;
   const nedCrvene=weekData.filter(w=>w.s==="c").length;
 
+  const r=72;const circ=2*Math.PI*r;
+  const ringOffset=circ*(1-pct/100);
+
   return(
-    <div style={{padding:"56px 18px 20px",minHeight:"100vh"}} className="fi">
+    <div style={{minHeight:"100vh",background:C.bg}} className="fi">
       {izvestaj!==null&&(
         <div style={{position:"fixed",inset:0,zIndex:200,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={()=>setIzvestaj(null)}>
-          <div style={{position:"absolute",inset:0,background:"rgba(30,20,16,.45)",backdropFilter:"blur(4px)"}}/>
-          <div onClick={e=>e.stopPropagation()} style={{position:"relative",background:C.bg,borderRadius:"32px 32px 0 0",padding:"24px 24px 52px",maxHeight:"75vh",overflowY:"auto",boxShadow:"0 -8px 40px rgba(42,36,32,.18)"}} className="fi">
+          <div style={{position:"absolute",inset:0,background:"rgba(42,24,32,.5)",backdropFilter:"blur(6px)"}}/>
+          <div onClick={e=>e.stopPropagation()} style={{position:"relative",background:C.bg,borderRadius:"32px 32px 0 0",padding:"24px 24px 56px",maxHeight:"75vh",overflowY:"auto",boxShadow:"0 -12px 48px rgba(168,90,116,.18)"}} className="fi">
             <div style={{width:36,height:4,borderRadius:2,background:C.border,margin:"0 auto 20px"}}/>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
               <h3 className="serif" style={{fontSize:22,letterSpacing:-0.3}}>{weekData[izvestaj].naziv}</h3>
@@ -764,91 +767,94 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
         </div>
       )}
 
-      {/* ── Header ── */}
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18}}>
-        <div>
-          <p style={{fontSize:13,color:C.textMid,fontWeight:500,marginBottom:2}}>{pozdrav}</p>
-          <h1 className="serif" style={{fontSize:30,lineHeight:1,letterSpacing:-0.5,color:C.text}}>{prikazIme}</h1>
+      {/* ── TOP SECTION: gradient hero ── */}
+      <div style={{background:`linear-gradient(160deg,${C.primaryLight} 0%,${C.bg} 55%)`,padding:"52px 22px 32px",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:-60,right:-60,width:200,height:200,borderRadius:"50%",background:C.primary+"0D"}}/>
+
+        {/* Header row */}
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:28,position:"relative"}}>
+          <div>
+            <p style={{fontSize:12,color:C.textLight,fontWeight:600,marginBottom:3,letterSpacing:.3}}>{pozdrav}</p>
+            <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.5,color:C.text}}>{prikazIme}</h1>
+          </div>
+          <button onClick={onLogout} style={{background:C.bgCard,border:`1px solid ${C.border}`,borderRadius:100,fontSize:11,color:C.textLight,fontWeight:700,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"7px 14px",boxShadow:"0 2px 8px rgba(192,120,144,.1)"}}>Odjavi</button>
         </div>
-        <button onClick={onLogout} style={{background:"transparent",border:`1px solid ${C.border}`,borderRadius:100,fontSize:11,color:C.textLight,fontWeight:700,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"7px 13px",marginTop:4}}>Odjavi</button>
+
+        {/* Streak ring — centered hero */}
+        <div style={{display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
+          <div style={{position:"relative",width:r*2+20,height:r*2+20}}>
+            <svg width={r*2+20} height={r*2+20} style={{position:"absolute",inset:0,transform:"rotate(-90deg)"}}>
+              <circle cx={r+10} cy={r+10} r={r} fill="none" stroke={C.primary+"1A"} strokeWidth={7}/>
+              <circle cx={r+10} cy={r+10} r={r} fill="none" stroke={C.primaryGrad.includes("gradient")?"url(#pg)":C.primary} strokeWidth={7}
+                strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={ringOffset}
+                style={{transition:"stroke-dashoffset .6s ease"}}/>
+              <defs>
+                <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#D898AC"/>
+                  <stop offset="100%" stopColor="#A85A74"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2}}>
+              {niz===0
+                ?<><Ico d={I.leaf} size={28} stroke={C.primary} sw={1.8}/><p style={{fontSize:13,fontWeight:700,color:C.textMid}}>Počni!</p></>
+                :<><span style={{fontSize:52,fontWeight:400,color:C.text,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{niz}</span>
+                  <span style={{fontSize:12,color:C.textLight,fontWeight:700,letterSpacing:.5}}>DANA 🔥</span></>
+              }
+            </div>
+          </div>
+          <p style={{fontSize:13,color:badDanas?C.red:C.textMid,fontWeight:600,marginTop:10}}>
+            {badDanas?"Resetovano danas":`${faliTekst} do sledeće vatrice`}
+          </p>
+        </div>
       </div>
 
-      {/* ── Row 1: Streak widget + Week widget ── */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:12}}>
+      {/* ── BOTTOM SECTION: white panel ── */}
+      <div style={{padding:"24px 20px 20px",display:"flex",flexDirection:"column",gap:16}}>
 
-        {/* Streak widget */}
-        <div style={{background:C.primaryGrad,borderRadius:28,padding:"20px 18px",boxShadow:"0 10px 36px rgba(94,140,122,.38)",position:"relative",overflow:"hidden",minHeight:190}}>
-          <div style={{position:"absolute",top:-24,right:-24,width:90,height:90,borderRadius:"50%",background:"rgba(255,255,255,.09)"}}/>
-          <div style={{position:"absolute",bottom:-16,left:-16,width:60,height:60,borderRadius:"50%",background:"rgba(255,255,255,.06)"}}/>
-          <p style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,.65)",letterSpacing:1.2,textTransform:"uppercase",marginBottom:12,position:"relative"}}>Vatrica 🔥</p>
-          <div style={{position:"relative",marginBottom:4}}>
-            {niz===0
-              ?<p style={{fontSize:20,fontWeight:700,color:"#fff",lineHeight:1.2}}>Počni<br/>danas!</p>
-              :<div style={{display:"flex",alignItems:"baseline",gap:4}}>
-                <span style={{fontSize:58,fontWeight:400,color:"#fff",fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{niz}</span>
-                <span style={{fontSize:14,color:"rgba(255,255,255,.75)",fontWeight:600}}>dana</span>
-              </div>
-            }
-          </div>
-          <p style={{fontSize:11,color:"rgba(255,255,255,.6)",fontWeight:600,marginBottom:14}}>{niz===0?"Kreni":niz<7?"Nastavi":niz<14?"Sjajno!":niz<30?"Odlično!":"Šampion! 🏆"}</p>
-          <div style={{height:3,background:"rgba(255,255,255,.25)",borderRadius:100,overflow:"hidden",marginBottom:6}}>
-            <div style={{height:"100%",background:"#fff",borderRadius:100,width:`${pct}%`,transition:"width .5s ease"}}/>
-          </div>
-          <p style={{fontSize:10,color:badDanas?"rgba(255,180,180,.9)":"rgba(255,255,255,.6)",fontWeight:700}}>{faliTekst}</p>
-        </div>
-
-        {/* Week widget */}
-        <div style={{background:C.bgCard,borderRadius:28,padding:"18px 14px",boxShadow:"0 4px 20px rgba(122,158,142,.08)",border:`1px solid ${C.border}`,display:"flex",flexDirection:"column",minHeight:190}}>
-          <p style={{fontSize:10,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:12}}>Ova nedelja</p>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:3,marginBottom:"auto"}}>
+        {/* Week strip */}
+        <div style={{background:C.bgCard,borderRadius:22,padding:"16px 18px",border:`1px solid ${C.border}`}}>
+          <p style={{fontSize:10,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:14}}>Ova nedelja</p>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             {weekData.map(({s},i)=>(
-              <div key={i} onClick={()=>s!==null&&setIzvestaj(i)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,cursor:s!==null?"pointer":"default"}}>
-                <div style={{width:"100%",aspectRatio:"1",borderRadius:9,display:"flex",alignItems:"center",justifyContent:"center",background:s==="z"?C.greenLight:s==="ž"?C.amberLight:s==="c"?`${C.red}18`:C.bgMuted,transform:izvestaj===i?"scale(1.15)":"scale(1)",transition:"transform .18s"}}>
-                  {s==="z"&&<Ico d={I.check} size={10} stroke={C.green} sw={2.5}/>}
-                  {s==="ž"&&<span style={{fontSize:9,color:C.amber,fontWeight:900,lineHeight:1}}>~</span>}
-                  {s==="c"&&<Ico d={I.x} size={9} stroke={C.red} sw={2.5}/>}
-                  {s===null&&<span style={{width:3,height:3,borderRadius:"50%",background:C.border,display:"block"}}/>}
+              <div key={i} onClick={()=>s!==null&&setIzvestaj(i)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,cursor:s!==null?"pointer":"default"}}>
+                <div style={{width:36,height:36,borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",
+                  background:s==="z"?C.greenLight:s==="ž"?C.amberLight:s==="c"?C.red+"18":C.bgMuted,
+                  boxShadow:izvestaj===i?`0 0 0 2px ${C.primary}`:"none",transition:"box-shadow .18s"}}>
+                  {s==="z"&&<Ico d={I.check} size={14} stroke={C.green} sw={2.5}/>}
+                  {s==="ž"&&<span style={{fontSize:12,color:C.amber,fontWeight:900}}>~</span>}
+                  {s==="c"&&<Ico d={I.x} size={12} stroke={C.red} sw={2.5}/>}
+                  {s===null&&<span style={{width:5,height:5,borderRadius:"50%",background:C.border,display:"block"}}/>}
                 </div>
-                <span style={{fontSize:7.5,color:izvestaj===i?C.primary:C.textLight,fontWeight:700}}>{dani[i]}</span>
-              </div>
-            ))}
-          </div>
-          <div style={{borderTop:`1px solid ${C.border}`,paddingTop:12,marginTop:12,display:"flex",justifyContent:"space-between"}}>
-            {[[nedZelene,C.green,"✓"],[nedAmber,C.amber,"~"],[nedCrvene,C.red,"✗"]].map(([n,c,sym])=>(
-              <div key={sym} style={{textAlign:"center",flex:1}}>
-                <div style={{fontSize:20,fontWeight:400,color:n>0?c:C.border,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{n}</div>
-                <div style={{fontSize:9,fontWeight:700,color:C.textLight,marginTop:2}}>{sym}</div>
+                <span style={{fontSize:9,color:s==="z"?C.green:s==="c"?C.red:s==="ž"?C.amber:C.textLight,fontWeight:700}}>{dani[i]}</span>
               </div>
             ))}
           </div>
         </div>
-      </div>
 
-      {/* ── Quote widget (full width) ── */}
-      <div style={{background:C.purpleLight,borderRadius:28,padding:"20px 22px",marginBottom:12,border:`1px solid ${C.purple}22`}}>
-        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-          <div style={{width:26,height:26,borderRadius:8,background:C.purple+"22",display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={I.spark} size={12} stroke={C.purple} sw={1.8}/></div>
-          <p style={{fontSize:10,fontWeight:700,color:C.purple,letterSpacing:1,textTransform:"uppercase",opacity:.8}}>Poruka dana</p>
+        {/* Quote */}
+        <div style={{padding:"4px 6px 4px 20px",borderLeft:`3px solid ${C.primary}`,position:"relative"}}>
+          <p style={{fontSize:11,fontWeight:700,color:C.primary,letterSpacing:1,textTransform:"uppercase",marginBottom:8,opacity:.75}}>Poruka dana</p>
+          <p className="serif italic" style={{fontSize:17,color:C.text,lineHeight:1.75}}>{poruka}</p>
         </div>
-        <p className="serif italic" style={{fontSize:17,color:"#5A4060",lineHeight:1.75}}>{poruka}</p>
-      </div>
 
-      {/* ── Action widgets row ── */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-        <button onClick={onSOS} style={{background:C.primaryGrad,border:"none",borderRadius:24,padding:"18px 16px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"flex-start",gap:12,boxShadow:"0 8px 28px rgba(94,140,122,.30)",fontFamily:"'Plus Jakarta Sans',sans-serif",touchAction:"manipulation"}}>
-          <div style={{width:40,height:40,borderRadius:13,background:"rgba(255,255,255,.22)",display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={I.shield} size={20} stroke="#fff" sw={2}/></div>
-          <div style={{textAlign:"left"}}>
-            <p style={{fontSize:16,fontWeight:700,color:"#fff",marginBottom:2}}>SOS</p>
-            <p style={{fontSize:11,color:"rgba(255,255,255,.65)",fontWeight:600}}>Tehnika smirenja</p>
-          </div>
-        </button>
-        <button onClick={onNoviUnos} style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:24,padding:"18px 16px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"flex-start",gap:12,boxShadow:"0 4px 16px rgba(122,158,142,.08)",fontFamily:"'Plus Jakarta Sans',sans-serif",touchAction:"manipulation"}}>
-          <div style={{width:40,height:40,borderRadius:13,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={I.plus} size={20} stroke={C.primary} sw={2.5}/></div>
-          <div style={{textAlign:"left"}}>
-            <p style={{fontSize:16,fontWeight:700,color:C.text,marginBottom:2}}>Upiši</p>
-            <p style={{fontSize:11,color:C.textLight,fontWeight:600}}>Novi unos</p>
-          </div>
-        </button>
+        {/* Action buttons */}
+        <div style={{display:"flex",gap:12}}>
+          <button onClick={onSOS} style={{flex:1,background:C.primaryGrad,border:"none",borderRadius:20,padding:"18px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,boxShadow:`0 8px 28px ${C.primary}44`,fontFamily:"'Plus Jakarta Sans',sans-serif",touchAction:"manipulation"}}>
+            <div style={{width:38,height:38,borderRadius:12,background:"rgba(255,255,255,.2)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.shield} size={18} stroke="#fff" sw={2}/></div>
+            <div style={{textAlign:"left"}}>
+              <p style={{fontSize:15,fontWeight:700,color:"#fff",lineHeight:1}}>SOS</p>
+              <p style={{fontSize:11,color:"rgba(255,255,255,.65)",fontWeight:600,marginTop:3}}>Smiri se</p>
+            </div>
+          </button>
+          <button onClick={onNoviUnos} style={{flex:1,background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:20,padding:"18px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,fontFamily:"'Plus Jakarta Sans',sans-serif",touchAction:"manipulation"}}>
+            <div style={{width:38,height:38,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.plus} size={18} stroke={C.primary} sw={2.5}/></div>
+            <div style={{textAlign:"left"}}>
+              <p style={{fontSize:15,fontWeight:700,color:C.text,lineHeight:1}}>Upiši</p>
+              <p style={{fontSize:11,color:C.textLight,fontWeight:600,marginTop:3}}>Novi unos</p>
+            </div>
+          </button>
+        </div>
       </div>
     </div>
   );
