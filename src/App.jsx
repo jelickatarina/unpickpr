@@ -727,7 +727,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
             snimi(azurirano);
           }
         }).catch(()=>{});
-    }catch(e){console.error("posalji catch:",e?.message);snimi([...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu — "+(e?.message||"proveri internet vezu.")}]);}
+    }catch(e){console.error("posalji catch:",e?.message);snimi([...np,{id:Date.now()+1,ko:"ai",tekst:"Trenutno ne mogu da odgovorim. Pokušaj za koji minut. 💙"}]);}
     finally{setUcitava(false);}
   }
   return(
