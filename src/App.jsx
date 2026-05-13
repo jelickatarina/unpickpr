@@ -670,48 +670,35 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   const [unos,setUnos]=useState("");const [ucitava,setUcitava]=useState(false);const krajRef=useRef(null);
   const porRef=useRef([pocetna]);
 
-  const lsKey=userId?`chat_${userId}`:null;
-
-  // čuvaj automatski svaki put kad se poruke promene
-  useEffect(()=>{
-    if(!lsKey||poruke.length<=1) return;
-    localStorage.setItem(lsKey,JSON.stringify(poruke));
-    supabase.from("profiles").upsert({id:userId,chat_history:poruke},{onConflict:"id"}).catch(()=>{});
-  },[poruke]);
+  function sacuvajPoruke(p){
+    setPoruke(p);
+    porRef.current=p;
+    if(userId) localStorage.setItem(`chat_${userId}`,JSON.stringify(p));
+  }
 
   useEffect(()=>{
     if(!userId) return;
-    const key=`chat_${userId}`;
-    const local=localStorage.getItem(key);
-    if(local){
-      try{const p=JSON.parse(local);if(p?.length){setPoruke(p);porRef.current=p;return;}}catch{}
-    }
-    supabase.from("profiles").select("chat_history").eq("id",userId).single().then(({data})=>{
-      if(data?.chat_history?.length){
-        setPoruke(data.chat_history);porRef.current=data.chat_history;
-        localStorage.setItem(key,JSON.stringify(data.chat_history));
-      }
-    });
+    const local=localStorage.getItem(`chat_${userId}`);
+    if(local){try{const p=JSON.parse(local);if(p?.length){setPoruke(p);porRef.current=p;}}catch{}}
   },[userId]);
 
   useEffect(()=>{krajRef.current?.scrollIntoView({behavior:"smooth"})},[poruke,ucitava]);
   async function posalji(){
     const txt=unos.trim();if(!txt||ucitava)return;
-    const np=[...poruke,{id:Date.now(),ko:"user",tekst:txt}];
-    setPoruke(np);porRef.current=np;setUnos("");setUcitava(true);
-    if(!GROQ_KEY){const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna — nedostaje VITE_GROQ_API_KEY u .env fajlu."}];setPoruke(npp);porRef.current=npp;setUcitava(false);return;}
+    const np=[...porRef.current,{id:Date.now(),ko:"user",tekst:txt}];
+    sacuvajPoruke(np);setUnos("");setUcitava(true);
+    if(!GROQ_KEY){sacuvajPoruke([...np,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna."}]);setUcitava(false);return;}
     try{
       const [res,klasRes]=await Promise.all([
         fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})}),
-        fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:3,messages:[{role:"system",content:"Odgovori samo sa DA ili NE. DA znači: korisnik opisuje jak impuls da čačka kožu koji se dešava UPRAVO SAD, ili je u akutnoj krizi u ovom trenutku. NE znači sve ostalo."},{role:"user",content:txt}]})})
+        fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:3,messages:[{role:"system",content:"Odgovori samo sa DA ili NE. DA znači: korisnik opisuje jak impuls da čačka kožu koji se dešava UPRAVO SAD. NE znači sve ostalo."},{role:"user",content:txt}]})})
       ]);
       const [data,klasData]=await Promise.all([res.json(),klasRes.json()]);
       const raw=data.choices?.[0]?.message?.content||"Žao mi je, pokušaj ponovo.";
       const aiTekst=raw.replace(/\[SOS_DUGME\]/g,"").trim();
       const imasSOS=(klasData.choices?.[0]?.message?.content||"").trim().toUpperCase().startsWith("DA");
-      const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:imasSOS}];
-      setPoruke(npp);porRef.current=npp;
-    }catch(e){console.error("posalji greška:",e);const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu. Proveri internet vezu."}];setPoruke(npp);porRef.current=npp;}
+      sacuvajPoruke([...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:imasSOS}]);
+    }catch(e){sacuvajPoruke([...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu. Proveri internet vezu."}]);}
     finally{setUcitava(false);}
   }
   return(
