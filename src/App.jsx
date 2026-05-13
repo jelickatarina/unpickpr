@@ -568,6 +568,17 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
           </div>
         </div>
 
+        {/* Fotografija */}
+        <div>
+          <span className="lbl">FOTOGRAFIJA</span>
+          <label style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",borderRadius:18,border:`1.5px dashed ${C.border}`,background:C.bgMuted,cursor:"pointer"}}>
+            <input type="file" accept="image/*" multiple style={{display:"none"}} onChange={e=>{Promise.all(Array.from(e.target.files).map(f=>new Promise(res=>{const r=new FileReader();r.onload=ev=>res(ev.target.result);r.readAsDataURL(f)}))).then(urls=>setU(v=>({...v,slike:[...v.slike,...urls]})))}}/>
+            <div style={{width:38,height:38,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.camera} size={18} stroke={C.primary} sw={1.8}/></div>
+            <div><p style={{fontWeight:600,fontSize:14,color:C.textMid}}>Dodaj fotografiju</p><p style={{fontSize:12,color:C.textLight}}>Ostaje privatno</p></div>
+          </label>
+          {u.slike.length>0&&<div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>{u.slike.map((s,i)=><div key={i} style={{position:"relative"}}><img src={s} alt="" style={{width:80,height:80,borderRadius:14,objectFit:"cover"}}/><button onClick={()=>setU(v=>({...v,slike:v.slike.filter((_,j)=>j!==i)}))} style={{position:"absolute",top:-6,right:-6,width:22,height:22,borderRadius:"50%",background:C.red,color:"#fff",border:"none",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>✕</button></div>)}</div>}
+        </div>
+
         {/* Beleška */}
         <div>
           <span className="lbl">BELEŠKA <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
