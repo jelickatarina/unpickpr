@@ -572,6 +572,8 @@ OBRAĆANJE: Bez "draga/dragi". Koristi direktno ime ili "ti/tebi". Rodno neutral
 
 STIL: Topla, strpljiva, bez osude. Postavljaj otvorena pitanja da bi korisnik podelio šta ga muči — ne daj gotove odgovore bez razumevanja situacije. Aktivno slušaj i reflektuj ono što čuješ.
 
+SOS PRAVILO: Kada korisnik kaže da se oseća loše, da ima jak impuls, da želi da čačka, da mu/joj je teško, da treba da se smiri — UVEK na kraju poruke dodaj tačno ovaj tag (bez izmena): [SOS_DUGME]. Pre toga reci nešto ohrabrujuće — da izdrži, da može ovo, da si tu. Npr: "Znam da je teško, ali možeš da izdržiš — hajde da probamo jednu tehniku smirenja zajedno. [SOS_DUGME]"
+
 OBRASCI (koristi ovo da bi davala personalizovane uvide):
 ${obrasci.length?obrasci.map(o=>"- "+o).join("\n"):"- Nema dovoljno podataka za obrasce još uvek."}
 
@@ -586,7 +588,7 @@ PODACI O KORISNIKU (${ime}):
 Nikada ne pominjaj bazu podataka, API ni tehničke detalje. Govori prirodno. Budi sažeta — 2-4 rečenice. Ne zamenjuješ stručnu pomoć.`;
 }
 
-function AIChat({ime,niz,unosi,userId}){
+function AIChat({ime,niz,unosi,userId,onSOS}){
   const pocetna={id:0,ko:"ai",tekst:`Zdravo${ime?" "+ime:""}! Ja sam Mia — tu sam da te saslušam, bez osude i bez žurbe. Možeš mi reći šta te muči, kako se osećaš, ili šta ti je na umu. Šta se dešava kod tebe?`};
   const [poruke,setPoruke]=useState([pocetna]);
   const [unos,setUnos]=useState("");const [ucitava,setUcitava]=useState(false);const krajRef=useRef(null);
@@ -613,8 +615,10 @@ function AIChat({ime,niz,unosi,userId}){
     try{
       const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})});
       const data=await res.json();
-      const aiTekst=data.choices?.[0]?.message?.content||"Žao mi je, pokušaj ponovo.";
-      const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst}];
+      const raw=data.choices?.[0]?.message?.content||"Žao mi je, pokušaj ponovo.";
+      const imasSOS=raw.includes("[SOS_DUGME]");
+      const aiTekst=raw.replace("[SOS_DUGME]","").trim();
+      const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:imasSOS}];
       setPoruke(npp);porRef.current=npp;
       await sacuvaj(npp);
     }catch{const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu. Proveri internet vezu."}];setPoruke(npp);porRef.current=npp;}
@@ -635,7 +639,10 @@ function AIChat({ime,niz,unosi,userId}){
           <div key={p.id} style={{display:"flex",flexDirection:"column",alignItems:p.ko==="user"?"flex-end":"flex-start"}}>
             {p.ko==="ai"&&<div style={{display:"flex",alignItems:"flex-end",gap:8}}>
               <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginBottom:2}}><Ico d={I.spark} size={14} stroke={C.primary} sw={1.5}/></div>
-              <div className="bba">{p.tekst}</div>
+              <div style={{display:"flex",flexDirection:"column",gap:8,maxWidth:"84%"}}>
+                <div className="bba">{p.tekst}</div>
+                {p.sos&&<button onClick={onSOS} style={{alignSelf:"flex-start",background:C.primaryGrad,color:"#fff",border:"none",borderRadius:14,padding:"10px 18px",fontSize:13,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:"pointer",boxShadow:"0 4px 16px rgba(196,113,74,.35)",display:"flex",alignItems:"center",gap:8}}><Ico d={I.shield} size={15} stroke="#fff" sw={2}/>Otvori SOS tehnike</button>}
+              </div>
             </div>}
             {p.ko==="user"&&<div className="bbu">{p.tekst}</div>}
           </div>
@@ -1185,7 +1192,7 @@ export default function App(){
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
               {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
               {ekran==="bib"&&<Biblioteka/>}
-              {ekran==="chat"&&<AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id}/>}
+              {ekran==="chat"&&<AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)}/>}
             </div>
             <nav className="bnav">
               {NAV.map(n=>(
