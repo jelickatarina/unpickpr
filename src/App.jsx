@@ -693,8 +693,9 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
       const data=await res.json();
       const raw=data.choices?.[0]?.message?.content||"Žao mi je, pokušaj ponovo.";
       const aiTekst=raw.replace(/\[SOS_DUGME\]/g,"").trim();
-      const krizaRec=/ne mogu da se zaustavim|imam jak impuls|ho[cć]u da [cč]a[cč]kam|ne mogu vi[sš]e|ne mogu da se kontroli[sš]em|hitno mi treba pomo[cć]/i;
-      const imasSOS=krizaRec.test(txt);
+      const klasRes=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:3,messages:[{role:"system",content:"Odgovori samo sa DA ili NE. DA znači: korisnik opisuje jak impuls da čačka kožu koji se dešava UPRAVO SAD, ili je u akutnoj krizi u ovom trenutku. NE znači: priča o prošlim iskustvima, deli osećanja, traži savete, ili razgovara generalno."},{role:"user",content:txt}]})});
+      const klasData=await klasRes.json();
+      const imasSOS=(klasData.choices?.[0]?.message?.content||"").trim().toUpperCase().startsWith("DA");
       const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:imasSOS}];
       setPoruke(npp);porRef.current=npp;
       await sacuvaj(npp);
