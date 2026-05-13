@@ -611,7 +611,7 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
   );
 }
 
-const GROQ_KEY=import.meta.env.VITE_GROQ_API_KEY||"";
+const GEMINI_KEY=import.meta.env.VITE_GEMINI_API_KEY||"";
 
 function buildSys(ime,niz,unosi){
   const today=new Date();today.setHours(0,0,0,0);
@@ -707,19 +707,21 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
     const txt=unos.trim();if(!txt||ucitava)return;
     const np=[...poruke,{id:Date.now(),ko:"user",tekst:txt}];
     setPoruke(np);porRef.current=np;setUnos("");setUcitava(true);
-    if(!GROQ_KEY){const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna — nedostaje VITE_GROQ_API_KEY u .env fajlu."}];setPoruke(npp);porRef.current=npp;setUcitava(false);return;}
+    if(!GEMINI_KEY){const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna — nedostaje VITE_GEMINI_API_KEY u podešavanjima."}];setPoruke(npp);porRef.current=npp;setUcitava(false);return;}
+    const GURL="https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
+    const GHDRS={"Content-Type":"application/json","Authorization":`Bearer ${GEMINI_KEY}`};
     try{
-      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.1-8b-instant",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})});
+      const res=await fetch(GURL,{method:"POST",headers:GHDRS,body:JSON.stringify({model:"gemini-2.0-flash",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})});
       const data=await res.json();
-      if(!res.ok||data.error){console.error("Groq API greška:",JSON.stringify(data.error||data));throw new Error(data.error?.message||"API greška "+res.status);}
+      if(!res.ok||data.error){console.error("Gemini API greška:",JSON.stringify(data.error||data));throw new Error(data.error?.message||"API greška "+res.status);}
       const raw=data.choices?.[0]?.message?.content||"";
-      if(!raw){console.error("Groq prazan odgovor:",JSON.stringify(data));throw new Error("prazan odgovor");}
+      if(!raw){console.error("Gemini prazan odgovor:",JSON.stringify(data));throw new Error("prazan odgovor");}
       const aiTekst=raw.replace(/\[SOS_DUGME\]/g,"").trim();
       const aiId=Date.now()+1;
       const npp=[...np,{id:aiId,ko:"ai",tekst:aiTekst}];
       snimi(npp);
       // SOS detekcija u pozadini — ne blokira čuvanje
-      fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.1-8b-instant",max_tokens:3,messages:[{role:"system",content:"Odgovori samo sa DA ili NE. DA samo ako korisnik opisuje jak, aktivan impuls da čačka kožu koji se dešava UPRAVO SAD ili kaže da je u akutnoj krizi. NE za sve ostalo."},{role:"user",content:txt}]})})
+      fetch(GURL,{method:"POST",headers:GHDRS,body:JSON.stringify({model:"gemini-2.0-flash",max_tokens:3,messages:[{role:"system",content:"Odgovori samo sa DA ili NE. DA samo ako korisnik opisuje jak, aktivan impuls da čačka kožu koji se dešava UPRAVO SAD ili kaže da je u akutnoj krizi. NE za sve ostalo."},{role:"user",content:txt}]})})
         .then(r=>r.json()).then(d=>{
           const jeste=(d.choices?.[0]?.message?.content||"").trim().toUpperCase().startsWith("DA");
           if(jeste){
