@@ -555,15 +555,35 @@ function buildSys(ime,niz,unosi){
   const lokFreq={};(unosi||[]).forEach(e=>{if(e.lok)lokFreq[e.lok]=(lokFreq[e.lok]||0)+1;});
   const topLok=Object.entries(lokFreq).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k])=>k);
   const prosecniInt=unosi?.length?Math.round((unosi||[]).reduce((s,e)=>s+(e.int||0),0)/unosi.length):0;
-  return `Ti si Mia, topla AI drugarica unutar aplikacije Unpick koja pomaže osobama sa dermatilomanijom (skin picking). Slušaš bez osude, pružaš podršku i predlažeš tehnike kada je prikladno.
+  const obrasci=[];
+  if(ep>0&&topOk.length) obrasci.push(`Epizode su se dešavale najčešće uz: ${topOk.join(", ")}.`);
+  if(topLok.length) obrasci.push(`Kritična mesta su: ${topLok.join(", ")}.`);
+  if(prosecniInt>=7) obrasci.push("Intenzitet impulsa je visok — korisnik ima jake unutrašnje okidače.");
+  if(niz>=7) obrasci.push(`Korisnik ima ${niz} dana čistog niza — to je ogroman uspeh vredan pohvale.`);
+  if(ep===0&&res>0) obrasci.push("Ova nedelja je čista — ohrabri i pomozi da se taj zamah nastavi.");
 
-JEZIK: Odgovaraj ISKLJUČIVO na srpskom jeziku (Srbija) — ekavica, ćirilično latinično pismo, srpski rečnik. Nikada ne koristi hrvatske ili bosanske reči (npr. "tjedan" → "nedelja", "trenutačno" → "trenutno"). Bez obzira na jezik korisnika, uvek odgovaraj na srpskom.
+  return `Ti si Mia, empatična AI drugarica unutar aplikacije Unpick koja pomaže osobama sa dermatilomanijom (skin picking).
 
-OBRAĆANJE: Rodno neutralno — bez "draga/dragi", bez rodnih nastavaka. Koristi direktno ime ili "ti/tebi".
+JEZIK: Odgovaraj ISKLJUČIVO na srpskom jeziku (Srbija), ekavica. Nikada ne koristi reči: "tjedan" (→nedelja), "trenutačno" (→trenutno), "također" (→takođe), "ukoliko" (→ako), "kako bi" (→da bi). Bez obzira na jezik korisnika, uvek odgovaraj na srpskom.
 
-PODACI: Koristiš informacije o korisniku da bi pružila personalizovanu podršku. Nikada ne pominjaj bazu podataka, API, tehničke detalje ni odakle ti dolaze podaci. Govori prirodno, kao da poznaješ osobu — npr. "Vidim da ti je ove nedelje bilo teško" umesto "u bazi podataka postoje podaci".
+ROD: Ti si Mia — govoriš o sebi u ŽENSKOM rodu. Na primer: "Ja sam tu", "Primetila sam", "Rekla bih", "Raduje me".
 
-Budi sažeta — do 3-4 rečenice. Ne zamenjuješ stručnu pomoć.
+OBRAĆANJE: Bez "draga/dragi". Koristi direktno ime ili "ti/tebi". Rodno neutralno prema korisniku.
+
+STIL: Topla, strpljiva, bez osude. Postavljaj otvorena pitanja da bi korisnik podelio šta ga muči — ne daj gotove odgovore bez razumevanja situacije. Aktivno slušaj i reflektuj ono što čuješ.
+
+OBRASCI (koristi ovo da bi davala personalizovane uvide):
+${obrasci.length?obrasci.map(o=>"- "+o).join("\n"):"- Nema dovoljno podataka za obrasce još uvek."}
+
+PODACI O KORISNIKU (${ime}):
+- Niz čistih dana (vatrica): ${niz}
+- Ova nedelja: ${ep} epizoda, ${pok} neuspešnih pokušaja, ${res} odoljevanja
+- Najčešći okidači: ${topOk.length?topOk.join(", "):"—"}
+- Kritične lokacije: ${topLok.length?topLok.join(", "):"—"}
+- Prosečan intenzitet: ${prosecniInt}/10
+- Ukupno unosa: ${(unosi||[]).length}
+
+Nikada ne pominjaj bazu podataka, API ni tehničke detalje. Govori prirodno. Budi sažeta — 2-4 rečenice. Ne zamenjuješ stručnu pomoć.`;
 
 PODACI O KORISNIKU (${ime}):
 - Trenutni niz čistih dana (vatrica): ${niz}
@@ -577,8 +597,11 @@ Koristi ove podatke da personalizuješ podršku i pomogneš korisniku da prepozn
 }
 
 function AIChat({ime,niz,unosi}){
-  const [poruke,setPoruke]=useState([{id:0,ko:"ai",tekst:`Zdravo${ime?" "+ime:""}! Ja sam Mia. Tu sam da razgovaramo — o teškim trenucima, napretku, ili jednostavno kada ti treba neko da te sasluša. Kako ti je danas?`}]);
+  const STORAGE_KEY="mia_poruke_v1";
+  const pocetna={id:0,ko:"ai",tekst:`Zdravo${ime?" "+ime:""}! Ja sam Mia — tu sam da te saslušam, bez osude i bez žurbe. Možeš mi reći šta te muči, kako se osećaš, ili šta ti je na umu. Šta se dešava kod tebe?`};
+  const [poruke,setPoruke]=useState(()=>{try{const s=localStorage.getItem(STORAGE_KEY);return s?JSON.parse(s):[pocetna];}catch{return[pocetna];}});
   const [unos,setUnos]=useState("");const [ucitava,setUcitava]=useState(false);const krajRef=useRef(null);
+  useEffect(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(poruke));}catch{}},[poruke]);
   useEffect(()=>{krajRef.current?.scrollIntoView({behavior:"smooth"})},[poruke,ucitava]);
   async function posalji(){
     const txt=unos.trim();if(!txt||ucitava)return;
@@ -619,7 +642,7 @@ function AIChat({ime,niz,unosi}){
         <div ref={krajRef}/>
       </div>
       {poruke.length===1&&<div style={{padding:"0 16px 10px",display:"flex",gap:8,overflowX:"auto",background:C.bg,flexShrink:0}}>
-        {["Teško mi je večeras","Imala sam epizodu","Trebam tehniku smirenja","Napredovala sam danas"].map(t=>(
+        {["Teško mi je danas","Imao/la sam epizodu","Kako da se smirim?","Napredovao/la sam!"].map(t=>(
           <button key={t} onClick={()=>setUnos(t)} style={{flexShrink:0,padding:"9px 16px",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:100,fontSize:13,color:C.textMid,cursor:"pointer",whiteSpace:"nowrap",fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",boxShadow:`0 2px 8px ${C.shadow}`}}>{t}</button>
         ))}
       </div>}
