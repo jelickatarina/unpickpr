@@ -694,14 +694,16 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
     try{
       const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})});
       const data=await res.json();
-      const raw=data.choices?.[0]?.message?.content||"Žao mi je, pokušaj ponovo.";
+      if(!res.ok||data.error){console.error("Groq API greška:",JSON.stringify(data.error||data));throw new Error(data.error?.message||"API greška "+res.status);}
+      const raw=data.choices?.[0]?.message?.content||"";
+      if(!raw){console.error("Groq prazan odgovor:",JSON.stringify(data));throw new Error("prazan odgovor");}
       const aiTekst=raw.replace(/\[SOS_DUGME\]/g,"").trim();
       const krizaRec=/jak impuls|ho[cć]u da [cč]a[cč]k|ne mogu da se zaustavim|ne mogu da se kontroli[sš]em|pomozi mi sad|hitno mi treba|trenutno mi je veoma te[sš]ko|imam impuls|osećam jak|ne mogu da odolim/i;
       const imasSOS=krizaRec.test(txt);
       const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:imasSOS}];
       setPoruke(npp);porRef.current=npp;
       localStorage.setItem(LS,JSON.stringify(npp));
-    }catch{const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu. Proveri internet vezu."}];setPoruke(npp);porRef.current=npp;}
+    }catch(e){console.error("posalji catch:",e?.message);const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Nešto nije pošlo po planu — "+( e?.message||"proveri internet vezu.")}];setPoruke(npp);porRef.current=npp;localStorage.setItem(LS,JSON.stringify(npp));}
     finally{setUcitava(false);}
   }
   return(
