@@ -1105,22 +1105,13 @@ function Napredak({unosi,niz}){
           <p style={{fontSize:32,fontWeight:900,color:C.text,lineHeight:1,marginBottom:4}}>{niz}</p>
           <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:0.8,textTransform:"uppercase"}}>Trenutni niz</p>
         </div>
-        {/* Odolelo % + ring */}
-        <div style={{background:C.bgCard,borderRadius:24,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`,display:"flex",flexDirection:"column",justifyContent:"space-between"}}>
-          <div style={{position:"relative",width:64,height:64,marginBottom:10}}>
-            <svg width="64" height="64" style={{transform:"rotate(-90deg)"}}>
-              <circle cx="32" cy="32" r="26" fill="none" stroke={C.border} strokeWidth="6"/>
-              <circle cx="32" cy="32" r="26" fill="none" stroke={C.primary} strokeWidth="6"
-                strokeDasharray={2*Math.PI*26} strokeDashoffset={(2*Math.PI*26)*(1-resP/100)}
-                strokeLinecap="round"/>
-            </svg>
-            <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
-              <span style={{fontSize:13,fontWeight:900,color:C.primary}}>{resP}%</span>
-            </div>
+        {/* Odolelo % */}
+        <div style={{background:C.greenLight,borderRadius:24,padding:"20px",border:`1px solid ${C.green}22`,boxShadow:`0 2px 16px ${C.shadow}`}}>
+          <div style={{width:36,height:36,borderRadius:12,background:"rgba(122,158,120,0.2)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:14}}>
+            <Ico d={I.check} size={18} stroke={C.green} sw={2.5}/>
           </div>
-          <div>
-            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:0.8,textTransform:"uppercase"}}>Odolelo</p>
-          </div>
+          <p style={{fontSize:32,fontWeight:900,color:C.text,lineHeight:1,marginBottom:4}}>{resP}%</p>
+          <p style={{fontSize:11,fontWeight:700,color:C.green,letterSpacing:0.8,textTransform:"uppercase"}}>Odolelo</p>
         </div>
         {/* Rekord */}
         <div style={{background:C.amberLight,borderRadius:24,padding:"20px",border:`1px solid ${C.amber}22`,boxShadow:`0 2px 16px ${C.shadow}`}}>
@@ -1140,24 +1131,43 @@ function Napredak({unosi,niz}){
         </div>
       </div>
 
-      {/* Mesečni grafikon */}
+      {/* Linijski grafikon */}
       <div style={{margin:"0 20px 16px",background:C.bgCard,borderRadius:24,padding:"20px",border:`1px solid ${C.border}`,boxShadow:`0 2px 16px ${C.shadow}`}}>
-        <p style={{fontSize:12,fontWeight:800,color:C.text,letterSpacing:0.2,marginBottom:20}}>Epizode po mesecu</p>
-        <div style={{display:"flex",alignItems:"flex-end",gap:6,height:120}}>
-          {meseci.map((m,i)=>{
-            const isCurrent=i===meseci.length-1;
-            const barH=m.br?Math.max(24,Math.round((m.br/maxBr)*96)):0;
-            return(
-              <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
-                {m.br>0&&<span style={{fontSize:11,color:isCurrent?C.primary:C.textMid,fontWeight:800,lineHeight:1}}>{m.br}</span>}
-                <div style={{width:"100%",flex:1,display:"flex",alignItems:"flex-end"}}>
-                  <div style={{width:"100%",height:m.br?barH:3,background:isCurrent?C.primaryGrad:m.br?C.primary+"44":C.border,borderRadius:8,transition:"height .5s ease"}}/>
-                </div>
-                <span style={{fontSize:10,color:isCurrent?C.primary:C.textLight,fontWeight:isCurrent?800:600,letterSpacing:0.2}}>{m.mes}</span>
-              </div>
-            );
-          })}
-        </div>
+        <p style={{fontSize:12,fontWeight:800,color:C.text,letterSpacing:0.2,marginBottom:16}}>Epizode po mesecu</p>
+        {(()=>{
+          const W=280,H=90,pad=8;
+          const vals=meseci.map(m=>m.br);
+          const vmax=Math.max(...vals,1);
+          const pts=vals.map((v,i)=>{
+            const x=pad+(i/(meseci.length-1))*(W-pad*2);
+            const y=H-pad-(v/vmax)*(H-pad*2);
+            return[x,y];
+          });
+          const poly=pts.map(p=>p.join(",")).join(" ");
+          const area=[`${pts[0][0]},${H}`,poly,`${pts[pts.length-1][0]},${H}`].join(" ");
+          return(
+            <svg width="100%" viewBox={`0 0 ${W} ${H+24}`} style={{overflow:"visible"}}>
+              <defs>
+                <linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={C.primary} stopOpacity="0.18"/>
+                  <stop offset="100%" stopColor={C.primary} stopOpacity="0"/>
+                </linearGradient>
+              </defs>
+              <polygon points={area} fill="url(#lg)"/>
+              <polyline points={poly} fill="none" stroke={C.primary} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round"/>
+              {pts.map(([x,y],i)=>{
+                const isCur=i===pts.length-1;
+                return(
+                  <g key={i}>
+                    <circle cx={x} cy={y} r={isCur?5:3.5} fill={C.bgCard} stroke={isCur?C.primary:C.primary+"99"} strokeWidth={isCur?2.5:1.5}/>
+                    {vals[i]>0&&<text x={x} y={y-9} textAnchor="middle" fontSize="10" fontWeight="700" fill={isCur?C.primary:C.textMid}>{vals[i]}</text>}
+                    <text x={x} y={H+18} textAnchor="middle" fontSize="10" fontWeight={isCur?800:600} fill={isCur?C.primary:C.textLight}>{meseci[i].mes}</text>
+                  </g>
+                );
+              })}
+            </svg>
+          );
+        })()}
       </div>
 
       {/* Okidači */}
