@@ -163,12 +163,16 @@ function Auth({onDone}){
           Your skin<br/><span style={{color:C.primary,fontWeight:800}}>deserves kindness.</span>
         </h1>
         <p style={{fontSize:15,color:C.textMid,lineHeight:1.8,fontWeight:500,maxWidth:260,marginBottom:40}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
-        <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8,marginBottom:16}}>
-          {[[I.chart,"Praćenje epizoda"],[I.shield,"SOS alat u krizi"],[I.chat,"Mia — AI podrška"]].map(([ico,t])=>(
-            <div key={t} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 16px",borderRadius:16,background:C.bgCard,border:`1px solid ${C.border}`}}>
-              <div style={{width:36,height:36,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={ico} size={17} stroke={C.primary} sw={1.8}/></div>
-              <p style={{fontWeight:600,fontSize:14,color:C.textMid}}>{t}</p>
-              <Ico d={I.chev} size={16} stroke={C.border} sw={2} style={{marginLeft:"auto"}}/>
+        <div style={{width:"100%",display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+          {[[I.chart,"Praćenje epizoda","Beleži epizode i prati obrasce"],[I.shield,"SOS alat u krizi","Tehnike za smirenje u trenutku"],[I.chat,"Mia — AI podrška","Uvek dostupna, bez osude"]].map(([ico,t,sub])=>(
+            <div key={t} style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",borderRadius:18,background:C.bgCard,border:`1.5px solid ${C.border}`,boxShadow:`0 2px 12px ${C.shadow}`}}>
+              <div style={{width:44,height:44,borderRadius:14,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 12px rgba(192,120,144,0.25)`}}>
+                <Ico d={ico} size={20} stroke="#fff" sw={1.8}/>
+              </div>
+              <div style={{flex:1,minWidth:0}}>
+                <p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:2}}>{t}</p>
+                <p style={{fontSize:12,color:C.textLight,fontWeight:500}}>{sub}</p>
+              </div>
             </div>
           ))}
         </div>
