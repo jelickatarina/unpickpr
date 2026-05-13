@@ -47,6 +47,7 @@ textarea.inp{resize:none;min-height:80px;line-height:1.65;}
 .dot:nth-child(2){animation-delay:.18s}.dot:nth-child(3){animation-delay:.36s}
 @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(76,217,100,.5)}70%{box-shadow:0 0 0 6px rgba(76,217,100,0)}}
+@keyframes sosPulse{0%,100%{box-shadow:0 0 0 0 rgba(192,120,144,.4),0 2px 10px rgba(192,120,144,.13)}60%{box-shadow:0 0 0 7px rgba(192,120,144,0),0 2px 10px rgba(192,120,144,.13)}}
 .lbl{font-size:10px;font-weight:700;color:${C.textLight};letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:10px;}
 `;
 
@@ -709,9 +710,13 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
               <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginBottom:2}}><Ico d={I.heart} size={14} stroke={C.primary} sw={1.8}/></div>
               <div style={{display:"flex",flexDirection:"column",gap:8,maxWidth:"84%"}}>
                 <div className="bba">{p.tekst}</div>
-                {p.sos&&<button onClick={onSOS} style={{alignSelf:"flex-start",background:C.primaryLight,border:`1.5px solid ${C.primary}40`,borderRadius:100,padding:"9px 18px 9px 12px",cursor:"pointer",display:"flex",alignItems:"center",gap:8,fontFamily:"'Plus Jakarta Sans',sans-serif",boxShadow:`0 2px 10px ${C.primary}22`}}>
+                {p.sos&&<button onClick={onSOS} style={{alignSelf:"flex-start",background:C.primaryLight,border:`1.5px solid ${C.primary}50`,borderRadius:100,padding:"9px 16px 9px 10px",cursor:"pointer",display:"flex",alignItems:"center",gap:8,fontFamily:"'Plus Jakarta Sans',sans-serif",animation:"sosPulse 2s infinite"}}>
                   <div style={{width:26,height:26,borderRadius:"50%",background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.leaf} size={12} stroke="#fff" sw={2.2}/></div>
-                  <span style={{fontSize:13,fontWeight:700,color:C.primaryDark}}>SOS</span>
+                  <div>
+                    <span style={{fontSize:13,fontWeight:700,color:C.primaryDark,display:"block",lineHeight:1}}>SOS</span>
+                    <span style={{fontSize:10,color:C.textLight,fontWeight:600,letterSpacing:.3}}>pritisni</span>
+                  </div>
+                  <Ico d={I.chev} size={14} stroke={C.primary} sw={2.5}/>
                 </button>}
               </div>
             </div>}
