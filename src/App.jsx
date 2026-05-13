@@ -661,7 +661,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
 
   async function sacuvaj(p){
     if(!userId)return;
-    await supabase.from("profiles").update({chat_history:p}).eq("id",userId);
+    await supabase.from("profiles").upsert({id:userId,chat_history:p});
   }
 
   useEffect(()=>{
@@ -691,15 +691,15 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   }
   return(
     <div style={{display:"flex",flexDirection:"column",height:"100%",flex:1,minHeight:0}}>
-      <div style={{padding:"48px 20px 14px",background:C.primaryGrad,flexShrink:0,borderRadius:"0 0 24px 24px"}}>
-        <div style={{display:"flex",alignItems:"center",gap:12}}>
-          <div style={{width:40,height:40,borderRadius:"50%",background:"rgba(255,255,255,.22)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative"}}>
-            <Ico d={I.heart} size={18} stroke="#fff" sw={1.8}/>
-            <div style={{position:"absolute",bottom:1,right:1,width:10,height:10,borderRadius:"50%",background:"#4CD964",border:"2px solid #B85A80",animation:"pulse 2s infinite"}}/>
+      <div style={{padding:"env(safe-area-inset-top,44px) 20px 10px",background:C.primaryGrad,flexShrink:0,borderRadius:"0 0 20px 20px"}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <div style={{width:34,height:34,borderRadius:"50%",background:"rgba(255,255,255,.22)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative"}}>
+            <Ico d={I.heart} size={15} stroke="#fff" sw={1.8}/>
+            <div style={{position:"absolute",bottom:0,right:0,width:9,height:9,borderRadius:"50%",background:"#4CD964",border:"2px solid #B85A80",animation:"pulse 2s infinite"}}/>
           </div>
-          <div>
-            <p style={{fontWeight:700,fontSize:16,color:"#fff",lineHeight:1,marginBottom:3}}>Mia</p>
-            <p style={{fontSize:11,color:"rgba(255,255,255,.75)",fontWeight:600}}>dostupna</p>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <p style={{fontWeight:700,fontSize:15,color:"#fff",lineHeight:1}}>Mia</p>
+            <p style={{fontSize:11,color:"rgba(255,255,255,.7)",fontWeight:600}}>● dostupna</p>
           </div>
         </div>
       </div>
