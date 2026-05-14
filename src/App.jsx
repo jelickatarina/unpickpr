@@ -74,6 +74,7 @@ const I={
   heart:"M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z",
   leaf:["M12 22V11","M12 11C12 11 5 9 5 3c4 0 7 3 7 8z","M12 11C12 11 19 9 19 3c-4 0-7 3-7 8z"],
   shield:"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
+  zap:"M13 2L3 14h9l-1 8 10-12h-9l1-8z",
   send:["M22 2L11 13","M22 2L15 22l-4-9-9-4 22-7z"],
   plus:["M12 5v14","M5 12h14"],
   back:"M19 12H5 M12 19l-7-7 7-7",
@@ -748,15 +749,14 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
           <div style={{display:"flex",alignItems:"flex-end",gap:12}}>
             <div style={{width:38,height:38,borderRadius:"50%",background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative",boxShadow:`0 4px 10px ${C.primary}44`,marginBottom:2}}>
               <Ico d={I.heart} size={17} stroke="#fff" sw={1.8}/>
-              <div style={{position:"absolute",bottom:1,right:1,width:9,height:9,borderRadius:"50%",background:"#4CD964",border:"2px solid #fff",animation:"pulse 2s infinite"}}/>
             </div>
             <div>
               <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>AI podrška</span>
-              <h1 className="serif" style={{fontSize:30,lineHeight:1,letterSpacing:-0.5,color:C.text}}>Mia</h1>
+              <h1 className="serif" style={{fontSize:24,lineHeight:1,letterSpacing:-0.3,color:C.text}}>Mia</h1>
             </div>
           </div>
           <button onClick={onSOS} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 16px 9px 12px",borderRadius:100,background:C.red,border:"none",cursor:"pointer",flexShrink:0,boxShadow:`0 4px 12px ${C.red}55`}}>
-            <Ico d={I.shield} size={15} stroke="#fff" sw={2}/>
+            <Ico d={I.zap} size={15} stroke="#fff" sw={2.2}/>
             <span style={{fontSize:13,fontWeight:800,color:"#fff",letterSpacing:0.5}}>SOS</span>
           </button>
         </div>
@@ -769,7 +769,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
               <div style={{display:"flex",flexDirection:"column",gap:8,maxWidth:"84%"}}>
                 <div className="bba">{p.tekst}</div>
                 {p.sos&&<button onClick={onSOS} style={{alignSelf:"flex-start",display:"flex",alignItems:"center",gap:8,padding:"9px 16px 9px 12px",borderRadius:100,background:C.red,border:"none",cursor:"pointer",boxShadow:`0 4px 12px ${C.red}55`}}>
-                  <Ico d={I.shield} size={15} stroke="#fff" sw={2}/>
+                  <Ico d={I.zap} size={15} stroke="#fff" sw={2.2}/>
                   <span style={{fontSize:13,fontWeight:800,color:"#fff"}}>Otvori SOS tehnike</span>
                 </button>}
               </div>
@@ -882,7 +882,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
           <div>
             <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Početna</span>
-            <h1 className="serif" style={{fontSize:30,lineHeight:1,letterSpacing:-0.5,color:C.text}}>{prikazIme?`${pozdrav}, ${prikazIme}`:pozdrav}</h1>
+            <h1 className="serif" style={{fontSize:24,lineHeight:1,letterSpacing:-0.3,color:C.text}}>{prikazIme?`${pozdrav}, ${prikazIme}`:pozdrav}</h1>
           </div>
           <button onClick={onLogout} style={{background:C.bgMuted,border:`1px solid ${C.border}`,borderRadius:100,fontSize:11,color:C.textLight,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",padding:"7px 14px",boxShadow:"0 2px 8px rgba(192,120,144,.1)"}}>Odjavi</button>
         </div>
@@ -944,7 +944,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
         {/* Action buttons */}
         <div style={{display:"flex",gap:12}}>
           <button onClick={onSOS} style={{flex:1,background:C.primaryGrad,border:"none",borderRadius:20,padding:"18px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,boxShadow:`0 8px 28px ${C.primary}44`,fontFamily:"'DM Sans',sans-serif",touchAction:"manipulation"}}>
-            <div style={{width:38,height:38,borderRadius:12,background:"rgba(255,255,255,.2)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.shield} size={18} stroke="#fff" sw={2}/></div>
+            <div style={{width:38,height:38,borderRadius:12,background:"rgba(255,255,255,.2)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.zap} size={18} stroke="#fff" sw={2.2}/></div>
             <div style={{textAlign:"left"}}>
               <p style={{fontSize:15,fontWeight:700,color:"#fff",lineHeight:1}}>SOS</p>
               <p style={{fontSize:11,color:"rgba(255,255,255,.65)",fontWeight:600,marginTop:3}}>Smiri se</p>
@@ -960,10 +960,10 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
         </div>
 
         {/* Quote — last element */}
-        <div style={{background:`linear-gradient(135deg,${C.primaryLight} 0%,${C.purpleLight} 100%)`,borderRadius:22,padding:"22px 22px 20px",border:`1px solid ${C.primary}22`,position:"relative",overflow:"hidden"}}>
-          <div style={{position:"absolute",top:-18,right:10,fontSize:110,color:C.primary,opacity:.07,fontFamily:"'Playfair Display',serif",lineHeight:1,pointerEvents:"none"}}>"</div>
-          <span style={{display:"inline-block",background:"rgba(192,120,144,.14)",color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:14}}>Poruka dana</span>
-          <p className="serif italic" style={{fontSize:17,color:C.text,lineHeight:1.85,fontWeight:400}}>{poruka}</p>
+        <div style={{background:`linear-gradient(135deg,#F7F2F5 0%,#F2EEF8 100%)`,borderRadius:22,padding:"22px 22px 20px",border:`1px solid ${C.border}`,position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",top:-18,right:10,fontSize:110,color:C.textLight,opacity:.09,fontFamily:"'Playfair Display',serif",lineHeight:1,pointerEvents:"none"}}>"</div>
+          <span style={{display:"inline-block",background:"rgba(192,120,144,.12)",color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:14}}>Poruka dana</span>
+          <p className="serif" style={{fontSize:16,color:C.text,lineHeight:1.85,fontWeight:400}}>{poruka}</p>
         </div>
       </div>
     </div>
@@ -998,7 +998,7 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div>
             <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Moj dnevnik</span>
-            <h1 className="serif" style={{fontSize:30,letterSpacing:-0.5,lineHeight:1}}>Unosi</h1>
+            <h1 className="serif" style={{fontSize:24,letterSpacing:-0.3,lineHeight:1}}>Unosi</h1>
           </div>
           <button onClick={onDodaj} style={{width:46,height:46,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:`0 4px 16px rgba(192,120,144,.35)`}}>
             <Ico d={I.plus} size={20} stroke="#fff" sw={2.5}/>
@@ -1146,7 +1146,7 @@ function Napredak({unosi,niz}){
     <div style={{paddingBottom:90}} className="fi">
       <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:24,paddingRight:24,paddingBottom:14}}>
         <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Napredak</span>
-        <h1 className="serif" style={{fontSize:30,color:C.text,letterSpacing:-0.5}}>Tvoje statistike</h1>
+        <h1 className="serif" style={{fontSize:24,color:C.text,letterSpacing:-0.3}}>Tvoje statistike</h1>
       </div>
       <div style={{margin:"24px 20px 0",borderRadius:24,background:C.bgCard,padding:"40px 24px",textAlign:"center",border:`1px solid ${C.border}`}}>
         <div style={{width:60,height:60,borderRadius:18,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 16px"}}><Ico d={I.chart} size={26} stroke={C.primary} sw={1.8}/></div>
@@ -1162,7 +1162,7 @@ function Napredak({unosi,niz}){
       {/* Header + insight */}
       <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:14}}>
         <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Napredak</span>
-        <h1 className="serif" style={{fontSize:30,fontWeight:700,color:C.text,letterSpacing:-0.5,lineHeight:1}}>Tvoje statistike</h1>
+        <h1 className="serif" style={{fontSize:24,fontWeight:700,color:C.text,letterSpacing:-0.3,lineHeight:1}}>Tvoje statistike</h1>
         <div style={{marginTop:10,background:insightBg,borderRadius:14,padding:"9px 14px",display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:7,height:7,borderRadius:"50%",background:insightC,flexShrink:0}}/>
           <span style={{fontSize:13,fontWeight:700,color:insightC,lineHeight:1.3}}>{insight}</span>
@@ -1384,7 +1384,7 @@ function Biblioteka(){
     <div style={{paddingBottom:20}} className="fi">
       <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:24,paddingRight:24,paddingBottom:14}}>
         <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Resursi</span>
-        <h1 className="serif" style={{fontSize:30,letterSpacing:-0.5}}>Biblioteka</h1>
+        <h1 className="serif" style={{fontSize:24,letterSpacing:-0.3}}>Biblioteka</h1>
       </div>
       <div style={{padding:"16px 20px 0"}}>
         {CLANCI.map((a,idx)=>{const [b,f]=kBoja(a.k);return(
