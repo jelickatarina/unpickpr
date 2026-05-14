@@ -1415,6 +1415,14 @@ export default function App(){
   const [noviUnosi,setNoviUnosi]=useState([]);
   const [isDesk,setIsDesk]=useState(typeof window!=="undefined"&&window.innerWidth>=768);
   useEffect(()=>{const h=()=>setIsDesk(window.innerWidth>=768);window.addEventListener("resize",h);return()=>window.removeEventListener("resize",h);},[]);
+  const [kbOpen,setKbOpen]=useState(false);
+  useEffect(()=>{
+    const vv=window.visualViewport;
+    if(!vv)return;
+    const h=()=>setKbOpen(vv.height<window.innerHeight*0.75);
+    vv.addEventListener("resize",h);
+    return()=>vv.removeEventListener("resize",h);
+  },[]);
   const contentRef=useRef(null);
   useEffect(()=>{if(contentRef.current)contentRef.current.scrollTop=0;},[ekran]);
 
@@ -1560,7 +1568,7 @@ export default function App(){
                 {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
                 {ekran==="bib"&&<Biblioteka/>}
               </div>
-              <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",flex:1,minHeight:0,overflow:"hidden",paddingBottom:isDesk?0:"63px"}}>
+              <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",flex:1,minHeight:0,overflow:"hidden",paddingBottom:isDesk||kbOpen?0:"63px"}}>
                 <AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)} isVisible={ekran==="chat"}/>
               </div>
               {!isDesk&&(
