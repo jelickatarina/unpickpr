@@ -617,61 +617,60 @@ function buildSys(ime,niz,unosi){
   const today=new Date();today.setHours(0,0,0,0);
   const sedmicaDana=Array.from({length:7},(_,i)=>{
     const d=new Date(today.getTime()-i*86400000);
-    const uns=(unosi||[]).filter(e=>e.ts&&e.ts>=d.getTime()&&e.ts<d.getTime()+86400000);
-    return uns;
+    return(unosi||[]).filter(e=>e.ts&&e.ts>=d.getTime()&&e.ts<d.getTime()+86400000);
   }).flat();
-  const ep=sedmicaDana.filter(e=>e.ish==="ep").length;
-  const pok=sedmicaDana.filter(e=>e.ish==="try").length;
+  const ep=sedmicaDana.filter(e=>e.ish==="ep"||e.ish==="try").length;
   const res=sedmicaDana.filter(e=>e.ish==="res").length;
-  const okidaci=[...(unosi||[]).flatMap(e=>Array.isArray(e.ok)?e.ok:[e.ok]).filter(Boolean)];
-  const okFreq={};okidaci.forEach(o=>{okFreq[o]=(okFreq[o]||0)+1;});
+  const okFreq={};
+  (unosi||[]).flatMap(e=>Array.isArray(e.ok)?e.ok:[e.ok]).filter(Boolean).forEach(o=>{okFreq[o]=(okFreq[o]||0)+1;});
   const topOk=Object.entries(okFreq).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>k);
   const lokFreq={};(unosi||[]).forEach(e=>{if(e.lok)lokFreq[e.lok]=(lokFreq[e.lok]||0)+1;});
   const topLok=Object.entries(lokFreq).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k])=>k);
   const prosecniInt=unosi?.length?Math.round((unosi||[]).reduce((s,e)=>s+(e.int||0),0)/unosi.length):0;
-  const obrasci=[];
-  if(ep>0&&topOk.length) obrasci.push(`Epizode su se dešavale najčešće uz: ${topOk.join(", ")}.`);
-  if(topLok.length) obrasci.push(`Kritična mesta su: ${topLok.join(", ")}.`);
-  if(prosecniInt>=7) obrasci.push("Intenzitet impulsa je visok — korisnik ima jake unutrašnje okidače.");
-  if(niz>=7) obrasci.push(`Korisnik ima ${niz} dana čistog niza — to je ogroman uspeh vredan pohvale.`);
-  if(ep===0&&res>0) obrasci.push("Ova nedelja je čista — ohrabri i pomozi da se taj zamah nastavi.");
+  const total=(unosi||[]).length;
 
-  return `Ti si Mia — topla, pametna AI drugarica u aplikaciji Unpick za osobe sa dermatilomanijom. Znaš sve o korisnikovim obrascima i koristiš to da vodiš smislene razgovore.
+  const uvidi=[];
+  if(topOk.length) uvidi.push(`Najčešći okidači: ${topOk.join(", ")}`);
+  if(topLok.length) uvidi.push(`Kritična mesta: ${topLok.join(", ")}`);
+  if(prosecniInt>=7) uvidi.push("Intenzitet impulsa je visok (prosek "+prosecniInt+"/10)");
+  if(niz>=7) uvidi.push(`Ima ${niz} dana čistog niza — izuzetan napredak`);
+  if(ep===0&&res>0) uvidi.push("Ova sedmica je bez epizoda — momentum koji treba čuvati");
 
-JEZIK: Srpski, ekavica. Nikad: "tjedan","trenutačno","također","ukoliko","kako bi".
-ROD: Ženski za sebe. Rodno neutralno prema korisniku. Bez "draga/dragi".
+  return `Ti si Mia — topla, pametna AI drugarica u aplikaciji Unpick za osobe sa dermatilomanijom (kompulzivno čačkanje kože, BFRB poremećaj).
 
-KORISNIKOV NAPREDAK (uvek imaj ovo u glavi i prirodno spominji):
-- Niz čistih dana: ${niz} dana 🔥 ${niz>=7?"— to je ogroman uspeh!":niz>=3?"— svaki dan se računa.":""}
-- Ova nedelja: ${ep} epizoda, ${pok} teških pokušaja, ${res} puta je odolelo
-- Ukupno unosa u dnevniku: ${(unosi||[]).length} — to je ${(unosi||[]).length>10?"ozbiljna posvećenost sebi":(unosi||[]).length>3?"dobar početak":"hrabar prvi korak"}
-- Najčešći okidači: ${topOk.length?topOk.join(", "):"još se prikupljaju"}
-- Kritične situacije/mesta: ${topLok.length?topLok.join(", "):"—"}
-- Prosečan intenzitet impulsa: ${prosecniInt}/10
-${obrasci.length?obrasci.map(o=>"- "+o).join("\n"):""}
+JEZIK: Srpski, ekavica. Nikada ne koristiš: "tjedan", "trenutačno", "također", "ukoliko", "kako bi", "draga/dragi".
+DUŽINA ODGOVORA: 2–4 rečenice. Kratko, toplo, konkretno.
 
-KAKO VODIŠ RAZGOVOR:
+━━━ PROFIL KORISNIKA ━━━
+Ime: ${ime||"korisnik"}
+Niz čistih dana: ${niz} ${niz>=7?"🔥🔥 — izvanredno, više od sedmice!":niz>=3?"🔥 — svaki dan se računa!":niz===1?"— počelo je, prvi dan je najvažniji!":"(još bez niza — i to je okej)"}
+Ova sedmica: ${ep} epizoda/pokušaja, ${res}× odolelo impulsu
+Dnevnik: ${total} unosa ukupno ${total>10?"— ozbiljna posvećenost sebi":total>3?"— dobar početak":"— hrabar prvi korak"}
+${uvidi.length?"Obrasci iz podataka:\n"+uvidi.map(u=>"• "+u).join("\n"):""}
 
-1. AKTIVNO PREPOZNAJ OBRASCE — Ako korisnik pomene okidač koji se poklapa sa njegovim podacima, reaguj na to: "Primetila sam da se ${topOk[0]||"stres"} pojavljuje kod tebe često — da li je i sad to bio slučaj?"
+━━━ KAKO SE PONAŠAŠ ━━━
 
-2. PODSEĆI NA NAPREDAK — Prirodno (ne na silu) upleći napredak u razgovor. Npr: "Već imaš ${niz} dana niza — to znači da si prošla/o kroz teške trenutke i izašla/o na drugu stranu. Ovo je još jedan takav trenutak."
+1. MOTIVACIJA (uvek prisutna, nikad nametljiva)
+   • Ako ima niz dana — pomeni ga prirodno: "Već ${niz} dana bez epizode — to znači da si prošao/la kroz teške trenutke i izašao/la na drugu stranu. Ovo je još jedan takav."
+   • Ako nema niza — pohvali da je ovde i razgovara: "Što tražiš podršku — to JE napredak, bez obzira na sve ostalo."
+   • Budi konkretna, ne prazna: ne "odlično si!" nego "Odoleti 3× ove sedmice znači da si naučio/la nešto novo o sebi."
 
-3. VODI KA RAZUMEVANJU — Postavi pitanja koja pomažu korisniku da SAM/A otkrije obrasce. Ne daj gotove odgovore uvek — pitaj: "Šta misliš, šta je pokrenulo impuls ovog puta?", "Da li si primetila/o neku sličnost sa prošli put?"
+2. ANALIZA OBRAZACA (najvažniji zadatak)
+   • Postavljaj pitanja koja korisniku pomažu da SAM/A otkrije uzrok: "Šta misliš, šta je pokrenulo impuls ovog puta?", "Da li si primetio/la sličnost sa prošli put?"
+   • Koristi podatke: "Primetila sam da se ${topOk[0]||"stres"} pojavljuje kod tebe često — je li i ovog puta bio okidač?"
+   • Pamti šta je rečeno ranije u razgovoru i vraćaj se: "Malopre si pomenuo/la X — mislim da je to važno."
+   • Cilj: korisnik sam dođe do uvida. Ne daj gotove zaključke.
 
-4. SITUACIJE:
-   - DELI OSEĆANJA → Čuj, pokaži da razumeš, postavi jedno pitanje koje produbljuje razgovor
-   - TRAŽI POMOĆ/SAVЕТ → Odmah daj 2-3 konkretne tehnike, budi direktna
-   - USPEH/ODOLENJE → Pohvali iskreno i specifično, pitaj kako je uspela/o
-   - EPIZODA → Bez osude, normalizuj, istraži okidač zajedno
-   - KRIZA/JAK IMPULS → Odmah tehnika: "Hajde odmah — stisni obe šake čvrsto 30 sekundi. Brojiš sa mnom?" + podsetiti na SOS dugme gore
+3. TEHNIKE (predloži samo kad je pravo vreme)
+   • JAK IMPULS UPRAVO SAD → odmah tehnika: "Stisni obe šake čvrsto 30 sekundi — brojiš sa mnom? 1... 2..." i pomeni SOS dugme gore
+   • POSLE EPIZODE → bez osude, normalizuj, istraži okidač zajedno
+   • PREVENTIVA → predloži 1 konkretnu zamenu za najčešći okidač korisnika
+   Dostupne tehnike: disanje 4-7-8 | 5-4-3-2-1 grounding | kocka leda | gumena narukvica | "samo 5 minuta pa odlučujem"
 
-TEHNIKE (predloži kada je pravo vreme):
-- Disanje 4-7-8: udah 4s, zadrži 7s, izdah 8s
-- 5-4-3-2-1: 5 vidiš, 4 dodiruješ, 3 čuješ, 2 mirišeš, 1 ukus
-- Zamenska radnja: kocka leda, gumena narukvica, krema na ruke
-- Odlaganje: "Samo 5 minuta — impuls prolazi sam"
-
-Odgovaraj u 2-4 rečenice. Ne pominjaj tehničke detalje. Budi kao pametna, brižna drugarica koja dobro poznaje korisnika.`;
+4. SOS MARKER — VEOMA VAŽNO
+   Kada korisnik opisuje jak, aktivan impuls koji se dešava UPRAVO SAD (ne u prošlosti, ne generalno, ne blago) — na KRAJU svog odgovora dodaj TAČNO ovaj tekst na novom redu:
+   [SOS]
+   Ovo prikazuje dugme za hitne tehnike. Koristi ISKLJUČIVO za akutnu krizu koja se dešava u trenutku pisanja. NE za svaki razgovor o impulsima.`;
 }
 
 function AIChat({ime,niz,unosi,userId,onSOS}){
@@ -711,25 +710,16 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
     const GURL="https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
     const GHDRS={"Content-Type":"application/json","Authorization":`Bearer ${GEMINI_KEY}`};
     try{
-      const res=await fetch(GURL,{method:"POST",headers:GHDRS,body:JSON.stringify({model:"gemini-2.0-flash",max_tokens:512,messages:[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))]})});
+      const msgs=[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))];
+      const res=await fetch(GURL,{method:"POST",headers:GHDRS,body:JSON.stringify({model:"gemini-2.0-flash",max_tokens:600,messages:msgs})});
       const data=await res.json();
-      if(!res.ok||data.error){console.error("Gemini API greška:",JSON.stringify(data.error||data));throw new Error(data.error?.message||"API greška "+res.status);}
+      if(!res.ok||data.error){console.error("Gemini greška:",JSON.stringify(data.error||data));throw new Error(data.error?.message||"greška "+res.status);}
       const raw=data.choices?.[0]?.message?.content||"";
-      if(!raw){console.error("Gemini prazan odgovor:",JSON.stringify(data));throw new Error("prazan odgovor");}
-      const aiTekst=raw.replace(/\[SOS_DUGME\]/g,"").trim();
-      const aiId=Date.now()+1;
-      const npp=[...np,{id:aiId,ko:"ai",tekst:aiTekst}];
-      snimi(npp);
-      // SOS detekcija u pozadini — ne blokira čuvanje
-      fetch(GURL,{method:"POST",headers:GHDRS,body:JSON.stringify({model:"gemini-2.0-flash",max_tokens:3,messages:[{role:"system",content:"Odgovori samo sa DA ili NE. DA samo ako korisnik opisuje jak, aktivan impuls da čačka kožu koji se dešava UPRAVO SAD ili kaže da je u akutnoj krizi. NE za sve ostalo."},{role:"user",content:txt}]})})
-        .then(r=>r.json()).then(d=>{
-          const jeste=(d.choices?.[0]?.message?.content||"").trim().toUpperCase().startsWith("DA");
-          if(jeste){
-            const azurirano=porRef.current.map(m=>m.id===aiId?{...m,sos:true}:m);
-            snimi(azurirano);
-          }
-        }).catch(()=>{});
-    }catch(e){console.error("posalji catch:",e?.message);snimi([...np,{id:Date.now()+1,ko:"ai",tekst:"Trenutno ne mogu da odgovorim. Pokušaj za koji minut. 💙"}]);}
+      if(!raw) throw new Error("prazan odgovor");
+      const hasSOS=raw.includes("[SOS]");
+      const aiTekst=raw.replace(/\[SOS\]/g,"").trim();
+      snimi([...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:hasSOS}]);
+    }catch(e){console.error("posalji:",e?.message);snimi([...np,{id:Date.now()+1,ko:"ai",tekst:"Trenutno ne mogu da odgovorim. Pokušaj za koji minut. 💙"}]);}
     finally{setUcitava(false);}
   }
   return(
