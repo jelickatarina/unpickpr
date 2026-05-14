@@ -253,7 +253,7 @@ function Auth({onDone}){
   const dis=loading||!!uspeh;
 
   return(
-    <div className="fi" style={{minHeight:"100vh",background:C.bg,overflowY:"auto",...(!isPWA&&{display:"flex",flexDirection:"column",justifyContent:"center"})}}>
+    <div className="fi" style={{background:C.bg,overflowY:"auto",...(isPWA?{minHeight:"100vh"}:{height:"100dvh",display:"flex",flexDirection:"column",justifyContent:"center"})}}>
       <div style={{paddingTop:isPWA?`max(56px,${SAT})`:"24px",paddingLeft:28,paddingRight:28,paddingBottom:16}}>
         <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:C.bgCard,border:`1px solid ${C.border}`,borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",marginBottom:32,padding:"8px 16px",boxShadow:`0 2px 8px ${C.shadow}`}}>
           <Ico d={I.back} size={14} stroke={C.textMid} sw={2}/> Nazad
