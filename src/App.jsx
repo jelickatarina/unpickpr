@@ -663,13 +663,9 @@ ANALIZA OBRAZACA — najvažniji zadatak:
 - Cilj: korisnik sam kaže "Ah, sad vidim zašto se dešava"
 
 TEHNIKE — samo kad je pravo vreme:
-- Jak impuls UPRAVO SAD: tehnika odmah — "Stisni šake čvrsto 30s, brojiš sa mnom? 1... 2..." + reci da klikne SOS gore
+- Jak impuls UPRAVO SAD: tehnika odmah — "Stisni šake čvrsto 30s, brojiš sa mnom? 1... 2..."
 - Posle epizode: bez osude, zajedno istraži okidač
-- Tehnikе: disanje 4-7-8 | 5-4-3-2-1 | kocka leda | gumena narukvica | "samo 5 minuta"
-
-MARKER ZA HITNU SITUACIJU:
-Ako korisnik opisuje jak impuls koji se dešava UPRAVO SAD — na samom kraju odgovora dodaj samo: [SOS]
-Nemoj pisati ništa o tome. Samo dodaj [SOS] na kraju. Isključivo za akutnu krizu, ne za svaki razgovor.`;
+- Tehnike: disanje 4-7-8 | 5-4-3-2-1 | kocka leda | gumena narukvica | "samo 5 minuta"`;
 }
 
 function AIChat({ime,niz,unosi,userId,onSOS}){
@@ -712,18 +708,15 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
     if(!GROQ_KEY){const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna."}];setPoruke(npp);porRef.current=npp;setUcitava(false);return;}
     try{
       const msgs=[{role:"system",content:buildSys(ime,niz,unosi)},...np.filter(p=>p.id!==0).map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))];
-      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.1-8b-instant",max_tokens:600,messages:msgs})});
+      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:500,messages:msgs})});
       const data=await res.json();
       if(data.error){console.error("Groq greška:",data.error.message);throw new Error(data.error.message);}
       const raw=data.choices?.[0]?.message?.content||"";
       if(!raw) throw new Error("prazan odgovor");
-      const hasSOS=raw.includes("[SOS]");
-      const aiTekst=raw
-        .replace(/\[SOS\]/g,"")
-        .replace(/isključivo za akutnu krizu[^.]*\./gi,"")
-        .replace(/ovo prikazuje dugme[^.]*\./gi,"")
-        .replace(/marker[^.]*\./gi,"")
-        .trim();
+      // SOS detekcija na osnovu korisnikove poruke — bez AI markera
+      const kriza=/čačkam|čačkanje|grebem|ne mogu da se zaustavim|ne mogu da prestanem|impuls je jak|ne mogu odoleti|hoću da počnem|moram da|ne mogu se zaustaviti/i;
+      const hasSOS=kriza.test(txt);
+      const aiTekst=raw.replace(/\[SOS\]/g,"").trim();
       snimi([...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:hasSOS}]);
     }catch(e){console.error("posalji:",e?.message);snimi([...np,{id:Date.now()+1,ko:"ai",tekst:"Trenutno ne mogu da odgovorim. Pokušaj za koji minut. 💙"}]);}
     finally{setUcitava(false);}
