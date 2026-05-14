@@ -232,11 +232,15 @@ function Auth({onDone}){
       }else{
         const {data,error}=await supabase.auth.signUp({email:em.trim(),password:loz,options:{data:{name:ime.trim()}}});
         if(error){
-          if(error.message.includes("already registered")||error.message.includes("already exists")) setErrs({em:"Nalog sa ovim emailom već postoji."});
-          else setErrs({general:"Registracija nije uspela. Pokušaj ponovo."});
+          const msg=error.message||"";
+          if(msg.includes("already registered")||msg.includes("already exists")||msg.includes("User already registered")) setErrs({em:"Nalog sa ovim emailom već postoji."});
+          else if(msg.includes("rate limit")||msg.includes("security purposes")) setErrs({general:"Sačekaj trenutak pa pokušaj ponovo."});
+          else if(msg.includes("Password")) setErrs({loz:msg});
+          else if(msg.includes("valid email")||msg.includes("email")) setErrs({em:msg});
+          else setErrs({general:`Greška: ${msg}`});
           return;
         }
-        await supabase.from("profiles").upsert({id:data.user.id,ime:ime.trim()});
+        supabase.from("profiles").upsert({id:data.user.id,ime:ime.trim()}).catch(()=>{});
         if(data.session){
           onDone({ime:ime.trim(),registeredAt:data.user.created_at,id:data.user.id});
         }else{
