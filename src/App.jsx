@@ -16,7 +16,7 @@ const C = {
 const fonts=`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');`;
 const css=`
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;overflow:hidden;}
+html,body{height:100%;overscroll-behavior:none;}
 body{background:${C.bg};}
 .app{font-family:'DM Sans',sans-serif;background:${C.bg};height:100%;max-width:390px;margin:0 auto;position:relative;color:${C.text};overflow:hidden;}
 .serif{font-family:'Playfair Display',serif;}
