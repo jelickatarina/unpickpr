@@ -253,7 +253,7 @@ function Auth({onDone}){
   const dis=loading||!!uspeh;
 
   return(
-    <div className="fi" style={{height:"100dvh",background:C.bg,overflowY:"auto",display:"flex",flexDirection:"column",justifyContent:"center",...(isPWA&&{paddingBottom:"14vh"})}}>
+    <div className="fi" style={{height:"100dvh",background:C.bg,overflowY:"auto",display:"flex",flexDirection:"column",justifyContent:"center",paddingBottom:"14vh"}}>
       <div style={{paddingTop:isPWA?`max(56px,${SAT})`:"24px",paddingLeft:28,paddingRight:28,paddingBottom:16}}>
         <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:C.bgCard,border:`1px solid ${C.border}`,borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",marginBottom:32,padding:"8px 16px",boxShadow:`0 2px 8px ${C.shadow}`}}>
           <Ico d={I.back} size={14} stroke={C.textMid} sw={2}/> Nazad
@@ -866,19 +866,21 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
       )}
 
       {/* ── TOP SECTION: gradient hero ── */}
-      <div style={{background:`linear-gradient(160deg,${C.primaryLight} 0%,${C.bg} 55%)`,paddingTop:`max(56px,${SAT})`,paddingLeft:22,paddingRight:22,paddingBottom:32,position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:-60,right:-60,width:200,height:200,borderRadius:"50%",background:C.primary+"0D"}}/>
-
+      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:`max(56px,${SAT})`,paddingLeft:22,paddingRight:22,paddingBottom:14}}>
         {/* Header row */}
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:28,position:"relative"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",position:"relative"}}>
           <div>
-            <p style={{fontSize:12,color:C.textLight,fontWeight:600,marginBottom:3,letterSpacing:.3}}>{pozdrav}</p>
-            <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.5,color:C.text}}>{prikazIme}</h1>
+            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>{pozdrav}</p>
+            <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.3,fontWeight:700,color:C.text}}>{prikazIme}</h1>
           </div>
-          <button onClick={onLogout} style={{background:C.bgCard,border:`1px solid ${C.border}`,borderRadius:100,fontSize:11,color:C.textLight,fontWeight:700,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"7px 14px",boxShadow:"0 2px 8px rgba(192,120,144,.1)"}}>Odjavi</button>
+          <button onClick={onLogout} style={{background:C.bgMuted,border:`1px solid ${C.border}`,borderRadius:100,fontSize:11,color:C.textLight,fontWeight:700,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"7px 14px",boxShadow:"0 2px 8px rgba(192,120,144,.1)",marginBottom:2}}>Odjavi</button>
         </div>
 
-        {/* Streak ring — centered hero */}
+      </div>
+
+      {/* ── Streak ring — scrollable hero ── */}
+      <div style={{background:`linear-gradient(160deg,${C.primaryLight} 0%,${C.bg} 55%)`,padding:"24px 22px 28px",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:-60,right:-60,width:200,height:200,borderRadius:"50%",background:C.primary+"0D"}}/>
         <div style={{display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
           <div style={{position:"relative",width:r*2+20,height:r*2+20}}>
             <svg width={r*2+20} height={r*2+20} style={{position:"absolute",inset:0,transform:"rotate(-90deg)"}}>
@@ -985,14 +987,14 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
 
   return(
     <div style={{paddingBottom:20}} className="fi">
-      <div style={{paddingTop:`max(56px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:16}}>
+      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:`max(56px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:14}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div>
-            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:4}}>Moj dnevnik</p>
-            <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5,lineHeight:1}}>Unosi</h1>
+            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Moj dnevnik</p>
+            <h1 className="serif" style={{fontSize:28,letterSpacing:-0.3,lineHeight:1,fontWeight:700}}>Unosi</h1>
           </div>
-          <button onClick={onDodaj} style={{width:50,height:50,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:`0 6px 22px rgba(122,158,142,.35)`}}>
-            <Ico d={I.plus} size={22} stroke="#fff" sw={2.5}/>
+          <button onClick={onDodaj} style={{width:46,height:46,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:`0 4px 16px rgba(192,120,144,.35)`}}>
+            <Ico d={I.plus} size={20} stroke="#fff" sw={2.5}/>
           </button>
         </div>
       </div>
@@ -1135,9 +1137,9 @@ function Napredak({unosi,niz}){
 
   if(total===0) return(
     <div style={{paddingBottom:90}} className="fi">
-      <div style={{paddingTop:`max(56px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:24}}>
-        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:4}}>Napredak</p>
-        <h1 style={{fontSize:28,fontWeight:800,color:C.text,letterSpacing:-0.5}}>Tvoje statistike</h1>
+      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:`max(56px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:14}}>
+        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Napredak</p>
+        <h1 className="serif" style={{fontSize:28,fontWeight:700,color:C.text,letterSpacing:-0.3}}>Tvoje statistike</h1>
       </div>
       <div style={{margin:"0 20px",borderRadius:24,background:C.bgCard,padding:"40px 24px",textAlign:"center",border:`1px solid ${C.border}`}}>
         <div style={{width:60,height:60,borderRadius:18,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 16px"}}><Ico d={I.chart} size={26} stroke={C.primary} sw={1.8}/></div>
@@ -1151,12 +1153,10 @@ function Napredak({unosi,niz}){
     <div style={{paddingBottom:90}} className="fi">
 
       {/* Header + insight */}
-      <div style={{paddingTop:`max(56px,${SAT})`,paddingLeft:20,paddingRight:20,paddingBottom:16}}>
-        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.5,textTransform:"uppercase",marginBottom:4}}>Napredak</p>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
-          <h1 style={{fontSize:28,fontWeight:800,color:C.text,letterSpacing:-0.5,lineHeight:1}}>Tvoje statistike</h1>
-        </div>
-        <div style={{marginTop:12,background:insightBg,borderRadius:14,padding:"10px 14px",display:"flex",alignItems:"center",gap:8}}>
+      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:`max(56px,${SAT})`,paddingLeft:20,paddingRight:20,paddingBottom:14}}>
+        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Napredak</p>
+        <h1 className="serif" style={{fontSize:28,fontWeight:700,color:C.text,letterSpacing:-0.3,lineHeight:1}}>Tvoje statistike</h1>
+        <div style={{marginTop:10,background:insightBg,borderRadius:14,padding:"9px 14px",display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:7,height:7,borderRadius:"50%",background:insightC,flexShrink:0}}/>
           <span style={{fontSize:13,fontWeight:700,color:insightC,lineHeight:1.3}}>{insight}</span>
         </div>
@@ -1375,9 +1375,9 @@ function Biblioteka(){
   if(otvoren!==null) return<Clanak clanak={CLANCI[otvoren]} onNazad={()=>setOtvoren(null)}/>;
   return(
     <div style={{paddingBottom:20}} className="fi">
-      <div style={{paddingTop:`max(56px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:16}}>
-        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:4}}>Resursi</p>
-        <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5}}>Biblioteka</h1>
+      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:`max(56px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:14}}>
+        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Resursi</p>
+        <h1 className="serif" style={{fontSize:28,letterSpacing:-0.3,fontWeight:700}}>Biblioteka</h1>
       </div>
       <div style={{padding:"0 20px"}}>
         {CLANCI.map((a,idx)=>{const [b,f]=kBoja(a.k);return(
@@ -1427,16 +1427,11 @@ export default function App(){
 
   async function resolveSession(session){
     const uid=session.user.id;
-    // koristi keš samo ako je svež (< 8h) — inače keš ima zastareli streak
-    try{
-      const lastSync=localStorage.getItem(`unpick_sync_${uid}`);
-      const svez=lastSync&&(Date.now()-parseInt(lastSync))<8*60*60*1000;
-      if(svez){const c=localStorage.getItem(`unpick_entries_${uid}`);if(c)setNoviUnosi(JSON.parse(c));}
-    }catch{}
     const imePrivremeno=session.user.user_metadata?.name||session.user.email||"";
     setKor({ime:imePrivremeno,id:uid,registeredAt:session.user.created_at});
+    // uvek čekaj sveže podatke pre prikaza — nema keša na startu
+    await loadJournalEntries(uid);
     setFaza("app");
-    loadJournalEntries(uid);
     supabase.from("profiles").select("ime").eq("id",uid).single().then(({data})=>{
       if(data?.ime) setKor(prev=>({...prev,ime:data.ime}));
     }).catch(()=>{});
