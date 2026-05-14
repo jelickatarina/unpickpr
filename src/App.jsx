@@ -684,20 +684,22 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   function snimi(p){
     setPoruke(p);porRef.current=p;
     localStorage.setItem(LS,JSON.stringify(p));
-    if(userId) supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id"}).catch(()=>{});
+    if(userId) supabase.from("profiles").update({chat_history:p}).eq("id",userId).catch(e=>console.error("chat save:",e?.message));
   }
 
   useEffect(()=>{
     if(!userId)return;
-    // prvo Supabase (cross-device), fallback localStorage
-    supabase.from("profiles").select("chat_history").eq("id",userId).single().then(({data})=>{
-      if(data?.chat_history?.length>1){
-        snimi(data.chat_history);
-      } else {
-        try{const p=JSON.parse(localStorage.getItem(LS)||"[]");if(p.length>1){snimi(p);}}catch{}
-      }
+    const lsData=()=>{try{return JSON.parse(localStorage.getItem(LS)||"[]");}catch{return [];}};
+    supabase.from("profiles").select("chat_history").eq("id",userId).single().then(({data,error})=>{
+      if(error) console.error("chat load:",error?.message);
+      const sb=Array.isArray(data?.chat_history)?data.chat_history:[];
+      const ls=lsData();
+      // koristi koji ima više poruka
+      const best=sb.length>=ls.length?sb:ls;
+      if(best.length>1){setPoruke(best);porRef.current=best;localStorage.setItem(LS,JSON.stringify(best));}
     }).catch(()=>{
-      try{const p=JSON.parse(localStorage.getItem(LS)||"[]");if(p.length>1){snimi(p);}}catch{}
+      const ls=lsData();
+      if(ls.length>1){setPoruke(ls);porRef.current=ls;}
     });
   },[userId]);
 
@@ -706,15 +708,14 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
     const txt=unos.trim();if(!txt||ucitava)return;
     const np=[...poruke,{id:Date.now(),ko:"user",tekst:txt}];
     setPoruke(np);porRef.current=np;setUnos("");setUcitava(true);
-    if(!GEMINI_KEY){const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna — nedostaje VITE_GEMINI_API_KEY u podešavanjima."}];setPoruke(npp);porRef.current=npp;setUcitava(false);return;}
-    const GURL="https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
-    const GHDRS={"Content-Type":"application/json","Authorization":`Bearer ${GEMINI_KEY}`};
+    if(!GEMINI_KEY){const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna."}];setPoruke(npp);porRef.current=npp;setUcitava(false);return;}
     try{
-      const msgs=[{role:"system",content:buildSys(ime,niz,unosi)},...np.map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))];
-      const res=await fetch(GURL,{method:"POST",headers:GHDRS,body:JSON.stringify({model:"gemini-2.0-flash",max_tokens:600,messages:msgs})});
+      const hist=np.filter(p=>p.id!==0).map(p=>({role:p.ko==="user"?"user":"model",parts:[{text:p.tekst}]}));
+      const body={system_instruction:{parts:[{text:buildSys(ime,niz,unosi)}]},contents:hist,generationConfig:{maxOutputTokens:600}};
+      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       const data=await res.json();
-      if(!res.ok||data.error){console.error("Gemini greška:",JSON.stringify(data.error||data));throw new Error(data.error?.message||"greška "+res.status);}
-      const raw=data.choices?.[0]?.message?.content||"";
+      if(data.error){console.error("Gemini greška:",data.error.message);throw new Error(data.error.message);}
+      const raw=data.candidates?.[0]?.content?.parts?.[0]?.text||"";
       if(!raw) throw new Error("prazan odgovor");
       const hasSOS=raw.includes("[SOS]");
       const aiTekst=raw.replace(/\[SOS\]/g,"").trim();
@@ -1408,16 +1409,23 @@ export default function App(){
   },[]);
 
   async function resolveSession(session){
-    const {data:profile}=await supabase.from("profiles").select("name").eq("id",session.user.id).single();
+    const uid=session.user.id;
+    // učitaj keširane unose odmah (streak se vidi bez čekanja)
+    try{const c=localStorage.getItem(`unpick_entries_${uid}`);if(c)setNoviUnosi(JSON.parse(c));}catch{}
+    const {data:profile}=await supabase.from("profiles").select("name").eq("id",uid).single();
     const ime=profile?.name||session.user.user_metadata?.name||session.user.email;
-    setKor({ime,id:session.user.id,registeredAt:session.user.created_at});
+    setKor({ime,id:uid,registeredAt:session.user.created_at});
     setFaza("app");
-    loadJournalEntries(session.user.id);
+    loadJournalEntries(uid);
   }
 
   async function loadJournalEntries(userId){
     const {data}=await supabase.from("journal_entries").select("*").eq("user_id",userId).order("created_at",{ascending:false});
-    if(data) setNoviUnosi(data.map(e=>({id:e.id,datum:new Date(e.created_at).toLocaleString("sr"),ts:new Date(e.created_at).getTime(),int:e.intensity,ok:safeParseOk(e.trigger),lok:e.location,epre:e.emotion_before,epost:e.emotion_after,ish:e.outcome,bel:e.note,slike:e.images||[]})));
+    if(data){
+      const entries=data.map(e=>({id:e.id,datum:new Date(e.created_at).toLocaleString("sr"),ts:new Date(e.created_at).getTime(),int:e.intensity,ok:safeParseOk(e.trigger),lok:e.location,epre:e.emotion_before,epost:e.emotion_after,ish:e.outcome,bel:e.note,slike:e.images||[]}));
+      setNoviUnosi(entries);
+      localStorage.setItem(`unpick_entries_${userId}`,JSON.stringify(entries));
+    }
   }
 
   async function handleSacuvajUnos(u){
