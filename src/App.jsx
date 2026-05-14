@@ -13,23 +13,23 @@ const C = {
   amber:"#C4A870",amberLight:"#FAF0DC",
   red:"#C46878",border:"#EEE0E6",shadow:"rgba(192,120,144,0.09)",
 };
-const fonts=`@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');`;
+const fonts=`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');`;
 const css=`
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:${C.bg};}
-.app{font-family:'Plus Jakarta Sans',sans-serif;background:${C.bg};min-height:100vh;max-width:390px;margin:0 auto;position:relative;color:${C.text};overflow-x:hidden;}
-.serif{font-family:'Instrument Serif',serif;}
+.app{font-family:'DM Sans',sans-serif;background:${C.bg};min-height:100vh;max-width:390px;margin:0 auto;position:relative;color:${C.text};overflow-x:hidden;}
+.serif{font-family:'Playfair Display',serif;}
 .italic{font-style:italic;}
-.btn-p{background:${C.primaryGrad};color:#fff;border:none;border-radius:100px;padding:16px 32px;font-size:15px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;width:100%;transition:all .18s;box-shadow:0 4px 20px rgba(122,158,142,.30);touch-action:manipulation;-webkit-tap-highlight-color:transparent;letter-spacing:.2px;}
+.btn-p{background:${C.primaryGrad};color:#fff;border:none;border-radius:100px;padding:16px 32px;font-size:15px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;width:100%;transition:all .18s;box-shadow:0 4px 20px rgba(122,158,142,.30);touch-action:manipulation;-webkit-tap-highlight-color:transparent;letter-spacing:.2px;}
 .btn-p:active{transform:scale(.97);}
-.btn-o{background:${C.bgCard};color:${C.textMid};border:1.5px solid ${C.border};border-radius:100px;padding:15px 32px;font-size:15px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;width:100%;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
-.btn-g{background:transparent;color:${C.textMid};border:none;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;padding:6px;display:flex;align-items:center;gap:6px;font-weight:500;touch-action:manipulation;}
+.btn-o{background:${C.bgCard};color:${C.textMid};border:1.5px solid ${C.border};border-radius:100px;padding:15px 32px;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;width:100%;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.btn-g{background:transparent;color:${C.textMid};border:none;font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;padding:6px;display:flex;align-items:center;gap:6px;font-weight:500;touch-action:manipulation;}
 .card{background:${C.bgCard};border-radius:28px;box-shadow:0 4px 24px rgba(122,158,142,0.09);padding:20px;}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:100px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:13px;color:${C.textMid};cursor:pointer;transition:all .16s;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:100px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:13px;color:${C.textMid};cursor:pointer;transition:all .16s;font-family:'DM Sans',sans-serif;font-weight:600;}
 .chip.on{border-color:${C.primary};background:${C.primaryLight};color:${C.primaryDark};}
-.cr{display:block;width:100%;text-align:left;padding:15px 18px;border-radius:18px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:15px;color:${C.textMid};cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:8px;transition:all .16s;font-weight:500;}
+.cr{display:block;width:100%;text-align:left;padding:15px 18px;border-radius:18px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:15px;color:${C.textMid};cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:8px;transition:all .16s;font-weight:500;}
 .cr.on{border-color:${C.primary};background:${C.primaryLight};color:${C.primaryDark};font-weight:600;}
-.inp{width:100%;padding:16px 20px;border-radius:18px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;color:${C.text};outline:none;transition:all .18s;font-weight:500;}
+.inp{width:100%;padding:16px 20px;border-radius:18px;border:1.5px solid ${C.border};background:${C.bgCard};font-size:15px;font-family:'DM Sans',sans-serif;color:${C.text};outline:none;transition:all .18s;font-weight:500;}
 .inp:focus{border-color:${C.primary};box-shadow:0 0 0 4px ${C.primaryLight};}
 textarea.inp{resize:none;min-height:80px;line-height:1.65;}
 .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid ${C.border};border-radius:20px 20px 0 0;display:flex;z-index:100;padding:8px 4px env(safe-area-inset-bottom,10px);gap:0;}
@@ -169,7 +169,7 @@ function Auth({onDone}){
             <Ico d={I.leaf} size={22} stroke="#fff" sw={1.8}/>
           </div>
           <p style={{fontSize:10,fontWeight:700,letterSpacing:3,textTransform:"uppercase",color:C.textLight,marginBottom:6}}>Unpick</p>
-          <h1 style={{fontSize:24,lineHeight:1.3,marginBottom:6,letterSpacing:-0.2,color:C.text,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700}}>
+          <h1 style={{fontSize:24,lineHeight:1.3,marginBottom:6,letterSpacing:-0.2,color:C.text,fontFamily:"'DM Sans',sans-serif",fontWeight:700}}>
             Your skin<br/><span style={{color:C.primary,fontWeight:800}}>deserves kindness.</span>
           </h1>
           <p style={{fontSize:13,color:C.textMid,lineHeight:1.55,fontWeight:500,marginBottom:16}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
@@ -264,7 +264,7 @@ function Auth({onDone}){
   return(
     <div className="fi" style={{height:"100dvh",background:C.bg,overflowY:"auto",display:"flex",flexDirection:"column",justifyContent:"center",paddingBottom:"14vh"}}>
       <div style={{paddingTop:isPWA?HDR_PT:"24px",paddingLeft:28,paddingRight:28,paddingBottom:16}}>
-        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:C.bgMuted,border:`1.5px solid ${C.border}`,borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",marginBottom:32,padding:"9px 18px",boxShadow:`0 2px 8px ${C.shadow}`}}>
+        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:C.bgMuted,border:`1.5px solid ${C.border}`,borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:700,fontFamily:"'DM Sans',sans-serif",marginBottom:32,padding:"9px 18px",boxShadow:`0 2px 8px ${C.shadow}`}}>
           <Ico d={I.back} size={14} stroke={C.textMid} sw={2}/> Nazad
         </button>
         <h2 className="serif" style={{fontSize:38,letterSpacing:-0.5,color:C.text,marginBottom:6}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
@@ -305,7 +305,7 @@ function Auth({onDone}){
         >
           {loading?"Molimo sačekajte...":(isL?"Prijavi se →":"Registruj se →")}
         </button>
-        <button type="button" onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"6px 0",textAlign:"center",touchAction:"manipulation"}}>
+        <button type="button" onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'DM Sans',sans-serif",padding:"6px 0",textAlign:"center",touchAction:"manipulation"}}>
           {isL?"Nemaš nalog? Registruj se":"Već imaš nalog? Prijavi se"}
         </button>
       </div>
@@ -324,7 +324,7 @@ function Mehurici({onDone}){
         {ms.map(m=>!m.p&&<button key={m.id} onClick={()=>{setMs(v=>v.map(x=>x.id===m.id?{...x,p:true}:x));setN(v=>v+1)}} style={{position:"absolute",left:`${m.x}%`,top:`${m.y}%`,width:54,height:54,borderRadius:"50%",background:C.bgCard,border:`2px solid ${C.primary}`,fontSize:24,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transform:"translate(-50%,-50%)",boxShadow:`0 4px 16px rgba(122,158,142,.18)`}}>{m.e}</button>)}
         {svi&&<div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:44}}>🎉</span><p style={{fontWeight:700,color:C.primaryDark,fontSize:16,marginTop:10}}>Sve si prsnula!</p></div>}
       </div>
-      <p style={{fontSize:20,fontWeight:400,color:C.primary,fontFamily:"'Instrument Serif',serif"}}>{n} / {ms.length}</p>
+      <p style={{fontSize:20,fontWeight:400,color:C.primary,fontFamily:"'Playfair Display',serif"}}>{n} / {ms.length}</p>
       {svi&&<button className="btn-p" style={{width:"auto",padding:"13px 36px"}} onClick={onDone}>Osećam se bolje →</button>}
     </div>
   );
@@ -338,7 +338,7 @@ function Boje({onDone}){
   return(
     <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:16}}>
       <p style={{fontSize:14,color:C.textMid,fontWeight:500}}>Pritisni ispravnu boju što brže možeš</p>
-      <div style={{textAlign:"center"}}><p style={{fontSize:10,color:C.textLight,marginBottom:6,fontWeight:700,letterSpacing:1}}>PRONAĐI</p><span style={{fontSize:30,fontWeight:400,color:cilj.b,fontFamily:"'Instrument Serif',serif"}}>{cilj.n} {msg}</span></div>
+      <div style={{textAlign:"center"}}><p style={{fontSize:10,color:C.textLight,marginBottom:6,fontWeight:700,letterSpacing:1}}>PRONAĐI</p><span style={{fontSize:30,fontWeight:400,color:cilj.b,fontFamily:"'Playfair Display',serif"}}>{cilj.n} {msg}</span></div>
       <div style={{display:"flex",gap:14,flexWrap:"wrap",justifyContent:"center"}}>
         {red.map(b=><button key={b.n} onClick={()=>tap(b)} style={{width:70,height:70,borderRadius:"50%",background:b.b,border:"none",cursor:"pointer",boxShadow:`0 6px 20px ${b.b}55`}}/>)}
       </div>
@@ -422,7 +422,7 @@ function SOS({onZatvori}){
           </svg>
           <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:4}}>
             <Ico d={dk%3===0?I.plus:dk%3===1?I.shield:I.send} size={28} stroke={cur.c} sw={1.8}/>
-            <span style={{fontSize:42,fontWeight:400,color:cur.c,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{Math.max(disSek,0)}</span>
+            <span style={{fontSize:42,fontWeight:400,color:cur.c,fontFamily:"'Playfair Display',serif",lineHeight:1}}>{Math.max(disSek,0)}</span>
             <span style={{fontWeight:600,color:cur.c,fontSize:13}}>{cur.l}</span>
           </div>
         </div>
@@ -448,7 +448,7 @@ function SOS({onZatvori}){
             {done
               ? <div style={{width:64,height:64,borderRadius:"50%",background:C.greenLight,display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={I.check} size={32} stroke={C.green} sw={2.5}/></div>
               : <>
-                  <span style={{fontSize:44,fontWeight:400,color:C.primary,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{tajmer}</span>
+                  <span style={{fontSize:44,fontWeight:400,color:C.primary,fontFamily:"'Playfair Display',serif",lineHeight:1}}>{tajmer}</span>
                   <span style={{fontSize:12,color:C.textLight,fontWeight:600,letterSpacing:1}}>SEK</span>
                 </>
             }
@@ -475,7 +475,7 @@ function SOS({onZatvori}){
         {[[I.spark,"5","stvari koje VIDIŠ"],[I.heart,"4","stvari koje DODIRUJEŠ"],[I.chat,"3","zvuka koje ČUJEŠ"],[I.leaf,"2","mirisa koje OSEĆAŠ"],[I.plus,"1","ukus koji OSETIŠ"]].map(([ico,n,l])=>(
           <div key={l} className="card" style={{marginBottom:10,display:"flex",alignItems:"center",gap:14}}>
             <div style={{width:36,height:36,borderRadius:10,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={ico} size={18} stroke={C.primary} sw={1.8}/></div>
-            <div><span style={{fontWeight:400,color:C.primary,fontSize:22,fontFamily:"'Instrument Serif',serif"}}>{n} </span><span style={{fontSize:13,color:C.textMid,fontWeight:500}}>{l}</span></div>
+            <div><span style={{fontWeight:400,color:C.primary,fontSize:22,fontFamily:"'Playfair Display',serif"}}>{n} </span><span style={{fontSize:13,color:C.textMid,fontWeight:500}}>{l}</span></div>
           </div>
         ))}
         <div style={{height:16}}/><button className="btn-p" onClick={()=>onZatvori()}>Završila sam →</button>
@@ -528,7 +528,7 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
         <button
           disabled={!u.ish||saving}
           onClick={()=>{if(!u.ish||saving)return;setSaving(true);onSacuvaj(u);}}
-          style={{background:u.ish?C.primaryGrad:"transparent",color:u.ish?"#fff":C.textLight,border:u.ish?"none":`1.5px solid ${C.border}`,borderRadius:100,padding:"9px 20px",fontSize:13,fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",cursor:u.ish?"pointer":"default",transition:"all .2s",opacity:saving?0.6:1,flexShrink:0}}
+          style={{background:u.ish?C.primaryGrad:"transparent",color:u.ish?"#fff":C.textLight,border:u.ish?"none":`1.5px solid ${C.border}`,borderRadius:100,padding:"9px 20px",fontSize:13,fontWeight:700,fontFamily:"'DM Sans',sans-serif",cursor:u.ish?"pointer":"default",transition:"all .2s",opacity:saving?0.6:1,flexShrink:0}}
         >Sačuvaj</button>
       </div>
 
@@ -557,7 +557,7 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
         <div>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:10}}>
             <span className="lbl" style={{marginBottom:0}}>JAK IMPULS</span>
-            <span style={{fontSize:26,fontWeight:400,color:C.primary,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{u.int}</span>
+            <span style={{fontSize:26,fontWeight:400,color:C.primary,fontFamily:"'Playfair Display',serif",lineHeight:1}}>{u.int}</span>
           </div>
           <input type="range" min={1} max={10} value={u.int} onChange={e=>setU(v=>({...v,int:+e.target.value}))} style={{width:"100%",accentColor:C.primary}}/>
           <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:C.textLight,fontWeight:600,marginTop:4}}><span>Jedva primetno</span><span>Nepodnošljivo</span></div>
@@ -751,8 +751,8 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
               <div style={{position:"absolute",bottom:1,right:1,width:9,height:9,borderRadius:"50%",background:"#4CD964",border:"2px solid #fff",animation:"pulse 2s infinite"}}/>
             </div>
             <div>
-              <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>AI podrška</p>
-              <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.3,color:C.text}}>Mia</h1>
+              <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>AI podrška</span>
+              <h1 className="serif" style={{fontSize:30,lineHeight:1,letterSpacing:-0.5,color:C.text}}>Mia</h1>
             </div>
           </div>
           <button onClick={onSOS} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 16px 9px 12px",borderRadius:100,background:C.red,border:"none",cursor:"pointer",flexShrink:0,boxShadow:`0 4px 12px ${C.red}55`}}>
@@ -785,7 +785,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
       </div>
       {poruke.length===1&&<div style={{padding:"0 16px 10px",display:"flex",gap:8,overflowX:"auto",background:C.bg,flexShrink:0}}>
         {["Teško mi je danas","Imao/la sam epizodu","Kako da se smirim?","Napredovao/la sam!"].map(t=>(
-          <button key={t} onClick={()=>setUnos(t)} style={{flexShrink:0,padding:"9px 16px",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:100,fontSize:13,color:C.textMid,cursor:"pointer",whiteSpace:"nowrap",fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",boxShadow:`0 2px 8px ${C.shadow}`}}>{t}</button>
+          <button key={t} onClick={()=>setUnos(t)} style={{flexShrink:0,padding:"9px 16px",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:100,fontSize:13,color:C.textMid,cursor:"pointer",whiteSpace:"nowrap",fontWeight:600,fontFamily:"'DM Sans',sans-serif",boxShadow:`0 2px 8px ${C.shadow}`}}>{t}</button>
         ))}
       </div>}
       <div style={{padding:"10px 16px",paddingBottom:"calc(14px + env(safe-area-inset-bottom,0px))",background:"rgba(255,255,255,.92)",backdropFilter:"blur(20px)",borderTop:`1px solid ${C.border}`,display:"flex",gap:10,alignItems:"flex-end",flexShrink:0}}>
@@ -878,13 +878,13 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
       )}
 
       {/* ── TOP SECTION: gradient hero ── */}
-      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:22,paddingRight:22,paddingBottom:14}}>
+      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:22,paddingRight:22,paddingBottom:16}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
           <div>
-            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Početna</p>
-            <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.3,color:C.text}}>{prikazIme?`${pozdrav}, ${prikazIme}`:pozdrav}</h1>
+            <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Početna</span>
+            <h1 className="serif" style={{fontSize:30,lineHeight:1,letterSpacing:-0.5,color:C.text}}>{prikazIme?`${pozdrav}, ${prikazIme}`:pozdrav}</h1>
           </div>
-          <button onClick={onLogout} style={{background:C.bgMuted,border:`1px solid ${C.border}`,borderRadius:100,fontSize:11,color:C.textLight,fontWeight:700,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"7px 14px",boxShadow:"0 2px 8px rgba(192,120,144,.1)"}}>Odjavi</button>
+          <button onClick={onLogout} style={{background:C.bgMuted,border:`1px solid ${C.border}`,borderRadius:100,fontSize:11,color:C.textLight,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",padding:"7px 14px",boxShadow:"0 2px 8px rgba(192,120,144,.1)"}}>Odjavi</button>
         </div>
       </div>
 
@@ -907,7 +907,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
             <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2}}>
               {niz===0
                 ?<><Ico d={I.leaf} size={28} stroke={C.primary} sw={1.8}/><p style={{fontSize:13,fontWeight:700,color:C.textMid}}>Počni!</p></>
-                :<div style={{display:"flex",alignItems:"center",gap:6}}><span style={{fontSize:52,fontWeight:400,color:C.text,fontFamily:"'Instrument Serif',serif",lineHeight:1}}>{niz}</span><span style={{fontSize:26,lineHeight:1}}>🔥</span></div>
+                :<div style={{display:"flex",alignItems:"center",gap:6}}><span style={{fontSize:52,fontWeight:400,color:C.text,fontFamily:"'Playfair Display',serif",lineHeight:1}}>{niz}</span><span style={{fontSize:26,lineHeight:1}}>🔥</span></div>
               }
             </div>
           </div>
@@ -943,14 +943,14 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
 
         {/* Action buttons */}
         <div style={{display:"flex",gap:12}}>
-          <button onClick={onSOS} style={{flex:1,background:C.primaryGrad,border:"none",borderRadius:20,padding:"18px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,boxShadow:`0 8px 28px ${C.primary}44`,fontFamily:"'Plus Jakarta Sans',sans-serif",touchAction:"manipulation"}}>
+          <button onClick={onSOS} style={{flex:1,background:C.primaryGrad,border:"none",borderRadius:20,padding:"18px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,boxShadow:`0 8px 28px ${C.primary}44`,fontFamily:"'DM Sans',sans-serif",touchAction:"manipulation"}}>
             <div style={{width:38,height:38,borderRadius:12,background:"rgba(255,255,255,.2)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.shield} size={18} stroke="#fff" sw={2}/></div>
             <div style={{textAlign:"left"}}>
               <p style={{fontSize:15,fontWeight:700,color:"#fff",lineHeight:1}}>SOS</p>
               <p style={{fontSize:11,color:"rgba(255,255,255,.65)",fontWeight:600,marginTop:3}}>Smiri se</p>
             </div>
           </button>
-          <button onClick={onNoviUnos} style={{flex:1,background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:20,padding:"18px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,fontFamily:"'Plus Jakarta Sans',sans-serif",touchAction:"manipulation"}}>
+          <button onClick={onNoviUnos} style={{flex:1,background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:20,padding:"18px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,fontFamily:"'DM Sans',sans-serif",touchAction:"manipulation"}}>
             <div style={{width:38,height:38,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.plus} size={18} stroke={C.primary} sw={2.5}/></div>
             <div style={{textAlign:"left"}}>
               <p style={{fontSize:15,fontWeight:700,color:C.text,lineHeight:1}}>Upiši</p>
@@ -960,12 +960,10 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
         </div>
 
         {/* Quote — last element */}
-        <div style={{background:C.bgCard,borderRadius:22,padding:"22px 22px 20px",border:`1px solid ${C.border}`}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
-            <span style={{fontSize:28,lineHeight:1,color:C.primary,fontFamily:"'Instrument Serif',serif",opacity:.4}}>"</span>
-            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase"}}>Poruka dana</p>
-          </div>
-          <p style={{fontSize:17,color:C.text,lineHeight:1.8,fontFamily:"'Instrument Serif',serif",fontWeight:400}}>{poruka}</p>
+        <div style={{background:`linear-gradient(135deg,${C.primaryLight} 0%,${C.purpleLight} 100%)`,borderRadius:22,padding:"22px 22px 20px",border:`1px solid ${C.primary}22`,position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",top:-18,right:10,fontSize:110,color:C.primary,opacity:.07,fontFamily:"'Playfair Display',serif",lineHeight:1,pointerEvents:"none"}}>"</div>
+          <span style={{display:"inline-block",background:"rgba(192,120,144,.14)",color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:14}}>Poruka dana</span>
+          <p className="serif italic" style={{fontSize:17,color:C.text,lineHeight:1.85,fontWeight:400}}>{poruka}</p>
         </div>
       </div>
     </div>
@@ -999,8 +997,8 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
       <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:24,paddingRight:24,paddingBottom:14}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div>
-            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Moj dnevnik</p>
-            <h1 className="serif" style={{fontSize:28,letterSpacing:-0.3,lineHeight:1}}>Unosi</h1>
+            <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Moj dnevnik</span>
+            <h1 className="serif" style={{fontSize:30,letterSpacing:-0.5,lineHeight:1}}>Unosi</h1>
           </div>
           <button onClick={onDodaj} style={{width:46,height:46,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:`0 4px 16px rgba(192,120,144,.35)`}}>
             <Ico d={I.plus} size={20} stroke="#fff" sw={2.5}/>
@@ -1147,8 +1145,8 @@ function Napredak({unosi,niz}){
   if(total===0) return(
     <div style={{paddingBottom:90}} className="fi">
       <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:24,paddingRight:24,paddingBottom:14}}>
-        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Napredak</p>
-        <h1 className="serif" style={{fontSize:28,color:C.text,letterSpacing:-0.3}}>Tvoje statistike</h1>
+        <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Napredak</span>
+        <h1 className="serif" style={{fontSize:30,color:C.text,letterSpacing:-0.5}}>Tvoje statistike</h1>
       </div>
       <div style={{margin:"24px 20px 0",borderRadius:24,background:C.bgCard,padding:"40px 24px",textAlign:"center",border:`1px solid ${C.border}`}}>
         <div style={{width:60,height:60,borderRadius:18,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 16px"}}><Ico d={I.chart} size={26} stroke={C.primary} sw={1.8}/></div>
@@ -1163,8 +1161,8 @@ function Napredak({unosi,niz}){
 
       {/* Header + insight */}
       <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:14}}>
-        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Napredak</p>
-        <h1 className="serif" style={{fontSize:28,fontWeight:700,color:C.text,letterSpacing:-0.3,lineHeight:1}}>Tvoje statistike</h1>
+        <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Napredak</span>
+        <h1 className="serif" style={{fontSize:30,fontWeight:700,color:C.text,letterSpacing:-0.5,lineHeight:1}}>Tvoje statistike</h1>
         <div style={{marginTop:10,background:insightBg,borderRadius:14,padding:"9px 14px",display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:7,height:7,borderRadius:"50%",background:insightC,flexShrink:0}}/>
           <span style={{fontSize:13,fontWeight:700,color:insightC,lineHeight:1.3}}>{insight}</span>
@@ -1368,7 +1366,7 @@ function Clanak({clanak,onNazad}){
       </div>
       <div style={{display:"flex",flexDirection:"column",gap:18}}>
         {clanak.sadrzaj.map((s,i)=>{
-          if(s.tip==="uvod") return<div key={i} style={{background:b,borderRadius:20,padding:"20px 22px"}}><p style={{fontSize:16,color:C.text,lineHeight:1.8,fontStyle:"italic",fontFamily:"'Instrument Serif',serif"}}>{s.t}</p></div>;
+          if(s.tip==="uvod") return<div key={i} style={{background:b,borderRadius:20,padding:"20px 22px"}}><p style={{fontSize:16,color:C.text,lineHeight:1.8,fontStyle:"italic",fontFamily:"'Playfair Display',serif"}}>{s.t}</p></div>;
           if(s.tip==="naslov") return<h3 key={i} className="serif" style={{fontSize:20,color:C.text,marginTop:4,marginBottom:-8,letterSpacing:-0.2}}>{s.t}</h3>;
           if(s.tip==="tekst") return<p key={i} style={{fontSize:15,color:C.textMid,lineHeight:1.85,fontWeight:500}}>{s.t}</p>;
           if(s.tip==="vazno") return<div key={i} style={{background:C.primaryLight,borderLeft:`4px solid ${C.primary}`,borderRadius:"0 16px 16px 0",padding:"16px 20px"}}><p style={{fontSize:15,color:C.primaryDark,lineHeight:1.7,fontWeight:600}}>{s.t}</p></div>;
@@ -1385,8 +1383,8 @@ function Biblioteka(){
   return(
     <div style={{paddingBottom:20}} className="fi">
       <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:24,paddingRight:24,paddingBottom:14}}>
-        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Resursi</p>
-        <h1 className="serif" style={{fontSize:28,letterSpacing:-0.3}}>Biblioteka</h1>
+        <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Resursi</span>
+        <h1 className="serif" style={{fontSize:30,letterSpacing:-0.5}}>Biblioteka</h1>
       </div>
       <div style={{padding:"16px 20px 0"}}>
         {CLANCI.map((a,idx)=>{const [b,f]=kBoja(a.k);return(
