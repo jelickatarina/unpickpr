@@ -787,7 +787,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   );
 }
 
-function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
+function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
   const [izvestaj,setIzvestaj]=useState(null);
   const h=new Date().getHours();
   const pozdrav=h<12?"Dobro jutro,":h<18?"Dobar dan,":"Dobro veče,";
@@ -799,17 +799,20 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
   const ponedeljak=new Date(danas);
   ponedeljak.setDate(danas.getDate()-(dow===0?6:dow-1));
   ponedeljak.setHours(0,0,0,0);
+  const regTs=registeredAt?new Date(registeredAt).setHours(0,0,0,0):null;
   const weekData=Array.from({length:7},(_,i)=>{
     const d=new Date(ponedeljak.getTime()+i*86400000);
     const buduci=d.getTime()>danas.getTime();
+    const preReg=regTs&&d.getTime()<regTs;
     const entries=(unosi||[]).filter(e=>e.ts&&e.ts>=d.getTime()&&e.ts<d.getTime()+86400000);
     let s=null;
-    if(!buduci){
+    if(preReg) s="pre";
+    else if(!buduci){
       if(entries.some(e=>e.ish==="ep")) s="c";
       else if(entries.some(e=>e.ish==="try")) s="ž";
       else s="z";
     }
-    return{s,entries,datum:d,naziv:puniDani[i]};
+    return{s,entries,datum:d,naziv:puniDani[i],preReg};
   });
   const now=new Date();
   const todayStart=new Date(now);todayStart.setHours(0,0,0,0);
@@ -911,14 +914,15 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi}){
         <div style={{background:C.bgCard,borderRadius:22,padding:"16px 18px",border:`1px solid ${C.border}`}}>
           <p style={{fontSize:10,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:14}}>Ova nedelja</p>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-            {weekData.map(({s},i)=>(
-              <div key={i} onClick={()=>s!==null&&setIzvestaj(i)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,cursor:s!==null?"pointer":"default"}}>
+            {weekData.map(({s,preReg},i)=>(
+              <div key={i} onClick={()=>s!==null&&s!=="pre"&&setIzvestaj(i)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,cursor:s!==null&&s!=="pre"?"pointer":"default",opacity:preReg?0.35:1}}>
                 <div style={{width:36,height:36,borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",
                   background:s==="z"?C.greenLight:s==="ž"?C.amberLight:s==="c"?C.red+"18":C.bgMuted,
                   boxShadow:izvestaj===i?`0 0 0 2px ${C.primary}`:"none",transition:"box-shadow .18s"}}>
                   {s==="z"&&<Ico d={I.check} size={14} stroke={C.green} sw={2.5}/>}
                   {s==="ž"&&<span style={{fontSize:12,color:C.amber,fontWeight:900}}>~</span>}
                   {s==="c"&&<Ico d={I.x} size={12} stroke={C.red} sw={2.5}/>}
+                  {s==="pre"&&<span style={{fontSize:14,color:C.textLight,fontWeight:300}}>—</span>}
                   {s===null&&<span style={{width:5,height:5,borderRadius:"50%",background:C.border,display:"block"}}/>}
                 </div>
                 <span style={{fontSize:9,color:s==="z"?C.green:s==="c"?C.red:s==="ž"?C.amber:C.textLight,fontWeight:700}}>{dani[i]}</span>
@@ -1484,7 +1488,7 @@ export default function App(){
         ):(
           <>
             <div style={{paddingBottom:ekran==="chat"?0:"calc(70px + env(safe-area-inset-bottom,0px))",overflowY:ekran==="chat"?"hidden":"auto",height:ekran==="chat"?"calc(100vh - 63px - env(safe-area-inset-bottom,0px))":"auto",display:ekran==="chat"?"flex":"block",flexDirection:"column"}}>
-              {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
+              {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
               {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
               {ekran==="bib"&&<Biblioteka/>}
