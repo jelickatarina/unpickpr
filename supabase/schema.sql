@@ -38,3 +38,21 @@ create policy "Own profile update" on profiles for update using (auth.uid() = id
 create policy "Own entries select" on journal_entries for select using (auth.uid() = user_id);
 create policy "Own entries insert" on journal_entries for insert with check (auth.uid() = user_id);
 create policy "Own entries delete" on journal_entries for delete using (auth.uid() = user_id);
+
+-- Function to auto-create a profile row when a new auth user signs up.
+-- Must run as security definer so it can write to public.profiles bypassing RLS.
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, ime)
+  values (new.id, new.raw_user_meta_data->>'name')
+  on conflict (id) do nothing;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+-- Trigger: fires handle_new_user after every new row in auth.users
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
