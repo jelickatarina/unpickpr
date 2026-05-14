@@ -745,13 +745,14 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
     <div style={{display:"flex",flexDirection:"column",height:"100%",flex:1,minHeight:0}}>
       <div style={{paddingTop:HDR_PT,paddingBottom:14,paddingLeft:22,paddingRight:22,background:C.bgCard,borderBottom:`1px solid ${C.border}`,flexShrink:0,boxShadow:`0 2px 8px ${C.shadow}`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
-          <div style={{display:"flex",alignItems:"flex-end",gap:10}}>
+          <div style={{display:"flex",alignItems:"flex-end",gap:12}}>
+            <div style={{width:38,height:38,borderRadius:"50%",background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative",boxShadow:`0 4px 10px ${C.primary}44`,marginBottom:2}}>
+              <Ico d={I.heart} size={17} stroke="#fff" sw={1.8}/>
+              <div style={{position:"absolute",bottom:1,right:1,width:9,height:9,borderRadius:"50%",background:"#4CD964",border:"2px solid #fff",animation:"pulse 2s infinite"}}/>
+            </div>
             <div>
               <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>AI podrška</p>
-              <div style={{display:"flex",alignItems:"center",gap:8}}>
-                <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.3,color:C.text}}>Mia</h1>
-                <div style={{width:8,height:8,borderRadius:"50%",background:"#4CD964",flexShrink:0,boxShadow:"0 0 0 2px #fff",animation:"pulse 2s infinite"}}/>
-              </div>
+              <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.3,color:C.text}}>Mia</h1>
             </div>
           </div>
           <button onClick={onSOS} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 16px",borderRadius:100,background:C.red,border:"none",cursor:"pointer",flexShrink:0,boxShadow:`0 4px 12px ${C.red}55`}}>
@@ -787,7 +788,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
           <button key={t} onClick={()=>setUnos(t)} style={{flexShrink:0,padding:"9px 16px",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:100,fontSize:13,color:C.textMid,cursor:"pointer",whiteSpace:"nowrap",fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",boxShadow:`0 2px 8px ${C.shadow}`}}>{t}</button>
         ))}
       </div>}
-      <div style={{padding:"10px 16px 14px",background:"rgba(255,255,255,.92)",backdropFilter:"blur(20px)",borderTop:`1px solid ${C.border}`,display:"flex",gap:10,alignItems:"flex-end",flexShrink:0}}>
+      <div style={{padding:"10px 16px",paddingBottom:"calc(14px + env(safe-area-inset-bottom,0px))",background:"rgba(255,255,255,.92)",backdropFilter:"blur(20px)",borderTop:`1px solid ${C.border}`,display:"flex",gap:10,alignItems:"flex-end",flexShrink:0}}>
         <textarea className="inp" placeholder="Napiši poruku..." value={unos} onChange={e=>setUnos(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();posalji()}}} rows={1} style={{flex:1,minHeight:"auto",resize:"none",padding:"12px 14px",borderRadius:14,lineHeight:1.5}}/>
         <button onClick={posalji} disabled={!unos.trim()||ucitava} style={{width:46,height:46,borderRadius:"50%",background:unos.trim()&&!ucitava?C.primaryGrad:C.border,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:unos.trim()?"pointer":"default",flexShrink:0,transition:"all .2s",boxShadow:unos.trim()&&!ucitava?"0 4px 16px rgba(122,158,142,.30)":"none"}}>
           <Ico d={I.send} size={18} stroke="#fff" sw={2}/>
@@ -1559,7 +1560,7 @@ export default function App(){
                 {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
                 {ekran==="bib"&&<Biblioteka/>}
               </div>
-              <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",flex:1,minHeight:0,overflow:"hidden",paddingBottom:isDesk?0:"calc(63px + env(safe-area-inset-bottom,0px))"}}>
+              <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",flex:1,minHeight:0,overflow:"hidden",paddingBottom:isDesk?0:"63px"}}>
                 <AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)} isVisible={ekran==="chat"}/>
               </div>
               {!isDesk&&(
