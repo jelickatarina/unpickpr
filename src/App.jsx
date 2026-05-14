@@ -1561,8 +1561,8 @@ export default function App(){
               </aside>
             )}
             <div style={isDesk
-              ?{flex:1,minWidth:0,display:"flex",flexDirection:"column",height:"100%",overflow:"hidden"}
-              :{display:"flex",flexDirection:"column",height:"100%",overflow:"hidden"}}>
+              ?{flex:1,minWidth:0,display:"flex",flexDirection:"column",height:"100%"}
+              :{display:"flex",flexDirection:"column",height:"100%"}}>
               <div ref={contentRef} style={{display:ekran==="chat"?"none":"block",flex:1,minHeight:0,paddingBottom:isDesk?"24px":"calc(63px + env(safe-area-inset-bottom,0px))",overflowY:"auto",WebkitOverflowScrolling:"touch"}}>
                 {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
                 {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
