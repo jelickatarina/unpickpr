@@ -611,7 +611,7 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
   );
 }
 
-const GEMINI_KEY=import.meta.env.VITE_GEMINI_API_KEY||"";
+const GROQ_KEY=import.meta.env.VITE_GROQ_API_KEY||"";
 
 function buildSys(ime,niz,unosi){
   const today=new Date();today.setHours(0,0,0,0);
@@ -708,14 +708,13 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
     const txt=unos.trim();if(!txt||ucitava)return;
     const np=[...poruke,{id:Date.now(),ko:"user",tekst:txt}];
     setPoruke(np);porRef.current=np;setUnos("");setUcitava(true);
-    if(!GEMINI_KEY){const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna."}];setPoruke(npp);porRef.current=npp;setUcitava(false);return;}
+    if(!GROQ_KEY){const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna."}];setPoruke(npp);porRef.current=npp;setUcitava(false);return;}
     try{
-      const hist=np.filter(p=>p.id!==0).map(p=>({role:p.ko==="user"?"user":"model",parts:[{text:p.tekst}]}));
-      const body={system_instruction:{parts:[{text:buildSys(ime,niz,unosi)}]},contents:hist,generationConfig:{maxOutputTokens:600}};
-      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+      const msgs=[{role:"system",content:buildSys(ime,niz,unosi)},...np.filter(p=>p.id!==0).map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))];
+      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.1-8b-instant",max_tokens:600,messages:msgs})});
       const data=await res.json();
-      if(data.error){console.error("Gemini greška:",data.error.message);throw new Error(data.error.message);}
-      const raw=data.candidates?.[0]?.content?.parts?.[0]?.text||"";
+      if(data.error){console.error("Groq greška:",data.error.message);throw new Error(data.error.message);}
+      const raw=data.choices?.[0]?.message?.content||"";
       if(!raw) throw new Error("prazan odgovor");
       const hasSOS=raw.includes("[SOS]");
       const aiTekst=raw.replace(/\[SOS\]/g,"").trim();
@@ -1396,6 +1395,13 @@ export default function App(){
   const [faza,setFaza]=useState("loading");const [kor,setKor]=useState(null);const [ekran,setEkran]=useState("poc");
   const [priSOS,setPriSOS]=useState(false);const [priUnos,setPriUnos]=useState(false);const [editUnos,setEditUnos]=useState(null);
   const [noviUnosi,setNoviUnosi]=useState([]);
+
+  // forsiraj ažuriranje Service Workera pri svakom pokretanju
+  useEffect(()=>{
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.update()));
+    }
+  },[]);
 
   useEffect(()=>{
     supabase.auth.getSession().then(({data:{session}})=>{
