@@ -743,15 +743,16 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
   }
   return(
     <div style={{display:"flex",flexDirection:"column",height:"100%",flex:1,minHeight:0}}>
-      <div style={{paddingTop:HDR_PT,paddingBottom:12,paddingLeft:16,paddingRight:16,background:C.bgCard,borderBottom:`1px solid ${C.border}`,flexShrink:0,boxShadow:`0 2px 8px ${C.shadow}`}}>
-        <div style={{display:"flex",alignItems:"center",gap:12}}>
-          <div style={{width:38,height:38,borderRadius:"50%",background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative",boxShadow:`0 4px 10px ${C.primary}44`}}>
-            <Ico d={I.heart} size={17} stroke="#fff" sw={1.8}/>
-            <div style={{position:"absolute",bottom:1,right:1,width:10,height:10,borderRadius:"50%",background:"#4CD964",border:"2px solid #fff",animation:"pulse 2s infinite"}}/>
-          </div>
-          <div style={{flex:1}}>
-            <p style={{fontWeight:700,fontSize:15,color:C.text,lineHeight:1,marginBottom:3}}>Mia</p>
-            <p style={{fontSize:11,color:C.textLight,fontWeight:500}}>AI podrška · uvek tu</p>
+      <div style={{paddingTop:HDR_PT,paddingBottom:14,paddingLeft:22,paddingRight:22,background:C.bgCard,borderBottom:`1px solid ${C.border}`,flexShrink:0,boxShadow:`0 2px 8px ${C.shadow}`}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
+          <div style={{display:"flex",alignItems:"flex-end",gap:10}}>
+            <div>
+              <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>AI podrška</p>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.3,color:C.text}}>Mia</h1>
+                <div style={{width:8,height:8,borderRadius:"50%",background:"#4CD964",flexShrink:0,boxShadow:"0 0 0 2px #fff",animation:"pulse 2s infinite"}}/>
+              </div>
+            </div>
           </div>
           <button onClick={onSOS} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 16px",borderRadius:100,background:C.red,border:"none",cursor:"pointer",flexShrink:0,boxShadow:`0 4px 12px ${C.red}55`}}>
             <div style={{width:7,height:7,borderRadius:"50%",background:"rgba(255,255,255,0.8)",animation:"pulse 2s infinite"}}/>
@@ -877,18 +878,17 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
 
       {/* ── TOP SECTION: gradient hero ── */}
       <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:22,paddingRight:22,paddingBottom:14}}>
-        {/* Header row */}
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",position:"relative"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
           <div>
+            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Početna</p>
             <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.3,color:C.text}}>{prikazIme?`${pozdrav}, ${prikazIme}`:pozdrav}</h1>
           </div>
+          <button onClick={onLogout} style={{background:C.bgMuted,border:`1px solid ${C.border}`,borderRadius:100,fontSize:11,color:C.textLight,fontWeight:700,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"7px 14px",boxShadow:"0 2px 8px rgba(192,120,144,.1)"}}>Odjavi</button>
         </div>
-
       </div>
 
       {/* ── Streak ring — scrollable hero ── */}
       <div style={{background:`linear-gradient(160deg,${C.primaryLight} 0%,${C.bg} 55%)`,padding:"24px 22px 28px",position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:-60,right:-60,width:200,height:200,borderRadius:"50%",background:C.primary+"0D"}}/>
         <div style={{display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
           <div style={{position:"relative",width:r*2+20,height:r*2+20}}>
             <svg width={r*2+20} height={r*2+20} style={{position:"absolute",inset:0,transform:"rotate(-90deg)"}}>
