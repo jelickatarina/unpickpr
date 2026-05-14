@@ -1426,7 +1426,7 @@ export default function App(){
       else setFaza("auth");
     });
     const {data:{subscription}}=supabase.auth.onAuthStateChange((event,session)=>{
-      if(!session){setFaza("auth");setKor(null);}
+      if(event==="SIGNED_OUT"){setFaza("auth");setKor(null);}
     });
     return()=>subscription.unsubscribe();
   },[]);
@@ -1439,8 +1439,12 @@ export default function App(){
     try{const c=localStorage.getItem(`unpick_entries_${uid}`);if(c)setNoviUnosi(JSON.parse(c));}catch{}
     setFaza("app");
     loadJournalEntries(uid);
-    supabase.from("profiles").select("ime").eq("id",uid).single().then(({data})=>{
-      if(data?.ime) setKor(prev=>({...prev,ime:data.ime}));
+    supabase.from("profiles").select("ime").eq("id",uid).single().then(({data,error})=>{
+      if(data?.ime){setKor(prev=>({...prev,ime:data.ime}));}
+      else if(error){
+        // profile row missing (registered before trigger fix) — create it now
+        supabase.from("profiles").upsert({id:uid,ime:imePrivremeno}).catch(()=>{});
+      }
     }).catch(()=>{});
   }
 
