@@ -684,7 +684,17 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   function snimi(p){
     setPoruke(p);porRef.current=p;
     try{localStorage.setItem(LS,JSON.stringify(p));}catch{}
-    if(userId) supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id"}).then(({error})=>{if(error)console.error("chat save err:",error.message,error.code);}).catch(e=>console.error("chat save catch:",e?.message));
+    if(userId){
+      supabase.from("profiles")
+        .update({chat_history:p})
+        .eq("id",userId)
+        .then(({error,data})=>{
+          if(error){
+            // update failed (row possibly missing) — try upsert
+            supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id",ignoreDuplicates:false}).catch(()=>{});
+          }
+        }).catch(()=>{});
+    }
   }
 
   useEffect(()=>{
