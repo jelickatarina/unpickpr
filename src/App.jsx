@@ -253,7 +253,7 @@ function Auth({onDone}){
   const dis=loading||!!uspeh;
 
   return(
-    <div className="fi" style={{height:"100dvh",background:C.bg,overflowY:"auto",display:"flex",flexDirection:"column",justifyContent:"center"}}>
+    <div className="fi" style={{height:"100dvh",background:C.bg,overflowY:"auto",display:"flex",flexDirection:"column",justifyContent:"center",...(isPWA&&{paddingBottom:"14vh"})}}>
       <div style={{paddingTop:isPWA?`max(56px,${SAT})`:"24px",paddingLeft:28,paddingRight:28,paddingBottom:16}}>
         <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:C.bgCard,border:`1px solid ${C.border}`,borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",marginBottom:32,padding:"8px 16px",boxShadow:`0 2px 8px ${C.shadow}`}}>
           <Ico d={I.back} size={14} stroke={C.textMid} sw={2}/> Nazad
@@ -866,7 +866,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
       )}
 
       {/* ── TOP SECTION: gradient hero ── */}
-      <div style={{background:`linear-gradient(160deg,${C.primaryLight} 0%,${C.bg} 55%)`,paddingTop:`max(52px,${SAT})`,paddingLeft:22,paddingRight:22,paddingBottom:32,position:"relative",overflow:"hidden"}}>
+      <div style={{background:`linear-gradient(160deg,${C.primaryLight} 0%,${C.bg} 55%)`,paddingTop:`max(56px,${SAT})`,paddingLeft:22,paddingRight:22,paddingBottom:32,position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",top:-60,right:-60,width:200,height:200,borderRadius:"50%",background:C.primary+"0D"}}/>
 
         {/* Header row */}
@@ -985,10 +985,10 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
 
   return(
     <div style={{paddingBottom:20}} className="fi">
-      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:16}}>
+      <div style={{paddingTop:`max(56px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:16}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div>
-            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:4}}>Moj dnevnik</p>
+            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:4}}>Moj dnevnik</p>
             <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5,lineHeight:1}}>Unosi</h1>
           </div>
           <button onClick={onDodaj} style={{width:50,height:50,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:`0 6px 22px rgba(122,158,142,.35)`}}>
@@ -1135,8 +1135,8 @@ function Napredak({unosi,niz}){
 
   if(total===0) return(
     <div style={{paddingBottom:90}} className="fi">
-      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:24}}>
-        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.5,textTransform:"uppercase",marginBottom:6}}>Napredak</p>
+      <div style={{paddingTop:`max(56px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:24}}>
+        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:4}}>Napredak</p>
         <h1 style={{fontSize:28,fontWeight:800,color:C.text,letterSpacing:-0.5}}>Tvoje statistike</h1>
       </div>
       <div style={{margin:"0 20px",borderRadius:24,background:C.bgCard,padding:"40px 24px",textAlign:"center",border:`1px solid ${C.border}`}}>
@@ -1151,7 +1151,7 @@ function Napredak({unosi,niz}){
     <div style={{paddingBottom:90}} className="fi">
 
       {/* Header + insight */}
-      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:20,paddingRight:20,paddingBottom:16}}>
+      <div style={{paddingTop:`max(56px,${SAT})`,paddingLeft:20,paddingRight:20,paddingBottom:16}}>
         <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.5,textTransform:"uppercase",marginBottom:4}}>Napredak</p>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
           <h1 style={{fontSize:28,fontWeight:800,color:C.text,letterSpacing:-0.5,lineHeight:1}}>Tvoje statistike</h1>
@@ -1375,8 +1375,8 @@ function Biblioteka(){
   if(otvoren!==null) return<Clanak clanak={CLANCI[otvoren]} onNazad={()=>setOtvoren(null)}/>;
   return(
     <div style={{paddingBottom:20}} className="fi">
-      <div style={{paddingTop:`max(60px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:16}}>
-        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:4}}>Resursi</p>
+      <div style={{paddingTop:`max(56px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:16}}>
+        <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:4}}>Resursi</p>
         <h1 className="serif" style={{fontSize:32,letterSpacing:-0.5}}>Biblioteka</h1>
       </div>
       <div style={{padding:"0 20px"}}>
@@ -1427,13 +1427,15 @@ export default function App(){
 
   async function resolveSession(session){
     const uid=session.user.id;
-    // keš odmah → streak vidljiv instant
-    try{const c=localStorage.getItem(`unpick_entries_${uid}`);if(c)setNoviUnosi(JSON.parse(c));}catch{}
-    // prikaži app odmah sa onim što imamo, ne čekaj mrežu
+    // koristi keš samo ako je svež (< 8h) — inače keš ima zastareli streak
+    try{
+      const lastSync=localStorage.getItem(`unpick_sync_${uid}`);
+      const svez=lastSync&&(Date.now()-parseInt(lastSync))<8*60*60*1000;
+      if(svez){const c=localStorage.getItem(`unpick_entries_${uid}`);if(c)setNoviUnosi(JSON.parse(c));}
+    }catch{}
     const imePrivremeno=session.user.user_metadata?.name||session.user.email||"";
     setKor({ime:imePrivremeno,id:uid,registeredAt:session.user.created_at});
     setFaza("app");
-    // učitaj pravo ime i unose u pozadini
     loadJournalEntries(uid);
     supabase.from("profiles").select("ime").eq("id",uid).single().then(({data})=>{
       if(data?.ime) setKor(prev=>({...prev,ime:data.ime}));
@@ -1446,6 +1448,7 @@ export default function App(){
       const entries=data.map(e=>({id:e.id,datum:new Date(e.created_at).toLocaleString("sr"),ts:new Date(e.created_at).getTime(),int:e.intensity,ok:safeParseOk(e.trigger),lok:e.location,epre:e.emotion_before,epost:e.emotion_after,ish:e.outcome,bel:e.note,slike:e.images||[]}));
       setNoviUnosi(entries);
       localStorage.setItem(`unpick_entries_${userId}`,JSON.stringify(entries));
+      localStorage.setItem(`unpick_sync_${userId}`,Date.now().toString());
     }
   }
 
