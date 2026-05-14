@@ -871,7 +871,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",position:"relative"}}>
           <div>
             <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>{pozdrav}</p>
-            <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.3,fontWeight:700,color:C.text}}>{prikazIme}</h1>
+            <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.3,color:C.text}}>{prikazIme}</h1>
           </div>
           <button onClick={onLogout} style={{background:C.bgMuted,border:`1px solid ${C.border}`,borderRadius:100,fontSize:11,color:C.textLight,fontWeight:700,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"7px 14px",boxShadow:"0 2px 8px rgba(192,120,144,.1)",marginBottom:2}}>Odjavi</button>
         </div>
@@ -991,7 +991,7 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div>
             <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Moj dnevnik</p>
-            <h1 className="serif" style={{fontSize:28,letterSpacing:-0.3,lineHeight:1,fontWeight:700}}>Unosi</h1>
+            <h1 className="serif" style={{fontSize:28,letterSpacing:-0.3,lineHeight:1}}>Unosi</h1>
           </div>
           <button onClick={onDodaj} style={{width:46,height:46,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:`0 4px 16px rgba(192,120,144,.35)`}}>
             <Ico d={I.plus} size={20} stroke="#fff" sw={2.5}/>
@@ -1139,7 +1139,7 @@ function Napredak({unosi,niz}){
     <div style={{paddingBottom:90}} className="fi">
       <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:`max(56px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:14}}>
         <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Napredak</p>
-        <h1 className="serif" style={{fontSize:28,fontWeight:700,color:C.text,letterSpacing:-0.3}}>Tvoje statistike</h1>
+        <h1 className="serif" style={{fontSize:28,color:C.text,letterSpacing:-0.3}}>Tvoje statistike</h1>
       </div>
       <div style={{margin:"0 20px",borderRadius:24,background:C.bgCard,padding:"40px 24px",textAlign:"center",border:`1px solid ${C.border}`}}>
         <div style={{width:60,height:60,borderRadius:18,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 16px"}}><Ico d={I.chart} size={26} stroke={C.primary} sw={1.8}/></div>
@@ -1377,7 +1377,7 @@ function Biblioteka(){
     <div style={{paddingBottom:20}} className="fi">
       <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:`max(56px,${SAT})`,paddingLeft:24,paddingRight:24,paddingBottom:14}}>
         <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Resursi</p>
-        <h1 className="serif" style={{fontSize:28,letterSpacing:-0.3,fontWeight:700}}>Biblioteka</h1>
+        <h1 className="serif" style={{fontSize:28,letterSpacing:-0.3}}>Biblioteka</h1>
       </div>
       <div style={{padding:"0 20px"}}>
         {CLANCI.map((a,idx)=>{const [b,f]=kBoja(a.k);return(
@@ -1406,6 +1406,8 @@ export default function App(){
   const [noviUnosi,setNoviUnosi]=useState([]);
   const [isDesk,setIsDesk]=useState(typeof window!=="undefined"&&window.innerWidth>=768);
   useEffect(()=>{const h=()=>setIsDesk(window.innerWidth>=768);window.addEventListener("resize",h);return()=>window.removeEventListener("resize",h);},[]);
+  const contentRef=useRef(null);
+  useEffect(()=>{if(contentRef.current)contentRef.current.scrollTop=0;},[ekran]);
 
   // forsiraj ažuriranje Service Workera pri svakom pokretanju
   useEffect(()=>{
@@ -1429,9 +1431,10 @@ export default function App(){
     const uid=session.user.id;
     const imePrivremeno=session.user.user_metadata?.name||session.user.email||"";
     setKor({ime:imePrivremeno,id:uid,registeredAt:session.user.created_at});
-    // uvek čekaj sveže podatke pre prikaza — nema keša na startu
-    await loadJournalEntries(uid);
+    // keš → instant prikaz; sveži podaci dolaze u pozadini i ažuriraju
+    try{const c=localStorage.getItem(`unpick_entries_${uid}`);if(c)setNoviUnosi(JSON.parse(c));}catch{}
     setFaza("app");
+    loadJournalEntries(uid);
     supabase.from("profiles").select("ime").eq("id",uid).single().then(({data})=>{
       if(data?.ime) setKor(prev=>({...prev,ime:data.ime}));
     }).catch(()=>{});
@@ -1536,7 +1539,7 @@ export default function App(){
               </aside>
             )}
             <div style={isDesk?{flex:1,minWidth:0,display:"flex",flexDirection:"column",minHeight:"100vh"}:undefined}>
-              <div style={{display:ekran==="chat"?"none":"block",paddingBottom:isDesk?"24px":"calc(70px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
+              <div ref={contentRef} style={{display:ekran==="chat"?"none":"block",paddingBottom:isDesk?"24px":"calc(70px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
                 {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
                 {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
                 {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
