@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
 
+const isPWA = typeof window !== "undefined" && (window.matchMedia("(display-mode: standalone)").matches || Boolean(window.navigator.standalone));
+
 const C = {
   bg:"#FAF5F7",bgCard:"#FFFFFF",bgMuted:"#F5ECEF",
   primary:"#C07890",primaryGrad:"linear-gradient(135deg,#D898AC 0%,#A85A74 100%)",
@@ -159,7 +161,7 @@ function Auth({onDone}){
   function reset(){setErrs({});setUspeh("");}
 
   if(mode==="w") return(
-    <div className="fi" style={{minHeight:"100vh",background:C.bg,display:"flex",flexDirection:"column"}}>
+    <div className="fi" style={{minHeight:"100vh",background:C.bg,display:"flex",flexDirection:"column",overflowY:"auto"}}>
       <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",paddingTop:`max(60px,${SAT})`,paddingLeft:32,paddingRight:32,paddingBottom:32,textAlign:"center"}}>
         <div style={{width:72,height:72,borderRadius:24,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 12px 36px rgba(192,120,144,.28)`,marginBottom:24}}>
           <Ico d={I.leaf} size={32} stroke="#fff" sw={1.8}/>
@@ -249,8 +251,8 @@ function Auth({onDone}){
   const dis=loading||!!uspeh;
 
   return(
-    <div className="fi" style={{minHeight:"100vh",background:C.bg}}>
-      <div style={{paddingTop:`max(56px,${SAT})`,paddingLeft:28,paddingRight:28,paddingBottom:24}}>
+    <div className="fi" style={{minHeight:"100vh",background:C.bg,overflowY:"auto",...(!isPWA&&{display:"flex",flexDirection:"column",justifyContent:"center"})}}>
+      <div style={{paddingTop:isPWA?`max(56px,${SAT})`:"24px",paddingLeft:28,paddingRight:28,paddingBottom:16}}>
         <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:C.bgCard,border:`1px solid ${C.border}`,borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif",marginBottom:32,padding:"8px 16px",boxShadow:`0 2px 8px ${C.shadow}`}}>
           <Ico d={I.back} size={14} stroke={C.textMid} sw={2}/> Nazad
         </button>
@@ -673,7 +675,7 @@ TEHNIKE — samo kad je pravo vreme:
 - Tehnike: disanje 4-7-8 | 5-4-3-2-1 | kocka leda | gumena narukvica | "samo 5 minuta"`;
 }
 
-function AIChat({ime,niz,unosi,userId,onSOS}){
+function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
   const pocetna={id:0,ko:"ai",tekst:`Zdravo${ime?" "+ime:""}! Ja sam Mia — tu sam da te saslušam, bez osude i bez žurbe. Možeš mi reći šta te muči, kako se osećaš, ili šta ti je na umu. Šta se dešava kod tebe?`};
   const [poruke,setPoruke]=useState([pocetna]);
   const [unos,setUnos]=useState("");const [ucitava,setUcitava]=useState(false);const krajRef=useRef(null);
@@ -706,6 +708,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
   },[userId]);
 
   useEffect(()=>{krajRef.current?.scrollIntoView({behavior:"smooth"})},[poruke,ucitava]);
+  useEffect(()=>{if(isVisible&&!isPWA)setTimeout(()=>krajRef.current?.scrollIntoView({behavior:"instant"}),60);},[isVisible]);
   async function posalji(){
     const txt=unos.trim();if(!txt||ucitava)return;
     const np=[...poruke,{id:Date.now(),ko:"user",tekst:txt}];
@@ -1540,7 +1543,7 @@ export default function App(){
                 {ekran==="bib"&&<Biblioteka/>}
               </div>
               <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",height:isDesk?"calc(100vh)":"calc(100vh - 63px - env(safe-area-inset-bottom,0px))",overflow:"hidden",flex:isDesk?1:undefined}}>
-                <AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)}/>
+                <AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)} isVisible={ekran==="chat"}/>
               </div>
               {!isDesk&&(
                 <nav className="bnav">
