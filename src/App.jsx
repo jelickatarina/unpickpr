@@ -49,6 +49,11 @@ textarea.inp{resize:none;min-height:80px;line-height:1.65;}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(76,217,100,.5)}70%{box-shadow:0 0 0 6px rgba(76,217,100,0)}}
 @keyframes sosPulse{0%,100%{box-shadow:0 0 0 0 rgba(192,120,144,.4),0 2px 10px rgba(192,120,144,.13)}60%{box-shadow:0 0 0 7px rgba(192,120,144,0),0 2px 10px rgba(192,120,144,.13)}}
 .lbl{font-size:10px;font-weight:700;color:${C.textLight};letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:10px;}
+@media(min-width:768px){
+  .app{max-width:1100px;display:flex;flex-direction:row;min-height:100vh;}
+  .bnav{display:none !important;}
+  .fi{animation:none;}
+}
 `;
 
 const Ico=({d,size=24,stroke=C.textLight,sw=1.7})=>(
@@ -1394,6 +1399,8 @@ export default function App(){
   const [faza,setFaza]=useState("loading");const [kor,setKor]=useState(null);const [ekran,setEkran]=useState("poc");
   const [priSOS,setPriSOS]=useState(false);const [priUnos,setPriUnos]=useState(false);const [editUnos,setEditUnos]=useState(null);
   const [noviUnosi,setNoviUnosi]=useState([]);
+  const [isDesk,setIsDesk]=useState(typeof window!=="undefined"&&window.innerWidth>=768);
+  useEffect(()=>{const h=()=>setIsDesk(window.innerWidth>=768);window.addEventListener("resize",h);return()=>window.removeEventListener("resize",h);},[]);
 
   // forsiraj ažuriranje Service Workera pri svakom pokretanju
   useEffect(()=>{
@@ -1486,31 +1493,66 @@ export default function App(){
   return(
     <><style>{fonts}{css}</style>
     <div className="app">
-      {faza==="auth"&&<Auth onDone={u=>{setKor(u);supabase.auth.getSession().then(({data:{session}})=>{if(session){loadJournalEntries(session.user.id);}});setFaza("app");}}/>}
+      {faza==="auth"&&(
+        isDesk
+          ?<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:C.bg,flex:1}}>
+              <div style={{width:420,background:C.bgCard,borderRadius:28,padding:8,boxShadow:`0 8px 40px ${C.shadow}`}}>
+                <Auth onDone={u=>{setKor(u);supabase.auth.getSession().then(({data:{session}})=>{if(session){loadJournalEntries(session.user.id);}});setFaza("app");}}/>
+              </div>
+            </div>
+          :<Auth onDone={u=>{setKor(u);supabase.auth.getSession().then(({data:{session}})=>{if(session){loadJournalEntries(session.user.id);}});setFaza("app");}}/>
+      )}
       {faza==="app"&&(
         priSOS?(
-          <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto"}} className="fi"><SOS onZatvori={()=>setPriSOS(false)}/></div>
+          <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto",flex:isDesk?1:undefined}} className="fi"><SOS onZatvori={()=>setPriSOS(false)}/></div>
         ):priUnos?(
-          <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto"}} className="fi"><NoviUnos onSacuvaj={handleSacuvajUnos} onOtkazi={()=>{setPriUnos(false);setEditUnos(null);}} editData={editUnos}/></div>
+          <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto",flex:isDesk?1:undefined}} className="fi"><NoviUnos onSacuvaj={handleSacuvajUnos} onOtkazi={()=>{setPriUnos(false);setEditUnos(null);}} editData={editUnos}/></div>
         ):(
           <>
-            <div style={{display:ekran==="chat"?"none":"block",paddingBottom:"calc(70px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
-              {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
-              {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
-              {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
-              {ekran==="bib"&&<Biblioteka/>}
+            {isDesk&&(
+              <aside style={{width:240,minHeight:"100vh",background:C.bgCard,borderRight:`1px solid ${C.border}`,display:"flex",flexDirection:"column",padding:"28px 16px",position:"sticky",top:0,flexShrink:0}}>
+                <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:40,paddingLeft:4}}>
+                  <div style={{width:36,height:36,borderRadius:11,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.leaf} size={18} stroke="#fff" sw={2}/></div>
+                  <span style={{fontSize:18,fontWeight:800,color:C.text,letterSpacing:-0.5}}>Unpick</span>
+                </div>
+                <div style={{display:"flex",flexDirection:"column",gap:2,flex:1}}>
+                  {NAV.map(n=>(
+                    <button key={n.id} onClick={()=>setEkran(n.id)} style={{display:"flex",alignItems:"center",gap:12,padding:"11px 14px",borderRadius:14,border:"none",background:ekran===n.id?C.primaryLight:"transparent",cursor:"pointer",fontFamily:"inherit",transition:"background .15s",textAlign:"left"}}>
+                      <Ico d={I[n.ico]} size={20} stroke={ekran===n.id?C.primary:C.textLight} sw={ekran===n.id?2.2:1.6}/>
+                      <span style={{fontSize:14,fontWeight:ekran===n.id?700:500,color:ekran===n.id?C.primary:C.textMid}}>{n.l}</span>
+                    </button>
+                  ))}
+                </div>
+                <div style={{borderTop:`1px solid ${C.border}`,paddingTop:16,display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}>
+                  <div style={{minWidth:0}}>
+                    <p style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{kor?.ime||""}</p>
+                    <p style={{fontSize:11,color:C.textLight}}>Moj nalog</p>
+                  </div>
+                  <button onClick={handleLogout} style={{background:C.bgMuted,border:"none",borderRadius:10,padding:"8px 12px",cursor:"pointer",fontSize:12,color:C.textMid,fontWeight:600,fontFamily:"inherit",flexShrink:0}}>Izlaz</button>
+                </div>
+              </aside>
+            )}
+            <div style={isDesk?{flex:1,minWidth:0,display:"flex",flexDirection:"column",minHeight:"100vh"}:undefined}>
+              <div style={{display:ekran==="chat"?"none":"block",paddingBottom:isDesk?"24px":"calc(70px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
+                {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
+                {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
+                {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
+                {ekran==="bib"&&<Biblioteka/>}
+              </div>
+              <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",height:isDesk?"calc(100vh)":"calc(100vh - 63px - env(safe-area-inset-bottom,0px))",overflow:"hidden",flex:isDesk?1:undefined}}>
+                <AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)}/>
+              </div>
+              {!isDesk&&(
+                <nav className="bnav">
+                  {NAV.map(n=>(
+                    <button key={n.id} className={`ni${ekran===n.id?" active":""}`} onClick={()=>setEkran(n.id)}>
+                      <Ico d={I[n.ico]} size={22} stroke={ekran===n.id?C.primary:C.textLight} sw={ekran===n.id?2.2:1.6}/>
+                      <span style={{fontSize:10,fontWeight:700,color:ekran===n.id?C.primary:C.textLight}}>{n.l}</span>
+                    </button>
+                  ))}
+                </nav>
+              )}
             </div>
-            <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",height:"calc(100vh - 63px - env(safe-area-inset-bottom,0px))",overflow:"hidden"}}>
-              <AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)}/>
-            </div>
-            <nav className="bnav">
-              {NAV.map(n=>(
-                <button key={n.id} className={`ni${ekran===n.id?" active":""}`} onClick={()=>setEkran(n.id)}>
-                  <Ico d={I[n.ico]} size={22} stroke={ekran===n.id?C.primary:C.textLight} sw={ekran===n.id?2.2:1.6}/>
-                  <span style={{fontSize:10,fontWeight:700,color:ekran===n.id?C.primary:C.textLight}}>{n.l}</span>
-                </button>
-              ))}
-            </nav>
           </>
         )
       )}
