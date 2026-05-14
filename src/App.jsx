@@ -1419,7 +1419,7 @@ export default function App(){
   useEffect(()=>{
     const vv=window.visualViewport;
     if(!vv)return;
-    const h=()=>setKbOpen(vv.height<window.innerHeight*0.75);
+    const h=()=>setKbOpen(vv.height<window.screen.height*0.65);
     vv.addEventListener("resize",h);
     return()=>vv.removeEventListener("resize",h);
   },[]);
