@@ -230,26 +230,30 @@ function Auth({onDone}){
         const {data:profile}=await supabase.from("profiles").select("ime").eq("id",data.user.id).single();
         onDone({ime:profile?.ime||data.user.user_metadata?.name||em,registeredAt:data.user.created_at,id:data.user.id});
       }else{
-        const {data,error}=await supabase.auth.signUp({email:em.trim(),password:loz,options:{data:{name:ime.trim()}}});
+        const res=await supabase.auth.signUp({email:em.trim(),password:loz,options:{data:{name:ime.trim()}}});
+        const data=res.data;const error=res.error;
         if(error){
           const msg=error.message||"";
           if(msg.includes("already registered")||msg.includes("already exists")||msg.includes("User already registered")) setErrs({em:"Nalog sa ovim emailom već postoji."});
           else if(msg.includes("rate limit")||msg.includes("security purposes")) setErrs({general:"Sačekaj trenutak pa pokušaj ponovo."});
           else if(msg.includes("Password")) setErrs({loz:msg});
           else if(msg.includes("valid email")||msg.includes("email")) setErrs({em:msg});
-          else setErrs({general:`Greška: ${msg}`});
+          else setErrs({general:`Greška pri registraciji: ${msg}`});
           return;
         }
-        if(data.user) supabase.from("profiles").upsert({id:data.user.id,ime:ime.trim()}).catch(()=>{});
-        if(data.session && data.user){
-          onDone({ime:ime.trim(),registeredAt:data.user.created_at,id:data.user.id});
+        const user=data?.user??null;
+        const session=data?.session??null;
+        if(user) supabase.from("profiles").upsert({id:user.id,ime:ime.trim()}).catch(()=>{});
+        if(session && user){
+          onDone({ime:ime.trim(),registeredAt:user.created_at,id:user.id});
         }else{
           setUspeh("Proveri email i potvrdi nalog, pa se prijavi.");
           setTimeout(()=>{setMode("l");setUspeh("");setLoz("");setLoz2("");},4000);
         }
       }
-    }catch{
-      setErrs({general:"Nešto nije pošlo po planu. Pokušaj ponovo."});
+    }catch(e){
+      console.error("Auth error:",e);
+      setErrs({general:`Greška: ${e?.message||String(e)}`});
     }finally{setLoading(false);}
   }
 
