@@ -3,9 +3,10 @@
 -- Profiles table (stores name + onboarding state)
 create table if not exists profiles (
   id uuid references auth.users on delete cascade primary key,
-  name text,
+  ime text,
   onboarding_done boolean default false,
   onboarding_answers jsonb,
+  chat_history jsonb,
   created_at timestamptz default now()
 );
 

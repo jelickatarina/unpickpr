@@ -218,8 +218,8 @@ function Auth({onDone}){
           else setErrs({general:"Prijava nije uspela. Pokušaj ponovo."});
           return;
         }
-        const {data:profile}=await supabase.from("profiles").select("name").eq("id",data.user.id).single();
-        onDone({ime:profile?.name||data.user.user_metadata?.name||em,registeredAt:data.user.created_at,id:data.user.id});
+        const {data:profile}=await supabase.from("profiles").select("ime").eq("id",data.user.id).single();
+        onDone({ime:profile?.ime||data.user.user_metadata?.name||em,registeredAt:data.user.created_at,id:data.user.id});
       }else{
         const {data,error}=await supabase.auth.signUp({email:em.trim(),password:loz,options:{data:{name:ime.trim()}}});
         if(error){
@@ -227,7 +227,7 @@ function Auth({onDone}){
           else setErrs({general:"Registracija nije uspela. Pokušaj ponovo."});
           return;
         }
-        await supabase.from("profiles").upsert({id:data.user.id,name:ime.trim()});
+        await supabase.from("profiles").upsert({id:data.user.id,ime:ime.trim()});
         if(data.session){
           onDone({ime:ime.trim(),registeredAt:data.user.created_at,id:data.user.id});
         }else{
@@ -1430,8 +1430,8 @@ export default function App(){
     setFaza("app");
     // učitaj pravo ime i unose u pozadini
     loadJournalEntries(uid);
-    supabase.from("profiles").select("name").eq("id",uid).single().then(({data})=>{
-      if(data?.name) setKor(prev=>({...prev,ime:data.name}));
+    supabase.from("profiles").select("ime").eq("id",uid).single().then(({data})=>{
+      if(data?.ime) setKor(prev=>({...prev,ime:data.ime}));
     }).catch(()=>{});
   }
 
