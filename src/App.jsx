@@ -126,7 +126,7 @@ const LOK=["🛋️ Dnevna","🛁 Kupatilo","🍳 Kuhinja","🛏️ Spavaća","�
 const OKI=["Stres","Umor","Ogledalo","Dosada","Ekrani","Tuga","Učenje","Jelo","Ostalo"];
 
 const SAT="env(safe-area-inset-top,0px)";
-const HDR_PT=isPWA?"max(64px,env(safe-area-inset-top,0px))":"max(56px,env(safe-area-inset-top,0px))";
+const HDR_PT=isPWA?"max(64px,env(safe-area-inset-top,0px))":"max(16px,env(safe-area-inset-top,0px))";
 function safeParseOk(v){if(!v)return[];try{const p=JSON.parse(v);return Array.isArray(p)?p:[v];}catch{return v?[v]:[];}}
 function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
 
