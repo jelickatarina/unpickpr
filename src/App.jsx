@@ -1496,7 +1496,10 @@ export default function App(){
               {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
               {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
               {ekran==="bib"&&<Biblioteka/>}
-              {ekran==="chat"&&<AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)}/>}
+            </div>
+            {/* AIChat uvek montiran — samo skriven kad nije aktivan ekran */}
+            <div style={{display:ekran==="chat"&&!priSOS&&!priUnos?"flex":"none",flexDirection:"column",height:"calc(100vh - 63px - env(safe-area-inset-bottom,0px))",overflow:"hidden"}}>
+              <AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)}/>
             </div>
             <nav className="bnav">
               {NAV.map(n=>(
