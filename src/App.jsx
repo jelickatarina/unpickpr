@@ -161,21 +161,21 @@ function Auth({onDone}){
   function reset(){setErrs({});setUspeh("");}
 
   if(mode==="w") return(
-    <div className="fi" style={{minHeight:"100vh",background:C.bg,display:"flex",flexDirection:"column",overflowY:"auto"}}>
-      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",paddingTop:`max(40px,${SAT})`,paddingLeft:32,paddingRight:32,paddingBottom:16,textAlign:"center"}}>
-        <div style={{width:56,height:56,borderRadius:18,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 24px rgba(192,120,144,.28)`,marginBottom:14}}>
-          <Ico d={I.leaf} size={24} stroke="#fff" sw={1.8}/>
+    <div className="fi" style={{height:"100vh",background:C.bg,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      <div style={{flex:1,minHeight:0,overflowY:"auto",display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center",paddingTop:`max(44px,${SAT})`,paddingLeft:28,paddingRight:28,paddingBottom:12}}>
+        <div style={{width:52,height:52,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 24px rgba(192,120,144,.28)`,marginBottom:12,flexShrink:0}}>
+          <Ico d={I.leaf} size={22} stroke="#fff" sw={1.8}/>
         </div>
-        <p style={{fontSize:10,fontWeight:700,letterSpacing:3,textTransform:"uppercase",color:C.textLight,marginBottom:8}}>Unpick</p>
-        <h1 style={{fontSize:26,lineHeight:1.3,marginBottom:8,letterSpacing:-0.2,color:C.text,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700}}>
+        <p style={{fontSize:10,fontWeight:700,letterSpacing:3,textTransform:"uppercase",color:C.textLight,marginBottom:6}}>Unpick</p>
+        <h1 style={{fontSize:24,lineHeight:1.3,marginBottom:6,letterSpacing:-0.2,color:C.text,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700}}>
           Your skin<br/><span style={{color:C.primary,fontWeight:800}}>deserves kindness.</span>
         </h1>
-        <p style={{fontSize:13,color:C.textMid,lineHeight:1.6,fontWeight:500,marginBottom:20}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
-        <div style={{width:"100%",display:"flex",flexDirection:"column",gap:6,marginBottom:0,textAlign:"left"}}>
+        <p style={{fontSize:13,color:C.textMid,lineHeight:1.55,fontWeight:500,marginBottom:16}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
+        <div style={{width:"100%",display:"flex",flexDirection:"column",gap:6,textAlign:"left"}}>
           {[[I.chart,"Praćenje epizoda","Beleži epizode i prati obrasce"],[I.wind,"SOS alat u krizi","Tehnike za smirenje u trenutku"],[I.chat,"Mia — AI podrška","Uvek dostupna, bez osude"]].map(([ico,t,sub])=>(
-            <div key={t} style={{display:"flex",alignItems:"center",gap:12,padding:"11px 14px",borderRadius:16,background:C.bgCard,border:`1.5px solid ${C.border}`,boxShadow:`0 2px 10px ${C.shadow}`}}>
-              <div style={{width:38,height:38,borderRadius:12,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 10px rgba(192,120,144,0.22)`}}>
-                <Ico d={ico} size={17} stroke="#fff" sw={1.8}/>
+            <div key={t} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",borderRadius:16,background:C.bgCard,border:`1.5px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`}}>
+              <div style={{width:36,height:36,borderRadius:11,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <Ico d={ico} size={16} stroke="#fff" sw={1.8}/>
               </div>
               <div style={{flex:1,minWidth:0}}>
                 <p style={{fontWeight:700,fontSize:13,color:C.text,marginBottom:1}}>{t}</p>
@@ -185,7 +185,7 @@ function Auth({onDone}){
           ))}
         </div>
       </div>
-      <div style={{padding:"20px 28px 56px",display:"flex",flexDirection:"column",gap:10}}>
+      <div style={{padding:"14px 28px calc(28px + env(safe-area-inset-bottom,0px))",display:"flex",flexDirection:"column",gap:10,flexShrink:0,background:C.bg}}>
         <button onClick={()=>{setMode("r");reset();}} className="btn-p">Počni</button>
         <button onClick={()=>{setMode("l");reset();}} className="btn-o">Već imam nalog</button>
       </div>
