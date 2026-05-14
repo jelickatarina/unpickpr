@@ -755,8 +755,8 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
               <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.3,color:C.text}}>Mia</h1>
             </div>
           </div>
-          <button onClick={onSOS} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 16px",borderRadius:100,background:C.red,border:"none",cursor:"pointer",flexShrink:0,boxShadow:`0 4px 12px ${C.red}55`}}>
-            <div style={{width:7,height:7,borderRadius:"50%",background:"rgba(255,255,255,0.8)",animation:"pulse 2s infinite"}}/>
+          <button onClick={onSOS} style={{display:"flex",alignItems:"center",gap:6,padding:"9px 16px 9px 12px",borderRadius:100,background:C.red,border:"none",cursor:"pointer",flexShrink:0,boxShadow:`0 4px 12px ${C.red}55`}}>
+            <Ico d={I.shield} size={15} stroke="#fff" sw={2}/>
             <span style={{fontSize:13,fontWeight:800,color:"#fff",letterSpacing:0.5}}>SOS</span>
           </button>
         </div>
@@ -769,7 +769,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
               <div style={{display:"flex",flexDirection:"column",gap:8,maxWidth:"84%"}}>
                 <div className="bba">{p.tekst}</div>
                 {p.sos&&<button onClick={onSOS} style={{alignSelf:"flex-start",display:"flex",alignItems:"center",gap:8,padding:"9px 16px 9px 12px",borderRadius:100,background:C.red,border:"none",cursor:"pointer",boxShadow:`0 4px 12px ${C.red}55`}}>
-                  <div style={{width:7,height:7,borderRadius:"50%",background:"rgba(255,255,255,0.8)",animation:"pulse 2s infinite"}}/>
+                  <Ico d={I.shield} size={15} stroke="#fff" sw={2}/>
                   <span style={{fontSize:13,fontWeight:800,color:"#fff"}}>Otvori SOS tehnike</span>
                 </button>}
               </div>
