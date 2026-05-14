@@ -1418,13 +1418,17 @@ export default function App(){
 
   async function resolveSession(session){
     const uid=session.user.id;
-    // učitaj keširane unose odmah (streak se vidi bez čekanja)
+    // keš odmah → streak vidljiv instant
     try{const c=localStorage.getItem(`unpick_entries_${uid}`);if(c)setNoviUnosi(JSON.parse(c));}catch{}
-    const {data:profile}=await supabase.from("profiles").select("name").eq("id",uid).single();
-    const ime=profile?.name||session.user.user_metadata?.name||session.user.email;
-    setKor({ime,id:uid,registeredAt:session.user.created_at});
+    // prikaži app odmah sa onim što imamo, ne čekaj mrežu
+    const imePrivremeno=session.user.user_metadata?.name||session.user.email||"";
+    setKor({ime:imePrivremeno,id:uid,registeredAt:session.user.created_at});
     setFaza("app");
+    // učitaj pravo ime i unose u pozadini
     loadJournalEntries(uid);
+    supabase.from("profiles").select("name").eq("id",uid).single().then(({data})=>{
+      if(data?.name) setKor(prev=>({...prev,ime:data.name}));
+    }).catch(()=>{});
   }
 
   async function loadJournalEntries(userId){
