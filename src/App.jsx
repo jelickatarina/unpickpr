@@ -240,8 +240,8 @@ function Auth({onDone}){
           else setErrs({general:`Greška: ${msg}`});
           return;
         }
-        supabase.from("profiles").upsert({id:data.user.id,ime:ime.trim()}).catch(()=>{});
-        if(data.session){
+        if(data.user) supabase.from("profiles").upsert({id:data.user.id,ime:ime.trim()}).catch(()=>{});
+        if(data.session && data.user){
           onDone({ime:ime.trim(),registeredAt:data.user.created_at,id:data.user.id});
         }else{
           setUspeh("Proveri email i potvrdi nalog, pa se prijavi.");
