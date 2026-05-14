@@ -720,7 +720,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
       const hasSOS=raw.includes("[SOS]");
       const aiTekst=raw.replace(/\[SOS\]/g,"").trim();
       snimi([...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:hasSOS}]);
-    }catch(e){const dbg=e?.message||"nepoznata greška";console.error("posalji:",dbg);snimi([...np,{id:Date.now()+1,ko:"ai",tekst:`[debug] ${dbg}`}]);}
+    }catch(e){console.error("posalji:",e?.message);snimi([...np,{id:Date.now()+1,ko:"ai",tekst:"Trenutno ne mogu da odgovorim. Pokušaj za koji minut. 💙"}]);}
     finally{setUcitava(false);}
   }
   return(
