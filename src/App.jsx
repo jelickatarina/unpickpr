@@ -16,9 +16,8 @@ const C = {
 const fonts=`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');`;
 const css=`
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;overscroll-behavior:none;}
 body{background:${C.bg};}
-.app{font-family:'DM Sans',sans-serif;background:${C.bg};height:100%;max-width:390px;margin:0 auto;position:relative;color:${C.text};overflow:hidden;}
+.app{font-family:'DM Sans',sans-serif;background:${C.bg};min-height:100vh;max-width:390px;margin:0 auto;position:relative;color:${C.text};overflow-x:hidden;}
 .serif{font-family:'Playfair Display',serif;}
 .italic{font-style:italic;}
 .btn-p{background:${C.primaryGrad};color:#fff;border:none;border-radius:100px;padding:16px 32px;font-size:15px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;width:100%;transition:all .18s;box-shadow:0 4px 20px rgba(122,158,142,.30);touch-action:manipulation;-webkit-tap-highlight-color:transparent;letter-spacing:.2px;}
@@ -750,7 +749,6 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
           <div style={{display:"flex",alignItems:"flex-end",gap:12}}>
             <div style={{width:38,height:38,borderRadius:"50%",background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative",boxShadow:`0 4px 10px ${C.primary}44`,marginBottom:2}}>
               <Ico d={I.heart} size={17} stroke="#fff" sw={1.8}/>
-              <div style={{position:"absolute",bottom:1,right:1,width:9,height:9,borderRadius:"50%",background:"#4CD964",border:"2px solid #fff",animation:"pulse 2s infinite"}}/>
             </div>
             <div>
               <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>AI podrška</span>
@@ -1523,7 +1521,7 @@ export default function App(){
     <div className="app">
       {faza==="auth"&&(
         isDesk
-          ?<div style={{height:"100%",display:"flex",alignItems:"center",justifyContent:"center",background:C.bg,flex:1}}>
+          ?<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:C.bg,flex:1}}>
               <div style={{width:420,background:C.bgCard,borderRadius:28,padding:8,boxShadow:`0 8px 40px ${C.shadow}`}}>
                 <Auth onDone={u=>{setKor(u);supabase.auth.getSession().then(({data:{session}})=>{if(session){loadJournalEntries(session.user.id);}});setFaza("app");}}/>
               </div>
@@ -1532,13 +1530,13 @@ export default function App(){
       )}
       {faza==="app"&&(
         priSOS?(
-          <div style={{height:"100%",background:C.bg,overflowY:"auto",flex:isDesk?1:undefined}} className="fi"><SOS onZatvori={()=>setPriSOS(false)}/></div>
+          <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto",flex:isDesk?1:undefined}} className="fi"><SOS onZatvori={()=>setPriSOS(false)}/></div>
         ):priUnos?(
-          <div style={{height:"100%",background:C.bg,overflowY:"auto",flex:isDesk?1:undefined}} className="fi"><NoviUnos onSacuvaj={handleSacuvajUnos} onOtkazi={()=>{setPriUnos(false);setEditUnos(null);}} editData={editUnos}/></div>
+          <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto",flex:isDesk?1:undefined}} className="fi"><NoviUnos onSacuvaj={handleSacuvajUnos} onOtkazi={()=>{setPriUnos(false);setEditUnos(null);}} editData={editUnos}/></div>
         ):(
           <>
             {isDesk&&(
-              <aside style={{width:240,height:"100%",background:C.bgCard,borderRight:`1px solid ${C.border}`,display:"flex",flexDirection:"column",padding:"28px 16px",position:"sticky",top:0,flexShrink:0}}>
+              <aside style={{width:240,minHeight:"100vh",background:C.bgCard,borderRight:`1px solid ${C.border}`,display:"flex",flexDirection:"column",padding:"28px 16px",position:"sticky",top:0,flexShrink:0}}>
                 <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:40,paddingLeft:4}}>
                   <div style={{width:36,height:36,borderRadius:11,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.leaf} size={18} stroke="#fff" sw={2}/></div>
                   <span style={{fontSize:18,fontWeight:800,color:C.text,letterSpacing:-0.5}}>Unpick</span>
@@ -1561,9 +1559,9 @@ export default function App(){
               </aside>
             )}
             <div style={isDesk
-              ?{flex:1,minWidth:0,display:"flex",flexDirection:"column",height:"100%"}
-              :{display:"flex",flexDirection:"column",height:"100%"}}>
-              <div ref={contentRef} style={{display:ekran==="chat"?"none":"block",flex:1,minHeight:0,paddingBottom:isDesk?"24px":"calc(63px + env(safe-area-inset-bottom,0px))",overflowY:"auto",WebkitOverflowScrolling:"touch"}}>
+              ?{flex:1,minWidth:0,display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden"}
+              :{display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}}>
+              <div ref={contentRef} style={{display:ekran==="chat"?"none":"flex",flexDirection:"column",flex:1,minHeight:0,paddingBottom:isDesk?"24px":"calc(63px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
                 {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
                 {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
                 {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
