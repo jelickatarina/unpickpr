@@ -688,12 +688,22 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
       supabase.from("profiles")
         .update({chat_history:p})
         .eq("id",userId)
+        .select()
         .then(({error,data})=>{
           if(error){
-            // update failed (row possibly missing) — try upsert
-            supabase.from("profiles").upsert({id:userId,chat_history:p},{onConflict:"id",ignoreDuplicates:false}).catch(()=>{});
+            const msg=`[save err] ${error.message} (${error.code})`;
+            console.error(msg);
+            setPoruke(prev=>[...prev,{id:Date.now()+99,ko:"ai",tekst:msg}]);
+          } else if(!data?.length){
+            const msg=`[save warn] 0 rows updated — profile missing?`;
+            console.warn(msg);
+            setPoruke(prev=>[...prev,{id:Date.now()+99,ko:"ai",tekst:msg}]);
           }
-        }).catch(()=>{});
+        }).catch(e=>{
+          const msg=`[save catch] ${e?.message}`;
+          console.error(msg);
+          setPoruke(prev=>[...prev,{id:Date.now()+99,ko:"ai",tekst:msg}]);
+        });
     }
   }
 
