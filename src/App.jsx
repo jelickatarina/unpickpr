@@ -243,7 +243,7 @@ function Auth({onDone}){
         }
         const user=data?.user??null;
         const session=data?.session??null;
-        if(user) supabase.from("profiles").upsert({id:user.id,ime:ime.trim()}).catch(()=>{});
+        if(user) supabase.from("profiles").upsert({id:user.id,ime:ime.trim()}).then(null,()=>{});
         if(session && user){
           onDone({ime:ime.trim(),registeredAt:user.created_at,id:user.id});
         }else{
@@ -697,7 +697,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
     setPoruke(p);porRef.current=p;
     try{localStorage.setItem(LS,JSON.stringify(p));}catch{}
     if(userId){
-      supabase.from("profiles").update({chat_history:p}).eq("id",userId).catch(()=>{});
+      supabase.from("profiles").update({chat_history:p}).eq("id",userId).then(null,()=>{});
     }
   }
 
@@ -1447,7 +1447,7 @@ export default function App(){
       if(data?.ime){setKor(prev=>({...prev,ime:data.ime}));}
       else if(error){
         // profile row missing (registered before trigger fix) — create it now
-        supabase.from("profiles").upsert({id:uid,ime:imePrivremeno}).catch(()=>{});
+        supabase.from("profiles").upsert({id:uid,ime:imePrivremeno}).then(null,()=>{});
       }
     }).catch(()=>{});
   }
