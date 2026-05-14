@@ -685,25 +685,7 @@ function AIChat({ime,niz,unosi,userId,onSOS}){
     setPoruke(p);porRef.current=p;
     try{localStorage.setItem(LS,JSON.stringify(p));}catch{}
     if(userId){
-      supabase.from("profiles")
-        .update({chat_history:p})
-        .eq("id",userId)
-        .select()
-        .then(({error,data})=>{
-          if(error){
-            const msg=`[save err] ${error.message} (${error.code})`;
-            console.error(msg);
-            setPoruke(prev=>[...prev,{id:Date.now()+99,ko:"ai",tekst:msg}]);
-          } else if(!data?.length){
-            const msg=`[save warn] 0 rows updated — profile missing?`;
-            console.warn(msg);
-            setPoruke(prev=>[...prev,{id:Date.now()+99,ko:"ai",tekst:msg}]);
-          }
-        }).catch(e=>{
-          const msg=`[save catch] ${e?.message}`;
-          console.error(msg);
-          setPoruke(prev=>[...prev,{id:Date.now()+99,ko:"ai",tekst:msg}]);
-        });
+      supabase.from("profiles").update({chat_history:p}).eq("id",userId).catch(()=>{});
     }
   }
 
