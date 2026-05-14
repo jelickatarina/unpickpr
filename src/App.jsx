@@ -265,7 +265,7 @@ function Auth({onDone}){
         {errs.general&&<div style={{background:"#FEF2F2",borderRadius:14,padding:"12px 16px",border:"1px solid #FCA5A5"}}><p style={{color:"#991B1B",fontSize:13,fontWeight:600,textAlign:"center"}}>{errs.general}</p></div>}
         {uspeh&&<div style={{background:"#F0FDF4",borderRadius:14,padding:"12px 16px",border:"1px solid #86EFAC"}}><p style={{color:"#166534",fontSize:13,fontWeight:600,textAlign:"center"}}>{uspeh}</p></div>}
         {!isL&&<div>
-          <input className="inp" placeholder="Ime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inpStyle("ime")} autoComplete="given-name"/>
+          <input className="inp" placeholder="Ime *" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inpStyle("ime")} autoComplete="given-name" required/>
           {prevErr("ime")}
         </div>}
         <div>
@@ -790,8 +790,8 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
 function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
   const [izvestaj,setIzvestaj]=useState(null);
   const h=new Date().getHours();
-  const pozdrav=h<12?"Dobro jutro,":h<18?"Dobar dan,":"Dobro veče,";
-  const prikazIme=ime?.includes("@")?ime.split("@")[0]:ime;
+  const pozdrav=h<12?"Dobro jutro":h<18?"Dobar dan":"Dobro veče";
+  const prikazIme=ime&&!ime.includes("@")?ime:"";
   const dani=["P","U","S","Č","P","S","N"];
   const puniDani=["Ponedeljak","Utorak","Sreda","Četvrtak","Petak","Subota","Nedelja"];
   const danas=new Date();
@@ -871,8 +871,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
         {/* Header row */}
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",position:"relative"}}>
           <div>
-            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>{pozdrav}</p>
-            <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.3,color:C.text}}>{prikazIme}</h1>
+            <h1 className="serif" style={{fontSize:28,lineHeight:1,letterSpacing:-0.3,color:C.text}}>{prikazIme?`${pozdrav}, ${prikazIme}`:pozdrav}</h1>
           </div>
           <button onClick={onLogout} style={{background:C.bgMuted,border:`1px solid ${C.border}`,borderRadius:100,fontSize:11,color:C.textLight,fontWeight:700,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",padding:"7px 14px",boxShadow:"0 2px 8px rgba(192,120,144,.1)",marginBottom:2}}>Odjavi</button>
         </div>
@@ -1539,14 +1538,16 @@ export default function App(){
                 </div>
               </aside>
             )}
-            <div style={isDesk?{flex:1,minWidth:0,display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden"}:undefined}>
-              <div ref={contentRef} style={{display:ekran==="chat"?"none":"block",height:isDesk?"100%":"100dvh",paddingBottom:isDesk?"24px":"calc(70px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
-                {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
+            <div style={isDesk
+              ?{flex:1,minWidth:0,display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden"}
+              :{display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}}>
+              <div ref={contentRef} style={{display:ekran==="chat"?"none":"flex",flexDirection:"column",flex:1,minHeight:0,paddingBottom:isDesk?"24px":"calc(63px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
+                {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
                 {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
                 {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
                 {ekran==="bib"&&<Biblioteka/>}
               </div>
-              <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",height:isDesk?"100%":"calc(100dvh - 63px - env(safe-area-inset-bottom,0px))",overflow:"hidden",flex:isDesk?1:undefined}}>
+              <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",flex:1,minHeight:0,overflow:"hidden"}}>
                 <AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)} isVisible={ekran==="chat"}/>
               </div>
               {!isDesk&&(
