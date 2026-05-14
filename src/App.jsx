@@ -161,7 +161,7 @@ function Auth({onDone}){
   function reset(){setErrs({});setUspeh("");}
 
   if(mode==="w") return(
-    <div className="fi" style={{height:"100vh",background:C.bg,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+    <div className="fi" style={{height:"100dvh",background:C.bg,display:"flex",flexDirection:"column",overflow:"hidden"}}>
       <div style={{flex:1,minHeight:0,overflowY:"auto",display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center",paddingTop:`max(44px,${SAT})`,paddingLeft:28,paddingRight:28,paddingBottom:12}}>
         <div style={{width:52,height:52,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 24px rgba(192,120,144,.28)`,marginBottom:12,flexShrink:0}}>
           <Ico d={I.leaf} size={22} stroke="#fff" sw={1.8}/>
