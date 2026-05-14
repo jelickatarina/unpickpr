@@ -680,7 +680,7 @@ TEHNIKE — samo kad je pravo vreme:
 function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
   const pocetna={id:0,ko:"ai",tekst:`Zdravo${ime?" "+ime:""}! Ja sam Mia — tu sam da te saslušam, bez osude i bez žurbe. Možeš mi reći šta te muči, kako se osećaš, ili šta ti je na umu. Šta se dešava kod tebe?`};
   const [poruke,setPoruke]=useState([pocetna]);
-  const [unos,setUnos]=useState("");const [ucitava,setUcitava]=useState(false);const krajRef=useRef(null);
+  const [unos,setUnos]=useState("");const [ucitava,setUcitava]=useState(false);const krajRef=useRef(null);const msgsRef=useRef(null);
   const porRef=useRef([pocetna]);
 
   const LS=`unpick_chat_${userId}`;
@@ -709,8 +709,9 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
     });
   },[userId]);
 
-  useEffect(()=>{krajRef.current?.scrollIntoView({behavior:"smooth"})},[poruke,ucitava]);
-  useEffect(()=>{if(isVisible&&!isPWA)setTimeout(()=>krajRef.current?.scrollIntoView({behavior:"instant"}),60);},[isVisible]);
+  const scrollDno=()=>{if(msgsRef.current)msgsRef.current.scrollTop=msgsRef.current.scrollHeight;};
+  useEffect(()=>{scrollDno();},[poruke,ucitava]);
+  useEffect(()=>{if(isVisible)setTimeout(scrollDno,80);},[isVisible]);
   async function posalji(){
     const txt=unos.trim();if(!txt||ucitava)return;
     const np=[...poruke,{id:Date.now(),ko:"user",tekst:txt}];
@@ -749,7 +750,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
           </button>
         </div>
       </div>
-      <div style={{flex:1,overflowY:"auto",padding:"20px 16px 10px",display:"flex",flexDirection:"column",gap:12,background:C.bg,minHeight:0}}>
+      <div ref={msgsRef} style={{flex:1,overflowY:"auto",padding:"20px 16px 10px",display:"flex",flexDirection:"column",gap:12,background:C.bg,minHeight:0}}>
         {poruke.map(p=>(
           <div key={p.id} style={{display:"flex",flexDirection:"column",alignItems:p.ko==="user"?"flex-end":"flex-start"}}>
             {p.ko==="ai"&&<div style={{display:"flex",alignItems:"flex-end",gap:8}}>
@@ -998,7 +999,7 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
           </button>
         </div>
       </div>
-      <div style={{padding:"0 20px"}}>
+      <div style={{padding:"16px 20px 0"}}>
         {noviUnosi.length===0&&(
           <div style={{textAlign:"center",padding:"56px 24px"}}>
             <div style={{width:80,height:80,borderRadius:28,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}><Ico d={I.journal} size={36} stroke={C.primary} sw={1.5}/></div>
@@ -1163,7 +1164,7 @@ function Napredak({unosi,niz}){
       </div>
 
       {/* Sekcija 1 — 7-day calendar */}
-      <div style={{margin:"0 20px 10px",background:C.bgCard,borderRadius:24,padding:"18px",border:`1px solid ${C.border}`}}>
+      <div style={{margin:"16px 20px 10px",background:C.bgCard,borderRadius:24,padding:"18px",border:`1px solid ${C.border}`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
           <p style={{fontSize:13,fontWeight:700,color:C.text}}>Ova sedmica</p>
           <div style={{display:"flex",gap:10}}>
@@ -1379,7 +1380,7 @@ function Biblioteka(){
         <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:3}}>Resursi</p>
         <h1 className="serif" style={{fontSize:28,letterSpacing:-0.3}}>Biblioteka</h1>
       </div>
-      <div style={{padding:"0 20px"}}>
+      <div style={{padding:"16px 20px 0"}}>
         {CLANCI.map((a,idx)=>{const [b,f]=kBoja(a.k);return(
           <div key={a.n} className="card fi" style={{marginBottom:12,display:"flex",gap:14,alignItems:"center",cursor:"pointer"}} onClick={()=>setOtvoren(idx)}>
             <div style={{width:58,height:58,borderRadius:18,background:b,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,flexShrink:0}}>{a.e}</div>
@@ -1538,14 +1539,14 @@ export default function App(){
                 </div>
               </aside>
             )}
-            <div style={isDesk?{flex:1,minWidth:0,display:"flex",flexDirection:"column",minHeight:"100vh"}:undefined}>
-              <div ref={contentRef} style={{display:ekran==="chat"?"none":"block",paddingBottom:isDesk?"24px":"calc(70px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
+            <div style={isDesk?{flex:1,minWidth:0,display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden"}:undefined}>
+              <div ref={contentRef} style={{display:ekran==="chat"?"none":"block",height:isDesk?"100%":"100dvh",paddingBottom:isDesk?"24px":"calc(70px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
                 {ekran==="poc"&&<Pocetna ime={kor?.ime||"Ana"} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
                 {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
                 {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
                 {ekran==="bib"&&<Biblioteka/>}
               </div>
-              <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",height:isDesk?"calc(100vh)":"calc(100vh - 63px - env(safe-area-inset-bottom,0px))",overflow:"hidden",flex:isDesk?1:undefined}}>
+              <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",height:isDesk?"100%":"calc(100dvh - 63px - env(safe-area-inset-bottom,0px))",overflow:"hidden",flex:isDesk?1:undefined}}>
                 <AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)} isVisible={ekran==="chat"}/>
               </div>
               {!isDesk&&(
