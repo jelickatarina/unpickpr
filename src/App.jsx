@@ -165,7 +165,7 @@ function Auth({onDone}){
   const [errs,setErrs]=useState({});const [loading,setLoading]=useState(false);
   const [showLoz,setShowLoz]=useState(false);const [showLoz2,setShowLoz2]=useState(false);
   const [uspeh,setUspeh]=useState("");
-  const WG="linear-gradient(160deg,#C07890 0%,#A078B8 45%,#7898C8 100%)";
+  const WG="linear-gradient(160deg,#1A3D4A 0%,#2D6355 45%,#4A8870 100%)";
 
   function reset(){setErrs({});setUspeh("");}
 
@@ -200,7 +200,7 @@ function Auth({onDone}){
         </div>
       </div>
       <div style={{padding:"14px 28px calc(28px + env(safe-area-inset-bottom,0px))",display:"flex",flexDirection:"column",gap:10,flexShrink:0,position:"relative"}}>
-        <button onClick={()=>{setMode("r");reset();}} style={{background:"#fff",color:C.primaryDark,border:"none",borderRadius:100,padding:"16px 32px",fontSize:15,fontWeight:800,fontFamily:"'DM Sans',sans-serif",cursor:"pointer",width:"100%",touchAction:"manipulation",boxShadow:"0 8px 32px rgba(0,0,0,.15)"}}>Počni →</button>
+        <button onClick={()=>{setMode("r");reset();}} style={{background:"#fff",color:"#1A3D4A",border:"none",borderRadius:100,padding:"16px 32px",fontSize:15,fontWeight:800,fontFamily:"'DM Sans',sans-serif",cursor:"pointer",width:"100%",touchAction:"manipulation",boxShadow:"0 8px 32px rgba(0,0,0,.15)"}}>Počni →</button>
         <button onClick={()=>{setMode("l");reset();}} style={{background:"rgba(255,255,255,.15)",color:"#fff",border:"1.5px solid rgba(255,255,255,.35)",borderRadius:100,padding:"15px 32px",fontSize:15,fontWeight:600,fontFamily:"'DM Sans',sans-serif",cursor:"pointer",width:"100%",touchAction:"manipulation",backdropFilter:"blur(8px)"}}>Već imam nalog</button>
       </div>
     </div>
@@ -280,10 +280,10 @@ function Auth({onDone}){
           <Ico d={I.back} size={14} stroke={C.textMid} sw={2}/> Nazad
         </button>
         <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
-          <div style={{width:40,height:40,borderRadius:12,background:WG,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+          <div style={{width:40,height:40,borderRadius:12,background:WG,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:"0 4px 14px rgba(26,61,74,.2)"}}>
             <Ico d={I.leaf} size={18} stroke="#fff" sw={1.8}/>
           </div>
-          <span style={{fontSize:13,fontWeight:800,letterSpacing:0.5,color:C.textLight,textTransform:"uppercase",letterSpacing:1.5}}>Unpick</span>
+          <span style={{fontSize:13,fontWeight:800,color:"#2D6355",textTransform:"uppercase",letterSpacing:1.5}}>Unpick</span>
         </div>
         <h2 className="serif" style={{fontSize:34,letterSpacing:-0.5,color:C.text,marginBottom:6}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
         <p style={{color:C.textLight,fontSize:14,fontWeight:500}}>{isL?"Nastavi odakle si stala.":"Besplatno. Bez osude."}</p>
@@ -298,7 +298,7 @@ function Auth({onDone}){
         {!isL&&<div>
           <div style={{display:"flex",gap:8}}>
             {[["M","Muško","♂"],["Z","Žensko","♀"]].map(([v,l,sym])=>(
-              <button key={v} type="button" onClick={()=>{setPol(v);if(errs.pol)setErrs(e=>({...e,pol:""}));}} style={{flex:1,padding:"13px 0",borderRadius:14,border:`1.5px solid ${pol===v?C.primary:C.border}`,background:pol===v?C.primaryLight:C.bgCard,color:pol===v?C.primaryDark:C.textMid,fontWeight:700,fontSize:14,display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer",transition:"all .15s",fontFamily:"'DM Sans',sans-serif"}}>
+              <button key={v} type="button" onClick={()=>{setPol(v);if(errs.pol)setErrs(e=>({...e,pol:""}));}} style={{flex:1,padding:"13px 0",borderRadius:14,border:`1.5px solid ${pol===v?"#2D6355":C.border}`,background:pol===v?"#EAF3EF":C.bgCard,color:pol===v?"#1A3D4A":C.textMid,fontWeight:700,fontSize:14,display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer",transition:"all .15s",fontFamily:"'DM Sans',sans-serif"}}>
                 <span style={{fontSize:20}}>{sym}</span>
                 <span>{l}</span>
               </button>
@@ -324,7 +324,7 @@ function Auth({onDone}){
           </div>
           {prevErr("loz2")}
         </div>}
-        <button type="button" disabled={dis} className="btn-p" style={{opacity:dis?0.55:1,cursor:dis?"default":"pointer",touchAction:"manipulation"}} onTouchStart={e=>{e.preventDefault();if(!dis)handleSubmit();}} onClick={()=>{if(!dis)handleSubmit();}}>
+        <button type="button" disabled={dis} className="btn-dark" style={{opacity:dis?0.55:1,cursor:dis?"default":"pointer",touchAction:"manipulation"}} onTouchStart={e=>{e.preventDefault();if(!dis)handleSubmit();}} onClick={()=>{if(!dis)handleSubmit();}}>
           {loading?"Molimo sačekajte...":(isL?"Prijavi se →":"Registruj se →")}
         </button>
         <button type="button" onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");setPol("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'DM Sans',sans-serif",padding:"6px 0",textAlign:"center",touchAction:"manipulation"}}>
