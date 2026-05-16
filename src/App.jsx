@@ -44,6 +44,11 @@ textarea.inp{resize:none;min-height:80px;line-height:1.65;}
 .emb.on{border-color:${C.primary};background:${C.primaryLight};}
 .bbu{background:${C.primaryGrad};color:#fff;border-radius:20px 20px 4px 20px;padding:12px 16px;font-size:14px;line-height:1.65;max-width:78%;align-self:flex-end;box-shadow:0 4px 16px rgba(122,158,142,.25);font-weight:500;}
 .bba{background:${C.bgCard};box-shadow:0 2px 12px ${C.shadow};color:${C.text};border-radius:20px 20px 20px 4px;padding:12px 16px;font-size:14px;line-height:1.65;max-width:84%;align-self:flex-start;font-weight:500;}
+.inp-n{width:100%;padding:16px 20px;border-radius:18px;border:1.5px solid #E5E2DD;background:#FFFFFF;font-size:15px;font-family:'DM Sans',sans-serif;color:#1C1917;outline:none;transition:all .18s;font-weight:500;}
+.inp-n:focus{border-color:#292524;box-shadow:0 0 0 4px #F0EDE8;}
+.btn-dark{background:linear-gradient(135deg,#44403C 0%,#1C1917 100%);color:#fff;border:none;border-radius:100px;padding:16px 32px;font-size:15px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;width:100%;transition:all .18s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.btn-dark:active{transform:scale(.97);}
+.btn-n{background:#FFFFFF;color:#6B6862;border:1.5px solid #E5E2DD;border-radius:100px;padding:15px 32px;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;width:100%;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .typing{display:flex;gap:5px;padding:12px 16px;align-items:center;}
 .dot{width:6px;height:6px;border-radius:50%;background:${C.textLight};animation:bounce 1.3s infinite;}
 .dot:nth-child(2){animation-delay:.18s}.dot:nth-child(3){animation-delay:.36s}
@@ -156,42 +161,44 @@ const EyeBtn=({show,toggle})=>(
 function Auth({onDone}){
   const [mode,setMode]=useState("w");
   const [ime,setIme]=useState("");const [em,setEm]=useState("");const [loz,setLoz]=useState("");const [loz2,setLoz2]=useState("");
+  const [pol,setPol]=useState("");
   const [errs,setErrs]=useState({});const [loading,setLoading]=useState(false);
   const [showLoz,setShowLoz]=useState(false);const [showLoz2,setShowLoz2]=useState(false);
   const [uspeh,setUspeh]=useState("");
+  const N={bg:"#F8F7F5",card:"#FFFFFF",border:"#E5E2DD",text:"#1C1917",mid:"#6B6862",light:"#A8A29E",muted:"#F0EDE8",dark:"#292524",darkGrad:"linear-gradient(135deg,#44403C 0%,#1C1917 100%)"};
 
   function reset(){setErrs({});setUspeh("");}
 
   if(mode==="w") return(
-    <div className="fi" style={{height:"100dvh",background:C.bg,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+    <div className="fi" style={{height:"100dvh",background:N.bg,display:"flex",flexDirection:"column",overflow:"hidden"}}>
       <div style={{flex:1,minHeight:0,overflowY:"auto"}}>
         <div style={{minHeight:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",paddingTop:`max(32px,${SAT})`,paddingLeft:28,paddingRight:28,paddingBottom:16}}>
-          <div style={{width:52,height:52,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 24px rgba(192,120,144,.28)`,marginBottom:12,flexShrink:0}}>
+          <div style={{width:52,height:52,borderRadius:16,background:N.darkGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 24px rgba(28,25,23,.2)`,marginBottom:12,flexShrink:0}}>
             <Ico d={I.leaf} size={22} stroke="#fff" sw={1.8}/>
           </div>
-          <p style={{fontSize:10,fontWeight:700,letterSpacing:3,textTransform:"uppercase",color:C.textLight,marginBottom:6}}>Unpick</p>
-          <h1 style={{fontSize:24,lineHeight:1.3,marginBottom:6,letterSpacing:-0.2,color:C.text,fontFamily:"'DM Sans',sans-serif",fontWeight:700}}>
-            Your skin<br/><span style={{color:C.primary,fontWeight:800}}>deserves kindness.</span>
+          <p style={{fontSize:10,fontWeight:700,letterSpacing:3,textTransform:"uppercase",color:N.light,marginBottom:6}}>Unpick</p>
+          <h1 style={{fontSize:24,lineHeight:1.3,marginBottom:6,letterSpacing:-0.2,color:N.text,fontFamily:"'DM Sans',sans-serif",fontWeight:700}}>
+            Your skin<br/><span style={{color:N.dark,fontWeight:800}}>deserves kindness.</span>
           </h1>
-          <p style={{fontSize:13,color:C.textMid,lineHeight:1.55,fontWeight:500,marginBottom:16}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
+          <p style={{fontSize:13,color:N.mid,lineHeight:1.55,fontWeight:500,marginBottom:16}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
           <div style={{width:"100%",display:"flex",flexDirection:"column",gap:6,textAlign:"left"}}>
             {[[I.chart,"Praćenje epizoda","Beleži epizode i prati obrasce"],[I.wind,"SOS alat u krizi","Tehnike za smirenje u trenutku"],[I.chat,"Mia — AI podrška","Uvek dostupna, bez osude"]].map(([ico,t,sub])=>(
-              <div key={t} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",borderRadius:16,background:C.bgCard,border:`1.5px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`}}>
-                <div style={{width:36,height:36,borderRadius:11,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+              <div key={t} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",borderRadius:16,background:N.card,border:`1.5px solid ${N.border}`,boxShadow:`0 2px 8px rgba(28,25,23,.05)`}}>
+                <div style={{width:36,height:36,borderRadius:11,background:N.darkGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                   <Ico d={ico} size={16} stroke="#fff" sw={1.8}/>
                 </div>
                 <div style={{flex:1,minWidth:0}}>
-                  <p style={{fontWeight:700,fontSize:13,color:C.text,marginBottom:1}}>{t}</p>
-                  <p style={{fontSize:11,color:C.textLight,fontWeight:500}}>{sub}</p>
+                  <p style={{fontWeight:700,fontSize:13,color:N.text,marginBottom:1}}>{t}</p>
+                  <p style={{fontSize:11,color:N.light,fontWeight:500}}>{sub}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
-      <div style={{padding:"14px 28px calc(28px + env(safe-area-inset-bottom,0px))",display:"flex",flexDirection:"column",gap:10,flexShrink:0,background:C.bg}}>
-        <button onClick={()=>{setMode("r");reset();}} className="btn-p">Počni</button>
-        <button onClick={()=>{setMode("l");reset();}} className="btn-o">Već imam nalog</button>
+      <div style={{padding:"14px 28px calc(28px + env(safe-area-inset-bottom,0px))",display:"flex",flexDirection:"column",gap:10,flexShrink:0,background:N.bg}}>
+        <button onClick={()=>{setMode("r");reset();}} className="btn-dark">Počni</button>
+        <button onClick={()=>{setMode("l");reset();}} className="btn-n">Već imam nalog</button>
       </div>
     </div>
   );
@@ -202,6 +209,7 @@ function Auth({onDone}){
     const e={};
     if(!isL&&!ime.trim()) e.ime="Ime je obavezno.";
     else if(!isL&&ime.trim().length<2) e.ime="Ime mora imati najmanje 2 karaktera.";
+    if(!isL&&!pol) e.pol="Odaberi pol.";
     if(!em.trim()) e.em="Email adresa je obavezna.";
     else if(!validEmail(em)) e.em="Unesite ispravnu email adresu.";
     if(!loz) e.loz="Lozinka je obavezna.";
@@ -211,8 +219,8 @@ function Auth({onDone}){
   }
 
   function prevErr(key,hint){
-    if(errs[key]) return <p style={{color:C.red,fontSize:12,fontWeight:600,paddingLeft:4,marginTop:4}}>{errs[key]}</p>;
-    if(hint) return <p style={{color:C.textLight,fontSize:12,fontWeight:500,paddingLeft:4,marginTop:4}}>{hint}</p>;
+    if(errs[key]) return <p style={{color:"#C46878",fontSize:12,fontWeight:600,paddingLeft:4,marginTop:4}}>{errs[key]}</p>;
+    if(hint) return <p style={{color:N.light,fontSize:12,fontWeight:500,paddingLeft:4,marginTop:4}}>{hint}</p>;
     return null;
   }
 
@@ -232,7 +240,7 @@ function Auth({onDone}){
         const {data:profile}=await supabase.from("profiles").select("ime").eq("id",data.user.id).single();
         onDone({ime:profile?.ime||data.user.user_metadata?.name||em,registeredAt:data.user.created_at,id:data.user.id});
       }else{
-        const res=await supabase.auth.signUp({email:em.trim(),password:loz,options:{data:{name:ime.trim()}}});
+        const res=await supabase.auth.signUp({email:em.trim(),password:loz,options:{data:{name:ime.trim(),pol}}});
         const data=res.data;const error=res.error;
         if(error){
           const msg=error.message||"";
@@ -259,54 +267,58 @@ function Auth({onDone}){
     }finally{setLoading(false);}
   }
 
-  const inpStyle=(key)=>({borderColor:errs[key]?"#C0392B":undefined});
+  const inpStyle=(key)=>({borderColor:errs[key]?"#C46878":undefined});
   const dis=loading||!!uspeh;
 
   return(
-    <div className="fi" style={{height:"100dvh",background:C.bg,overflowY:"auto",display:"flex",flexDirection:"column",justifyContent:"center",paddingBottom:"14vh"}}>
+    <div className="fi" style={{height:"100dvh",background:N.card,overflowY:"auto",display:"flex",flexDirection:"column",justifyContent:"center",paddingBottom:"14vh"}}>
       <div style={{paddingTop:isPWA?HDR_PT:"24px",paddingLeft:28,paddingRight:28,paddingBottom:16}}>
-        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");}} style={{background:C.bgMuted,border:`1.5px solid ${C.border}`,borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:700,fontFamily:"'DM Sans',sans-serif",marginBottom:32,padding:"9px 18px",boxShadow:`0 2px 8px ${C.shadow}`}}>
-          <Ico d={I.back} size={14} stroke={C.textMid} sw={2}/> Nazad
+        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");setPol("");}} style={{background:N.muted,border:`1.5px solid ${N.border}`,borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:N.mid,fontSize:13,fontWeight:700,fontFamily:"'DM Sans',sans-serif",marginBottom:32,padding:"9px 18px"}}>
+          <Ico d={I.back} size={14} stroke={N.mid} sw={2}/> Nazad
         </button>
-        <h2 className="serif" style={{fontSize:38,letterSpacing:-0.5,color:C.text,marginBottom:6}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
-        <p style={{color:C.textLight,fontSize:14,fontWeight:500}}>{isL?"Nastavi odakle si stala.":"Besplatno. Bez osude."}</p>
+        <h2 className="serif" style={{fontSize:36,letterSpacing:-0.5,color:N.text,marginBottom:6}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
+        <p style={{color:N.light,fontSize:14,fontWeight:500}}>{isL?"Nastavi odakle si stala.":"Besplatno. Bez osude."}</p>
       </div>
       <div style={{padding:"0 28px 40px",display:"flex",flexDirection:"column",gap:16}}>
         {errs.general&&<div style={{background:"#FEF2F2",borderRadius:14,padding:"12px 16px",border:"1px solid #FCA5A5"}}><p style={{color:"#991B1B",fontSize:13,fontWeight:600,textAlign:"center"}}>{errs.general}</p></div>}
         {uspeh&&<div style={{background:"#F0FDF4",borderRadius:14,padding:"12px 16px",border:"1px solid #86EFAC"}}><p style={{color:"#166534",fontSize:13,fontWeight:600,textAlign:"center"}}>{uspeh}</p></div>}
         {!isL&&<div>
-          <input className="inp" placeholder="Ime *" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inpStyle("ime")} autoComplete="given-name" required/>
+          <input className="inp-n" placeholder="Ime *" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inpStyle("ime")} autoComplete="given-name"/>
           {prevErr("ime")}
         </div>}
+        {!isL&&<div>
+          <div style={{display:"flex",gap:8}}>
+            {[["M","Muško","♂"],["Z","Žensko","♀"]].map(([v,l,sym])=>(
+              <button key={v} type="button" onClick={()=>{setPol(v);if(errs.pol)setErrs(e=>({...e,pol:""}));}} style={{flex:1,padding:"13px 0",borderRadius:14,border:`1.5px solid ${pol===v?N.dark:N.border}`,background:pol===v?N.dark:N.card,color:pol===v?"#fff":N.mid,fontWeight:700,fontSize:14,display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer",transition:"all .15s",fontFamily:"'DM Sans',sans-serif"}}>
+                <span style={{fontSize:20}}>{sym}</span>
+                <span>{l}</span>
+              </button>
+            ))}
+          </div>
+          {prevErr("pol")}
+        </div>}
         <div>
-          <input className="inp" placeholder="Email adresa" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" autoComplete="email" inputMode="email" style={inpStyle("em")}/>
+          <input className="inp-n" placeholder="Email adresa" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" autoComplete="email" inputMode="email" style={inpStyle("em")}/>
           {prevErr("em")}
         </div>
         <div>
           <div style={{position:"relative"}}>
-            <input className="inp" type={showLoz?"text":"password"} placeholder="Lozinka" value={loz} onChange={e=>{setLoz(e.target.value);if(errs.loz)setErrs(v=>({...v,loz:""}));}} autoComplete={isL?"current-password":"new-password"} style={{paddingRight:44,...inpStyle("loz")}}/>
+            <input className="inp-n" type={showLoz?"text":"password"} placeholder="Lozinka" value={loz} onChange={e=>{setLoz(e.target.value);if(errs.loz)setErrs(v=>({...v,loz:""}));}} autoComplete={isL?"current-password":"new-password"} style={{paddingRight:44,...inpStyle("loz")}}/>
             <EyeBtn show={showLoz} toggle={()=>setShowLoz(v=>!v)}/>
           </div>
           {prevErr("loz",!isL?"Najmanje 6 karaktera":null)}
         </div>
         {!isL&&<div>
           <div style={{position:"relative"}}>
-            <input className="inp" type={showLoz2?"text":"password"} placeholder="Ponovi lozinku" value={loz2} onChange={e=>{setLoz2(e.target.value);if(errs.loz2)setErrs(v=>({...v,loz2:""}));}} autoComplete="new-password" style={{paddingRight:44,...inpStyle("loz2")}}/>
+            <input className="inp-n" type={showLoz2?"text":"password"} placeholder="Ponovi lozinku" value={loz2} onChange={e=>{setLoz2(e.target.value);if(errs.loz2)setErrs(v=>({...v,loz2:""}));}} autoComplete="new-password" style={{paddingRight:44,...inpStyle("loz2")}}/>
             <EyeBtn show={showLoz2} toggle={()=>setShowLoz2(v=>!v)}/>
           </div>
           {prevErr("loz2")}
         </div>}
-        <button
-          type="button"
-          disabled={dis}
-          className="btn-p"
-          style={{opacity:dis?0.55:1,cursor:dis?"default":"pointer",touchAction:"manipulation"}}
-          onTouchStart={e=>{e.preventDefault();if(!dis)handleSubmit();}}
-          onClick={()=>{if(!dis)handleSubmit();}}
-        >
+        <button type="button" disabled={dis} className="btn-dark" style={{opacity:dis?0.55:1,cursor:dis?"default":"pointer",touchAction:"manipulation"}} onTouchStart={e=>{e.preventDefault();if(!dis)handleSubmit();}} onClick={()=>{if(!dis)handleSubmit();}}>
           {loading?"Molimo sačekajte...":(isL?"Prijavi se →":"Registruj se →")}
         </button>
-        <button type="button" onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'DM Sans',sans-serif",padding:"6px 0",textAlign:"center",touchAction:"manipulation"}}>
+        <button type="button" onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");setPol("");}} style={{background:"none",border:"none",cursor:"pointer",color:N.light,fontSize:14,fontWeight:600,fontFamily:"'DM Sans',sans-serif",padding:"6px 0",textAlign:"center",touchAction:"manipulation"}}>
           {isL?"Nemaš nalog? Registruj se":"Već imaš nalog? Prijavi se"}
         </button>
       </div>
