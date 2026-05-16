@@ -165,43 +165,42 @@ function Auth({onDone}){
   const [errs,setErrs]=useState({});const [loading,setLoading]=useState(false);
   const [showLoz,setShowLoz]=useState(false);const [showLoz2,setShowLoz2]=useState(false);
   const [uspeh,setUspeh]=useState("");
-  const WG="linear-gradient(160deg,#E8D5B0 0%,#D4BC90 45%,#C8AA78 100%)";
+  const BG="#F2E8D5";const BD="#1C1208";const BM="#7A6040";
 
   function reset(){setErrs({});setUspeh("");}
 
   if(mode==="w") return(
-    <div className="fi" style={{height:"100dvh",background:WG,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-      {/* decorative blobs */}
-      <div style={{position:"absolute",top:-80,right:-60,width:260,height:260,borderRadius:"50%",background:"rgba(255,255,255,.08)",pointerEvents:"none"}}/>
-      <div style={{position:"absolute",bottom:120,left:-80,width:200,height:200,borderRadius:"50%",background:"rgba(255,255,255,.06)",pointerEvents:"none"}}/>
-      <div style={{flex:1,minHeight:0,overflowY:"auto",position:"relative"}}>
-        <div style={{minHeight:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",paddingTop:`max(48px,${SAT})`,paddingLeft:32,paddingRight:32,paddingBottom:24}}>
-          <div style={{width:64,height:64,borderRadius:20,background:"rgba(255,255,255,.18)",backdropFilter:"blur(8px)",border:"1.5px solid rgba(255,255,255,.3)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:16,flexShrink:0}}>
-            <Ico d={I.leaf} size={26} stroke="#fff" sw={1.8}/>
+    <div className="fi" style={{height:"100dvh",background:BG,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      {/* top: branding + hero */}
+      <div style={{flex:1,minHeight:0,overflowY:"auto",display:"flex",flexDirection:"column"}}>
+        {/* wordmark bar */}
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:`max(20px,${SAT}) 28px 0`}}>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <Ico d={I.leaf} size={16} stroke={BD} sw={2}/>
+            <span style={{fontSize:12,fontWeight:800,letterSpacing:2.5,textTransform:"uppercase",color:BD}}>Unpick</span>
           </div>
-          <p style={{fontSize:10,fontWeight:800,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,.6)",marginBottom:10}}>Unpick</p>
-          <h1 style={{fontSize:30,lineHeight:1.2,marginBottom:10,letterSpacing:-0.5,color:"#fff",fontFamily:"'Playfair Display',serif",fontWeight:400}}>
-            Tvoja koža<br/><em>zaslužuje nežnost.</em>
+          <button onClick={()=>{setMode("l");reset();}} style={{background:"none",border:`1px solid ${BD}`,borderRadius:100,fontSize:12,fontWeight:700,color:BD,padding:"6px 16px",cursor:"pointer",fontFamily:"'DM Sans',sans-serif",letterSpacing:0.3}}>Prijava</button>
+        </div>
+        {/* hero */}
+        <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center",padding:"32px 28px 24px"}}>
+          <p style={{fontSize:11,fontWeight:700,color:BM,letterSpacing:2,textTransform:"uppercase",marginBottom:16}}>Za one koji se brinu o sebi</p>
+          <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:44,lineHeight:1.1,letterSpacing:-1,color:BD,fontWeight:400,marginBottom:20}}>
+            Tvoja koža<br/>zaslužuje<br/><em>nežnost.</em>
           </h1>
-          <p style={{fontSize:14,color:"rgba(255,255,255,.75)",lineHeight:1.6,fontWeight:500,marginBottom:28}}>Prati obrasce, pronađi okidače,<br/>reaguj u kriznim trenucima.</p>
-          <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8,textAlign:"left"}}>
-            {[[I.chart,"Praćenje epizoda","Beleži i prati obrasce"],[I.wind,"SOS alat u krizi","Tehnike za smirenje"],[I.chat,"Mia — AI podrška","Uvek dostupna, bez osude"]].map(([ico,t,sub])=>(
-              <div key={t} style={{display:"flex",alignItems:"center",gap:12,padding:"11px 14px",borderRadius:16,background:"rgba(255,255,255,.13)",backdropFilter:"blur(10px)",border:"1px solid rgba(255,255,255,.2)"}}>
-                <div style={{width:34,height:34,borderRadius:10,background:"rgba(255,255,255,.2)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                  <Ico d={ico} size={16} stroke="#fff" sw={1.8}/>
-                </div>
-                <div style={{flex:1,minWidth:0}}>
-                  <p style={{fontWeight:700,fontSize:13,color:"#fff",marginBottom:1}}>{t}</p>
-                  <p style={{fontSize:11,color:"rgba(255,255,255,.65)",fontWeight:500}}>{sub}</p>
-                </div>
+          <div style={{width:48,height:2,background:BD,borderRadius:2,marginBottom:24}}/>
+          <div style={{display:"flex",flexDirection:"column",gap:14}}>
+            {[["Prati epizode i obrasce","01"],["SOS tehnike u kriznim trenucima","02"],["Mia — AI podrška, bez osude","03"]].map(([t,n])=>(
+              <div key={n} style={{display:"flex",alignItems:"center",gap:16}}>
+                <span style={{fontSize:10,fontWeight:800,color:BM,letterSpacing:1,minWidth:20}}>{n}</span>
+                <span style={{fontSize:14,fontWeight:500,color:BD,lineHeight:1.3}}>{t}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
-      <div style={{padding:"14px 28px calc(28px + env(safe-area-inset-bottom,0px))",display:"flex",flexDirection:"column",gap:10,flexShrink:0,position:"relative"}}>
-        <button onClick={()=>{setMode("r");reset();}} style={{background:"#fff",color:"#5A3E1B",border:"none",borderRadius:100,padding:"16px 32px",fontSize:15,fontWeight:800,fontFamily:"'DM Sans',sans-serif",cursor:"pointer",width:"100%",touchAction:"manipulation",boxShadow:"0 8px 32px rgba(0,0,0,.15)"}}>Počni →</button>
-        <button onClick={()=>{setMode("l");reset();}} style={{background:"rgba(255,255,255,.15)",color:"#fff",border:"1.5px solid rgba(255,255,255,.35)",borderRadius:100,padding:"15px 32px",fontSize:15,fontWeight:600,fontFamily:"'DM Sans',sans-serif",cursor:"pointer",width:"100%",touchAction:"manipulation",backdropFilter:"blur(8px)"}}>Već imam nalog</button>
+      {/* bottom CTA */}
+      <div style={{padding:"20px 28px calc(32px + env(safe-area-inset-bottom,0px))",borderTop:`1px solid rgba(28,18,8,.12)`,background:BG,display:"flex",flexDirection:"column",gap:10}}>
+        <button onClick={()=>{setMode("r");reset();}} style={{background:BD,color:BG,border:"none",borderRadius:14,padding:"17px 32px",fontSize:15,fontWeight:700,fontFamily:"'DM Sans',sans-serif",cursor:"pointer",width:"100%",touchAction:"manipulation",letterSpacing:0.3}}>Počni besplatno →</button>
       </div>
     </div>
   );
@@ -274,19 +273,17 @@ function Auth({onDone}){
   const dis=loading||!!uspeh;
 
   return(
-    <div className="fi" style={{height:"100dvh",background:C.bg,overflowY:"auto",display:"flex",flexDirection:"column",justifyContent:"center",paddingBottom:"14vh"}}>
+    <div className="fi" style={{height:"100dvh",background:BG,overflowY:"auto",display:"flex",flexDirection:"column",justifyContent:"center",paddingBottom:"14vh"}}>
       <div style={{paddingTop:isPWA?HDR_PT:"24px",paddingLeft:28,paddingRight:28,paddingBottom:16}}>
-        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");setPol("");}} style={{background:C.bgMuted,border:`1.5px solid ${C.border}`,borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:700,fontFamily:"'DM Sans',sans-serif",marginBottom:28,padding:"9px 18px"}}>
-          <Ico d={I.back} size={14} stroke={C.textMid} sw={2}/> Nazad
+        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");setPol("");}} style={{background:"rgba(28,18,8,.07)",border:"none",borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:BM,fontSize:13,fontWeight:700,fontFamily:"'DM Sans',sans-serif",marginBottom:32,padding:"9px 18px"}}>
+          <Ico d={I.back} size={14} stroke={BM} sw={2}/> Nazad
         </button>
-        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
-          <div style={{width:40,height:40,borderRadius:12,background:WG,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:"0 4px 14px rgba(26,61,74,.2)"}}>
-            <Ico d={I.leaf} size={18} stroke="#fff" sw={1.8}/>
-          </div>
-          <span style={{fontSize:13,fontWeight:800,color:"#8B6518",textTransform:"uppercase",letterSpacing:1.5}}>Unpick</span>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16}}>
+          <Ico d={I.leaf} size={14} stroke={BD} sw={2}/>
+          <span style={{fontSize:11,fontWeight:800,color:BM,textTransform:"uppercase",letterSpacing:2}}>Unpick</span>
         </div>
-        <h2 className="serif" style={{fontSize:34,letterSpacing:-0.5,color:C.text,marginBottom:6}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
-        <p style={{color:C.textLight,fontSize:14,fontWeight:500}}>{isL?"Nastavi odakle si stala.":"Besplatno. Bez osude."}</p>
+        <h2 className="serif" style={{fontSize:36,letterSpacing:-0.5,color:BD,marginBottom:6,fontWeight:400}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
+        <p style={{color:BM,fontSize:14,fontWeight:500}}>{isL?"Nastavi odakle si stala.":"Besplatno. Bez osude."}</p>
       </div>
       <div style={{padding:"0 28px 40px",display:"flex",flexDirection:"column",gap:16}}>
         {errs.general&&<div style={{background:"#FEF2F2",borderRadius:14,padding:"12px 16px",border:"1px solid #FCA5A5"}}><p style={{color:"#991B1B",fontSize:13,fontWeight:600,textAlign:"center"}}>{errs.general}</p></div>}
@@ -298,7 +295,7 @@ function Auth({onDone}){
         {!isL&&<div>
           <div style={{display:"flex",gap:8}}>
             {[["M","Muško","♂"],["Z","Žensko","♀"]].map(([v,l,sym])=>(
-              <button key={v} type="button" onClick={()=>{setPol(v);if(errs.pol)setErrs(e=>({...e,pol:""}));}} style={{flex:1,padding:"13px 0",borderRadius:14,border:`1.5px solid ${pol===v?"#8B6518":C.border}`,background:pol===v?"#F5ECD7":C.bgCard,color:pol===v?"#5A3E1B":C.textMid,fontWeight:700,fontSize:14,display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer",transition:"all .15s",fontFamily:"'DM Sans',sans-serif"}}>
+              <button key={v} type="button" onClick={()=>{setPol(v);if(errs.pol)setErrs(e=>({...e,pol:""}));}} style={{flex:1,padding:"13px 0",borderRadius:14,border:`1.5px solid ${pol===v?BD:"rgba(28,18,8,.15)"}`,background:pol===v?BD:"rgba(255,255,255,.6)",color:pol===v?BG:BM,fontWeight:700,fontSize:14,display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer",transition:"all .15s",fontFamily:"'DM Sans',sans-serif"}}>
                 <span style={{fontSize:20}}>{sym}</span>
                 <span>{l}</span>
               </button>
