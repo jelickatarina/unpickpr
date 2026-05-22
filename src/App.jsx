@@ -165,43 +165,38 @@ function Auth({onDone}){
   const [errs,setErrs]=useState({});const [loading,setLoading]=useState(false);
   const [showLoz,setShowLoz]=useState(false);const [showLoz2,setShowLoz2]=useState(false);
   const [uspeh,setUspeh]=useState("");
-  const WG="linear-gradient(160deg,#D4B896 0%,#B8966E 50%,#A07848 100%)";
-
   function reset(){setErrs({});setUspeh("");}
 
   if(mode==="w") return(
-    <div className="fi" style={{height:"100dvh",background:WG,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-      {/* decorative blobs */}
-      <div style={{position:"absolute",top:-80,right:-60,width:260,height:260,borderRadius:"50%",background:"rgba(255,255,255,.08)",pointerEvents:"none"}}/>
-      <div style={{position:"absolute",bottom:120,left:-80,width:200,height:200,borderRadius:"50%",background:"rgba(255,255,255,.06)",pointerEvents:"none"}}/>
-      <div style={{flex:1,minHeight:0,overflowY:"auto",position:"relative"}}>
-        <div style={{minHeight:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",paddingTop:`max(48px,${SAT})`,paddingLeft:32,paddingRight:32,paddingBottom:24}}>
-          <div style={{width:64,height:64,borderRadius:20,background:"rgba(255,255,255,.22)",backdropFilter:"blur(8px)",border:"1.5px solid rgba(255,255,255,.4)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:16,flexShrink:0}}>
-            <Ico d={I.leaf} size={26} stroke="#3D2008" sw={1.8}/>
+    <div className="fi" style={{height:"100dvh",background:C.bg,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      <div style={{flex:1,minHeight:0,overflowY:"auto"}}>
+        <div style={{minHeight:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",paddingTop:`max(32px,${SAT})`,paddingLeft:28,paddingRight:28,paddingBottom:16}}>
+          <div style={{width:52,height:52,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 24px rgba(192,120,144,.28)`,marginBottom:12,flexShrink:0}}>
+            <Ico d={I.leaf} size={22} stroke="#fff" sw={1.8}/>
           </div>
-          <p style={{fontSize:10,fontWeight:800,letterSpacing:3,textTransform:"uppercase",color:"rgba(61,32,8,.55)",marginBottom:10}}>Unpick</p>
-          <h1 style={{fontSize:32,lineHeight:1.2,marginBottom:10,letterSpacing:-0.5,color:"#2A1408",fontFamily:"'Playfair Display',serif",fontWeight:400}}>
-            Tvoja koža<br/><em>zaslužuje nežnost.</em>
+          <p style={{fontSize:10,fontWeight:700,letterSpacing:3,textTransform:"uppercase",color:C.textLight,marginBottom:6}}>Unpick</p>
+          <h1 style={{fontSize:24,lineHeight:1.3,marginBottom:6,letterSpacing:-0.2,color:C.text,fontFamily:"'DM Sans',sans-serif",fontWeight:700}}>
+            Your skin<br/><span style={{color:C.primary,fontWeight:800}}>deserves kindness.</span>
           </h1>
-          <p style={{fontSize:14,color:"rgba(61,32,8,.7)",lineHeight:1.6,fontWeight:500,marginBottom:28}}>Prati obrasce, pronađi okidače,<br/>reaguj u kriznim trenucima.</p>
-          <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8,textAlign:"left"}}>
-            {[[I.chart,"Praćenje epizoda","Beleži i prati obrasce"],[I.wind,"SOS alat u krizi","Tehnike za smirenje"],[I.chat,"Mia — AI podrška","Uvek dostupna, bez osude"]].map(([ico,t,sub])=>(
-              <div key={t} style={{display:"flex",alignItems:"center",gap:12,padding:"11px 14px",borderRadius:16,background:"rgba(255,255,255,.25)",backdropFilter:"blur(10px)",border:"1px solid rgba(255,255,255,.35)"}}>
-                <div style={{width:34,height:34,borderRadius:10,background:"rgba(61,32,8,.12)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                  <Ico d={ico} size={16} stroke="#3D2008" sw={1.8}/>
+          <p style={{fontSize:13,color:C.textMid,lineHeight:1.55,fontWeight:500,marginBottom:16}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
+          <div style={{width:"100%",display:"flex",flexDirection:"column",gap:6,textAlign:"left"}}>
+            {[[I.chart,"Praćenje epizoda","Beleži epizode i prati obrasce"],[I.wind,"SOS alat u krizi","Tehnike za smirenje u trenutku"],[I.chat,"Mia — AI podrška","Uvek dostupna, bez osude"]].map(([ico,t,sub])=>(
+              <div key={t} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",borderRadius:16,background:C.bgCard,border:`1.5px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`}}>
+                <div style={{width:36,height:36,borderRadius:11,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                  <Ico d={ico} size={16} stroke="#fff" sw={1.8}/>
                 </div>
                 <div style={{flex:1,minWidth:0}}>
-                  <p style={{fontWeight:700,fontSize:13,color:"#2A1408",marginBottom:1}}>{t}</p>
-                  <p style={{fontSize:11,color:"rgba(61,32,8,.6)",fontWeight:500}}>{sub}</p>
+                  <p style={{fontWeight:700,fontSize:13,color:C.text,marginBottom:1}}>{t}</p>
+                  <p style={{fontSize:11,color:C.textLight,fontWeight:500}}>{sub}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
-      <div style={{padding:"14px 28px calc(28px + env(safe-area-inset-bottom,0px))",display:"flex",flexDirection:"column",gap:10,flexShrink:0,position:"relative"}}>
-        <button onClick={()=>{setMode("r");reset();}} style={{background:"#2A1408",color:"#F2E8D5",border:"none",borderRadius:14,padding:"17px 32px",fontSize:15,fontWeight:700,fontFamily:"'DM Sans',sans-serif",cursor:"pointer",width:"100%",touchAction:"manipulation",boxShadow:"0 8px 32px rgba(42,20,8,.3)"}}>Počni besplatno →</button>
-        <button onClick={()=>{setMode("l");reset();}} style={{background:"rgba(255,255,255,.25)",color:"#2A1408",border:"1.5px solid rgba(255,255,255,.5)",borderRadius:14,padding:"15px 32px",fontSize:15,fontWeight:600,fontFamily:"'DM Sans',sans-serif",cursor:"pointer",width:"100%",touchAction:"manipulation",backdropFilter:"blur(8px)"}}>Već imam nalog</button>
+      <div style={{padding:"14px 28px calc(28px + env(safe-area-inset-bottom,0px))",display:"flex",flexDirection:"column",gap:10,flexShrink:0,background:C.bg}}>
+        <button onClick={()=>{setMode("r");reset();}} className="btn-p">Počni</button>
+        <button onClick={()=>{setMode("l");reset();}} className="btn-o">Već imam nalog</button>
       </div>
     </div>
   );
@@ -276,16 +271,10 @@ function Auth({onDone}){
   return(
     <div className="fi" style={{height:"100dvh",background:C.bg,overflowY:"auto",display:"flex",flexDirection:"column",justifyContent:"center",paddingBottom:"14vh"}}>
       <div style={{paddingTop:isPWA?HDR_PT:"24px",paddingLeft:28,paddingRight:28,paddingBottom:16}}>
-        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");setPol("");}} style={{background:C.bgMuted,border:`1.5px solid ${C.border}`,borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:700,fontFamily:"'DM Sans',sans-serif",marginBottom:28,padding:"9px 18px"}}>
+        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");setPol("");}} style={{background:C.bgMuted,border:`1.5px solid ${C.border}`,borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:700,fontFamily:"'DM Sans',sans-serif",marginBottom:32,padding:"9px 18px",boxShadow:`0 2px 8px ${C.shadow}`}}>
           <Ico d={I.back} size={14} stroke={C.textMid} sw={2}/> Nazad
         </button>
-        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
-          <div style={{width:40,height:40,borderRadius:12,background:WG,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:"0 4px 14px rgba(26,61,74,.2)"}}>
-            <Ico d={I.leaf} size={18} stroke="#fff" sw={1.8}/>
-          </div>
-          <span style={{fontSize:13,fontWeight:800,color:"#8B6518",textTransform:"uppercase",letterSpacing:1.5}}>Unpick</span>
-        </div>
-        <h2 className="serif" style={{fontSize:34,letterSpacing:-0.5,color:C.text,marginBottom:6}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
+        <h2 className="serif" style={{fontSize:36,letterSpacing:-0.5,color:C.text,marginBottom:6}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
         <p style={{color:C.textLight,fontSize:14,fontWeight:500}}>{isL?"Nastavi odakle si stala.":"Besplatno. Bez osude."}</p>
       </div>
       <div style={{padding:"0 28px 40px",display:"flex",flexDirection:"column",gap:16}}>
@@ -298,7 +287,7 @@ function Auth({onDone}){
         {!isL&&<div>
           <div style={{display:"flex",gap:8}}>
             {[["M","Muško","♂"],["Z","Žensko","♀"]].map(([v,l,sym])=>(
-              <button key={v} type="button" onClick={()=>{setPol(v);if(errs.pol)setErrs(e=>({...e,pol:""}));}} style={{flex:1,padding:"13px 0",borderRadius:14,border:`1.5px solid ${pol===v?"#8B6518":C.border}`,background:pol===v?"#F5ECD7":C.bgCard,color:pol===v?"#5A3E1B":C.textMid,fontWeight:700,fontSize:14,display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer",transition:"all .15s",fontFamily:"'DM Sans',sans-serif"}}>
+              <button key={v} type="button" onClick={()=>{setPol(v);if(errs.pol)setErrs(e=>({...e,pol:""}));}} style={{flex:1,padding:"13px 0",borderRadius:14,border:`1.5px solid ${pol===v?C.primary:C.border}`,background:pol===v?C.primaryLight:C.bgCard,color:pol===v?C.primaryDark:C.textMid,fontWeight:700,fontSize:14,display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer",transition:"all .15s",fontFamily:"'DM Sans',sans-serif"}}>
                 <span style={{fontSize:20}}>{sym}</span>
                 <span>{l}</span>
               </button>
