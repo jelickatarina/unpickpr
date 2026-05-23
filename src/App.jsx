@@ -93,6 +93,9 @@ const I={
   camera:["M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z","M12 17a4 4 0 100-8 4 4 0 000 8z"],
   target:["M12 22a10 10 0 100-20 10 10 0 000 20z","M12 16a4 4 0 100-8 4 4 0 000 8z","M12 12h.01"],
   wind:["M17.7 7.7a2.5 2.5 0 111.8 4.3H2","M9.6 4.6A2 2 0 1111 8H2","M12.6 19.4A2 2 0 1014 16H2"],
+  user:["M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2","M12 11a4 4 0 100-8 4 4 0 000 8z"],
+  mail:["M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z","M22 6l-10 7L2 6"],
+  lockIco:["M19 11H5a2 2 0 00-2 2v7a2 2 0 002 2h14a2 2 0 002-2v-7a2 2 0 00-2-2z","M17 11V7a5 5 0 00-10 0v4"],
 };
 
 const PORUKE_DANA=[
@@ -268,67 +271,101 @@ function Auth({onDone}){
   const inpStyle=(key)=>({borderColor:errs[key]?"#C46878":undefined});
   const dis=loading||!!uspeh;
 
+  const IcoField=({ico,children,err})=>(
+    <div style={{position:"relative"}}>
+      <div style={{position:"absolute",left:16,top:"50%",transform:"translateY(-50%)",pointerEvents:"none",display:"flex",zIndex:1}}>
+        <Ico d={ico} size={17} stroke={err?C.red:C.textLight} sw={1.8}/>
+      </div>
+      {children}
+    </div>
+  );
   return(
-    <div className="fi" style={{height:"100dvh",background:C.primaryGrad,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-      {/* Top: branding */}
-      <div style={{paddingTop:isPWA?HDR_PT:"max(24px,env(safe-area-inset-top,0px))",paddingLeft:24,paddingRight:24,paddingBottom:28,flexShrink:0}}>
-        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");setPol("");}} style={{background:"rgba(255,255,255,.18)",border:"none",borderRadius:100,cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:"#fff",fontSize:13,fontWeight:700,fontFamily:"'DM Sans',sans-serif",marginBottom:24,padding:"8px 16px",backdropFilter:"blur(8px)"}}>
-          <Ico d={I.back} size={14} stroke="#fff" sw={2}/> Nazad
+    <div className="fi" style={{height:"100dvh",background:"linear-gradient(165deg,#FBF0F4 0%,#EDD8E2 55%,#E5CDD7 100%)",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
+      {/* Botanical decoration */}
+      <svg viewBox="0 0 220 320" fill="none" style={{position:"absolute",top:0,right:-10,width:220,height:300,opacity:.22,pointerEvents:"none",zIndex:0}}>
+        <path d="M140 10 C145 60 125 110 110 170 C95 230 100 280 92 320" stroke={C.primaryDark} strokeWidth="1.8" strokeLinecap="round"/>
+        <ellipse cx="85" cy="110" rx="32" ry="18" transform="rotate(-40 85 110)" fill={C.primary} opacity=".5"/>
+        <ellipse cx="145" cy="72" rx="28" ry="15" transform="rotate(30 145 72)" fill={C.primary} opacity=".45"/>
+        <ellipse cx="160" cy="145" rx="30" ry="16" transform="rotate(-25 160 145)" fill={C.primary} opacity=".4"/>
+        <ellipse cx="78" cy="195" rx="26" ry="14" transform="rotate(-50 78 195)" fill={C.primary} opacity=".35"/>
+        <ellipse cx="118" cy="250" rx="22" ry="12" transform="rotate(20 118 250)" fill={C.primary} opacity=".3"/>
+        <circle cx="140" cy="10" r="4" fill={C.primary} opacity=".5"/>
+      </svg>
+
+      {/* Top branding */}
+      <div style={{position:"relative",zIndex:1,paddingTop:isPWA?HDR_PT:"max(20px,env(safe-area-inset-top,0px))",paddingLeft:24,paddingRight:24,paddingBottom:30,flexShrink:0}}>
+        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");setPol("");}} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:7,color:C.textMid,fontSize:13,fontWeight:700,fontFamily:"'DM Sans',sans-serif",marginBottom:26,padding:0,touchAction:"manipulation"}}>
+          <Ico d={I.back} size={16} stroke={C.textMid} sw={2.2}/> Nazad
         </button>
-        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
-          <div style={{width:36,height:36,borderRadius:11,background:"rgba(255,255,255,.2)",display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <Ico d={I.leaf} size={16} stroke="#fff" sw={1.8}/>
+        <div style={{display:"flex",alignItems:"center",gap:11,marginBottom:14}}>
+          <div style={{width:42,height:42,borderRadius:14,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 4px 16px rgba(192,120,144,.32)`,flexShrink:0}}>
+            <Ico d={I.leaf} size={19} stroke="#fff" sw={1.8}/>
           </div>
-          <span style={{fontSize:11,fontWeight:800,color:"rgba(255,255,255,.7)",letterSpacing:2,textTransform:"uppercase"}}>Unpick</span>
+          <span style={{fontSize:11,fontWeight:800,color:C.textMid,letterSpacing:3,textTransform:"uppercase"}}>Unpick</span>
         </div>
-        <h2 className="serif" style={{fontSize:32,letterSpacing:-0.3,color:"#fff",marginBottom:4,fontWeight:400}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
-        <p style={{color:"rgba(255,255,255,.75)",fontSize:14,fontWeight:500}}>{isL?"Nastavi odakle si stala.":"Besplatno. Bez osude."}</p>
+        <h2 className="serif" style={{fontSize:40,letterSpacing:-0.5,color:C.text,marginBottom:5,fontWeight:400,lineHeight:1.15}}>{isL?"Dobrodošla\nnazad":"Napravi\nnalog"}</h2>
+        <p style={{color:C.textMid,fontSize:14,fontWeight:500}}>{isL?"Nastavi odakle si stala.":"Besplatno. Bez osude."}</p>
       </div>
 
-      {/* Bottom: white card */}
-      <div style={{flex:1,background:"#fff",borderRadius:"28px 28px 0 0",overflowY:"auto",padding:"28px 24px calc(32px + env(safe-area-inset-bottom,0px))"}}>
-        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+      {/* White card */}
+      <div style={{flex:1,position:"relative",zIndex:1,background:"#fff",borderRadius:"32px 32px 0 0",overflowY:"auto",padding:"30px 22px calc(40px + env(safe-area-inset-bottom,0px))"}}>
+        <div style={{display:"flex",flexDirection:"column",gap:13}}>
           {errs.general&&<div style={{background:"#FEF2F2",borderRadius:14,padding:"12px 16px",border:"1px solid #FCA5A5"}}><p style={{color:"#991B1B",fontSize:13,fontWeight:600,textAlign:"center"}}>{errs.general}</p></div>}
           {uspeh&&<div style={{background:"#F0FDF4",borderRadius:14,padding:"12px 16px",border:"1px solid #86EFAC"}}><p style={{color:"#166534",fontSize:13,fontWeight:600,textAlign:"center"}}>{uspeh}</p></div>}
+
           {!isL&&<div>
-            <input className="inp" placeholder="Ime *" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inpStyle("ime")} autoComplete="given-name"/>
+            <IcoField ico={I.user} err={!!errs.ime}>
+              <input className="inp" placeholder="Ime *" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={{paddingLeft:48,...inpStyle("ime")}} autoComplete="given-name"/>
+            </IcoField>
             {prevErr("ime")}
           </div>}
+
           {!isL&&<div>
-            <div style={{display:"flex",gap:8}}>
+            <div style={{display:"flex",gap:9}}>
               {[["M","Muško","♂"],["Z","Žensko","♀"]].map(([v,l,sym])=>(
-                <button key={v} type="button" onClick={()=>{setPol(v);if(errs.pol)setErrs(e=>({...e,pol:""}));}} style={{flex:1,padding:"13px 0",borderRadius:14,border:`1.5px solid ${pol===v?C.primary:C.border}`,background:pol===v?C.primaryLight:C.bgCard,color:pol===v?C.primaryDark:C.textMid,fontWeight:700,fontSize:14,display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer",transition:"all .15s",fontFamily:"'DM Sans',sans-serif"}}>
-                  <span style={{fontSize:20}}>{sym}</span>
+                <button key={v} type="button" onClick={()=>{setPol(v);if(errs.pol)setErrs(e=>({...e,pol:""}));}} style={{flex:1,padding:"14px 0",borderRadius:16,border:`1.5px solid ${pol===v?C.primary:C.border}`,background:pol===v?C.primaryLight:"#FAFAFA",color:pol===v?C.primaryDark:C.textMid,fontWeight:700,fontSize:13,display:"flex",flexDirection:"column",alignItems:"center",gap:4,cursor:"pointer",transition:"all .15s",fontFamily:"'DM Sans',sans-serif"}}>
+                  <span style={{fontSize:22,lineHeight:1}}>{sym}</span>
                   <span>{l}</span>
                 </button>
               ))}
             </div>
             {prevErr("pol")}
           </div>}
+
           <div>
-            <input className="inp" placeholder="Email adresa" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" autoComplete="email" inputMode="email" style={inpStyle("em")}/>
+            <IcoField ico={I.mail} err={!!errs.em}>
+              <input className="inp" placeholder="Email adresa" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" autoComplete="email" inputMode="email" style={{paddingLeft:48,...inpStyle("em")}}/>
+            </IcoField>
             {prevErr("em")}
           </div>
+
           <div>
-            <div style={{position:"relative"}}>
-              <input className="inp" type={showLoz?"text":"password"} placeholder="Lozinka" value={loz} onChange={e=>{setLoz(e.target.value);if(errs.loz)setErrs(v=>({...v,loz:""}));}} autoComplete={isL?"current-password":"new-password"} style={{paddingRight:44,...inpStyle("loz")}}/>
+            <IcoField ico={I.lockIco} err={!!errs.loz}>
+              <input className="inp" type={showLoz?"text":"password"} placeholder="Lozinka" value={loz} onChange={e=>{setLoz(e.target.value);if(errs.loz)setErrs(v=>({...v,loz:""}));}} autoComplete={isL?"current-password":"new-password"} style={{paddingLeft:48,paddingRight:44,...inpStyle("loz")}}/>
               <EyeBtn show={showLoz} toggle={()=>setShowLoz(v=>!v)}/>
-            </div>
+            </IcoField>
             {prevErr("loz",!isL?"Najmanje 6 karaktera":null)}
           </div>
+
           {!isL&&<div>
-            <div style={{position:"relative"}}>
-              <input className="inp" type={showLoz2?"text":"password"} placeholder="Ponovi lozinku" value={loz2} onChange={e=>{setLoz2(e.target.value);if(errs.loz2)setErrs(v=>({...v,loz2:""}));}} autoComplete="new-password" style={{paddingRight:44,...inpStyle("loz2")}}/>
+            <IcoField ico={I.lockIco} err={!!errs.loz2}>
+              <input className="inp" type={showLoz2?"text":"password"} placeholder="Ponovi lozinku" value={loz2} onChange={e=>{setLoz2(e.target.value);if(errs.loz2)setErrs(v=>({...v,loz2:""}));}} autoComplete="new-password" style={{paddingLeft:48,paddingRight:44,...inpStyle("loz2")}}/>
               <EyeBtn show={showLoz2} toggle={()=>setShowLoz2(v=>!v)}/>
-            </div>
+            </IcoField>
             {prevErr("loz2")}
           </div>}
-          <button type="button" disabled={dis} className="btn-p" style={{opacity:dis?0.55:1,cursor:dis?"default":"pointer",touchAction:"manipulation",marginTop:4}} onTouchStart={e=>{e.preventDefault();if(!dis)handleSubmit();}} onClick={()=>{if(!dis)handleSubmit();}}>
-            {loading?"Molimo sačekajte...":(isL?"Prijavi se →":"Registruj se →")}
+
+          <button type="button" disabled={dis} className="btn-p" style={{opacity:dis?0.55:1,cursor:dis?"default":"pointer",touchAction:"manipulation",marginTop:6,display:"flex",alignItems:"center",justifyContent:"center",gap:8}} onTouchStart={e=>{e.preventDefault();if(!dis)handleSubmit();}} onClick={()=>{if(!dis)handleSubmit();}}>
+            {loading?"Molimo sačekajte...":(isL?"Prijavi se":"Registruj se")}
+            {!loading&&<span style={{fontSize:18,lineHeight:1}}>→</span>}
           </button>
-          <button type="button" onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");setPol("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:14,fontWeight:600,fontFamily:"'DM Sans',sans-serif",padding:"4px 0",textAlign:"center",touchAction:"manipulation"}}>
-            {isL?"Nemaš nalog? Registruj se":"Već imaš nalog? Prijavi se"}
-          </button>
+
+          <p style={{textAlign:"center",fontSize:14,color:C.textLight,fontWeight:500,paddingTop:2}}>
+            {isL?"Nemaš nalog? ":"Već imaš nalog? "}
+            <button type="button" onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");setPol("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.primary,fontSize:14,fontWeight:700,fontFamily:"'DM Sans',sans-serif",padding:0,touchAction:"manipulation",textDecoration:"underline",textUnderlineOffset:2}}>
+              {isL?"Registruj se":"Prijavi se"}
+            </button>
+          </p>
         </div>
       </div>
     </div>
