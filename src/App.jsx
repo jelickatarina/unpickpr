@@ -1404,7 +1404,7 @@ function Napredak({unosi,niz}){
       <div style={{margin:"0 20px 10px",background:C.bgCard,borderRadius:24,padding:"18px",border:`1px solid ${C.border}`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16}}>
           <div>
-            <p style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:2}}>Trend po sedmicama</p>
+            <p style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:2}}>Trend po nedeljama</p>
             <p style={{fontSize:11,color:C.textLight}}>poslednjih 8 sedmica</p>
           </div>
           <div style={{display:"flex",gap:10}}>
