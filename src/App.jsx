@@ -625,7 +625,9 @@ function SOS({onZatvori}){
             </div>
             {tAkt&&!done&&<p style={{fontSize:13,color:C.textLight,fontWeight:500}}>Drži se, ide ti odlično 🌿</p>}
           </div>
-          {!tAkt&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();try{acRef.current=new(window.AudioContext||window.webkitAudioContext)();}catch{}setTAkt(true);}} onClick={()=>{try{acRef.current=new(window.AudioContext||window.webkitAudioContext)();}catch{}setTAkt(true);}}>▶ Pokreni</button>}
+          {!tAkt&&<button onTouchStart={e=>{e.preventDefault();try{acRef.current=new(window.AudioContext||window.webkitAudioContext)();}catch{}setTAkt(true);}} onClick={()=>{try{acRef.current=new(window.AudioContext||window.webkitAudioContext)();}catch{}setTAkt(true);}} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:10,background:C.primaryGrad,border:"none",borderRadius:100,padding:"18px 48px",fontSize:15,fontWeight:700,color:"#fff",cursor:"pointer",fontFamily:"'DM Sans',sans-serif",boxShadow:`0 6px 24px rgba(192,120,144,.35)`,letterSpacing:0.3}}>
+            <span style={{fontSize:18,lineHeight:1}}>▶</span> Pokreni tajmer
+          </button>}
           {done&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();onZatvori();}} onClick={()=>onZatvori()}>Nastavi →</button>}
         </div>
       </div>
