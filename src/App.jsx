@@ -1962,7 +1962,7 @@ export default function App(){
   useEffect(()=>{
     setTimeout(hideSplash,3300);
     const cachedKey=Object.keys(localStorage).find(k=>k.startsWith('sb-')&&k.endsWith('-auth-token'));
-    if(cachedKey){try{const parsed=JSON.parse(localStorage.getItem(cachedKey));if(parsed?.access_token){resolveSession({user:parsed.user||{id:parsed.user_id,email:parsed.email,user_metadata:parsed.user_metadata,created_at:parsed.created_at}});}}catch{}}
+    if(cachedKey){try{const parsed=JSON.parse(localStorage.getItem(cachedKey));if(parsed?.access_token){resolveSession({user:parsed.user||{id:parsed.user_id,email:parsed.email,user_metadata:parsed.user_metadata}});}}catch{}}
     supabase.auth.getSession().then(({data:{session}})=>{
       if(session) resolveSession(session);
       else{setFaza("auth");document.getElementById("root").style.visibility="visible";hideSplash();}
@@ -1976,7 +1976,7 @@ export default function App(){
   async function resolveSession(session){
     const uid=session.user.id;
     const imePrivremeno=session.user.user_metadata?.name||session.user.email||"";
-    setKor({ime:imePrivremeno,id:uid,registeredAt:session.user.created_at,email:session.user.email||""});
+    setKor(prev=>({...prev,ime:imePrivremeno,id:uid,email:session.user.email||"",...(session.user.created_at?{registeredAt:session.user.created_at}:{})}));
     // keš → instant prikaz; sveži podaci dolaze u pozadini i ažuriraju
     try{const c=localStorage.getItem(`unpick_entries_${uid}`);if(c)setNoviUnosi(JSON.parse(c));}catch{}
     setFaza("app");
