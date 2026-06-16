@@ -1194,7 +1194,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
       )}
 
       {/* ── HEADER ── */}
-      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:14}}>
+      <div style={{paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:14,background:C.bg}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <div style={{width:36,height:36,borderRadius:11,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 3px 10px rgba(168,90,116,.3)`}}>
@@ -1331,7 +1331,7 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
 
   return(
     <div style={{paddingBottom:20}} className="fi">
-      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:12}}>
+      <div style={{paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:12,background:C.bg}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
           <div>
             <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Moj dnevnik</span>
@@ -1515,7 +1515,7 @@ function Napredak({unosi,niz}){
     <div style={{paddingBottom:90}} className="fi">
 
       {/* Header + insight */}
-      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:14}}>
+      <div style={{paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:14,background:C.bg}}>
         <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Napredak</span>
         <h1 className="serif" style={{fontSize:24,fontWeight:700,color:C.text,letterSpacing:-0.3,lineHeight:1}}>Tvoje statistike</h1>
         <div style={{marginTop:10,background:insightBg,borderRadius:14,padding:"9px 14px",display:"flex",alignItems:"center",gap:8}}>
@@ -1785,7 +1785,7 @@ function Biblioteka(){
   if(otvoren!==null) return<Clanak clanak={CLANCI[otvoren]} onNazad={()=>setOtvoren(null)}/>;
   return(
     <div style={{paddingBottom:20}} className="fi">
-      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:24,paddingRight:24,paddingBottom:14}}>
+      <div style={{paddingTop:HDR_PT,paddingLeft:24,paddingRight:24,paddingBottom:14,background:C.bg}}>
         <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Resursi</span>
         <h1 className="serif" style={{fontSize:24,letterSpacing:-0.3}}>Biblioteka</h1>
       </div>
