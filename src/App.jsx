@@ -701,7 +701,6 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
   );
 }
 
-const GROQ_KEY=import.meta.env.VITE_GROQ_API_KEY||"";
 
 function buildSys(ime,niz,unosi){
   const today=new Date();today.setHours(0,0,0,0);
@@ -797,12 +796,12 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
     const txt=unos.trim();if(!txt||ucitava)return;
     const np=[...poruke,{id:Date.now(),ko:"user",tekst:txt}];
     setPoruke(np);porRef.current=np;setUnos("");setUcitava(true);
-    if(!GROQ_KEY){const npp=[...np,{id:Date.now()+1,ko:"ai",tekst:"Mia trenutno nije dostupna."}];setPoruke(npp);porRef.current=npp;setUcitava(false);return;}
     try{
       const msgs=[{role:"system",content:buildSys(ime,niz,unosi)},...np.filter(p=>p.id!==0).map(p=>({role:p.ko==="user"?"user":"assistant",content:p.tekst}))];
-      const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${GROQ_KEY}`},body:JSON.stringify({model:"llama-3.3-70b-versatile",max_tokens:500,messages:msgs})});
+      const res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgs})});
+      if(!res.ok) throw new Error(`Server greška: ${res.status}`);
       const data=await res.json();
-      if(data.error){console.error("Groq greška:",data.error.message);throw new Error(data.error.message);}
+      if(data.error) throw new Error(data.error);
       const raw=data.choices?.[0]?.message?.content||"";
       if(!raw) throw new Error("prazan odgovor");
       // SOS detekcija na osnovu korisnikove poruke — bez AI markera
@@ -810,7 +809,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
       const hasSOS=kriza.test(txt);
       const aiTekst=raw.replace(/\[SOS\]/g,"").trim();
       snimi([...np,{id:Date.now()+1,ko:"ai",tekst:aiTekst,sos:hasSOS}]);
-    }catch(e){console.error("posalji:",e?.message);snimi([...np,{id:Date.now()+1,ko:"ai",tekst:"Trenutno ne mogu da odgovorim. Pokušaj za koji minut. 💙"}]);}
+    }catch(e){console.error("posalji:",e?.message);snimi([...np,{id:Date.now()+1,ko:"ai",tekst:"Ups, Mia trenutno nije dostupna. Proveri internet konekciju ili pokušaj za koji minut. Ako te muči nešto hitno, koristi SOS dugme gore. 💙"}]);}
     finally{setUcitava(false);}
   }
   return(
