@@ -421,50 +421,58 @@ function Mehurici({onDone}){
 }
 
 function Boje({onDone}){
-  const B=[
-    {b:"#C07890",n:"Ruža"},
-    {b:"#7A9E78",n:"Žalfija"},
-    {b:"#C4A870",n:"Pesak"},
-    {b:"#8BA7B8",n:"Čelik"},
-    {b:"#B08878",n:"Terrakota"},
-    {b:"#A0A878",n:"Maslina"},
+  const PAR=[
+    {id:0,c:"#C07890"},{id:1,c:"#7A9E78"},{id:2,c:"#C4A870"},
+    {id:3,c:"#8BA7B8"},{id:4,c:"#B08878"},{id:5,c:"#D4A0A8"},
   ];
-  const [cilj,setCilj]=useState(()=>B[Math.floor(Math.random()*B.length)]);
-  const [opcije,setOpcije]=useState(()=>[...B].sort(()=>Math.random()-0.5).slice(0,4));
-  const [ok,setOk]=useState(0);const [flash,setFlash]=useState(null);
+  const [karte]=useState(()=>[...PAR,...PAR].map((b,i)=>({...b,uid:i})).sort(()=>Math.random()-0.5));
+  const [otkr,setOtkr]=useState([]);
+  const [pogod,setPogod]=useState([]);
+  const [blok,setBlok]=useState(false);
+  const [potezi,setPotezi]=useState(0);
+  const sve=pogod.length===PAR.length;
 
-  function sledeci(){
-    const noviCilj=B[Math.floor(Math.random()*B.length)];
-    const ostale=[...B].filter(x=>x.n!==noviCilj.n).sort(()=>Math.random()-0.5).slice(0,3);
-    setCilj(noviCilj);
-    setOpcije([...ostale,noviCilj].sort(()=>Math.random()-0.5));
+  function tap(uid){
+    if(blok||otkr.includes(uid)||pogod.includes(karte.find(k=>k.uid===uid)?.id)) return;
+    const nov=[...otkr,uid];
+    setOtkr(nov);
+    if(nov.length===2){
+      setPotezi(v=>v+1);
+      const [a,b]=nov.map(u=>karte.find(k=>k.uid===u));
+      if(a.id===b.id){setPogod(v=>[...v,a.id]);setOtkr([]);}
+      else{setBlok(true);setTimeout(()=>{setOtkr([]);setBlok(false);},700);}
+    }
   }
-  function tap(b){
-    if(flash) return;
-    if(b.n===cilj.n){setOk(v=>v+1);setFlash("ok");setTimeout(()=>{sledeci();setFlash(null);},500);}
-    else{setFlash("ne");setTimeout(()=>setFlash(null),400);}
-  }
+  function isPog(uid){return pogod.includes(karte.find(k=>k.uid===uid)?.id);}
+  function isVid(uid){return otkr.includes(uid)||isPog(uid);}
+
   return(
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
-      <p style={{fontSize:13,color:C.textMid,fontWeight:500,textAlign:"center"}}>Prepoznaj nijansu i odaberi naziv</p>
-      {/* Prikaz boje */}
-      <div style={{width:"100%",height:160,borderRadius:24,background:cilj.b,border:`1.5px solid ${C.border}`,transition:"background .4s",boxShadow:`0 4px 24px ${cilj.b}44`,position:"relative",overflow:"hidden"}}>
-        {flash&&<div style={{position:"absolute",inset:0,background:flash==="ok"?`${C.green}33`:`${C.red}33`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:36,transition:"all .2s"}}>{flash==="ok"?"✓":"✗"}</div>}
+      <p style={{fontSize:13,color:C.textMid,fontWeight:500,textAlign:"center"}}>Pronađi svaki par boja</p>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
+        {karte.map(k=>{
+          const vid=isVid(k.uid);const pog=isPog(k.uid);
+          return(
+            <button key={k.uid} onClick={()=>tap(k.uid)} style={{
+              aspectRatio:"1",borderRadius:18,cursor:vid?"default":"pointer",
+              background:vid?k.c:C.bgCard,
+              border:`2px solid ${pog?k.c:vid?k.c+"99":C.border}`,
+              boxShadow:pog?`0 4px 16px ${k.c}55`:vid?`0 2px 8px ${k.c}33`:`0 2px 6px ${C.shadow}`,
+              transition:"all .25s",opacity:pog?0.65:1,
+            }}/>
+          );
+        })}
       </div>
-      {/* Opcije */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-        {opcije.map(b=>(
-          <button key={b.n} onClick={()=>tap(b)} style={{padding:"16px 12px",borderRadius:16,border:`1.5px solid ${C.border}`,background:C.bgCard,cursor:"pointer",fontSize:14,fontWeight:600,color:C.text,fontFamily:"inherit",textAlign:"center",transition:"all .15s",boxShadow:`0 2px 8px ${C.shadow}`}}>
-            {b.n}
-          </button>
-        ))}
+      <div style={{display:"flex",justifyContent:"space-between",padding:"0 2px"}}>
+        <span style={{fontSize:13,color:C.textLight,fontWeight:500}}>Potezi: <span style={{color:C.primary,fontWeight:700}}>{potezi}</span></span>
+        <span style={{fontSize:13,color:C.textLight,fontWeight:500}}>{pogod.length}/{PAR.length} parova</span>
       </div>
-      {/* Skor */}
-      <div style={{textAlign:"center",padding:"8px 0"}}>
-        <span style={{fontSize:13,color:C.textLight,fontWeight:500}}>Tačno: </span>
-        <span style={{fontSize:15,fontWeight:700,color:C.primary}}>{ok}</span>
-      </div>
-      {ok>=6&&<button className="btn-p" onClick={onDone}>Osećam se bolje ✨</button>}
+      {sve&&(
+        <div style={{textAlign:"center",display:"flex",flexDirection:"column",gap:10}}>
+          <p style={{fontSize:14,color:C.textMid,fontWeight:500}}>Pronašla si sve parove u <strong style={{color:C.primary}}>{potezi}</strong> {potezi===1?"potezu":"poteza"} 🌸</p>
+          <button className="btn-p" onClick={onDone}>Osećam se bolje ✨</button>
+        </div>
+      )}
     </div>
   );
 }
