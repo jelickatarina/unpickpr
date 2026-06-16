@@ -308,72 +308,87 @@ function Auth({onDone}){
   }
 
   const dis=loading||!!uspeh;
+  const lbl={fontSize:10,fontWeight:800,letterSpacing:2,textTransform:"uppercase",color:C.textLight,display:"block",marginBottom:7};
+  const inp=(err)=>({paddingLeft:46,background:"#fff",border:`1.5px solid ${err?C.red:C.border}`,borderRadius:14,boxShadow:err?`0 0 0 2px ${C.red}22`:"0 1px 4px rgba(192,120,144,.08)"});
 
   return(
-    <div className="fi" style={{height:"100dvh",background:C.bg,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-      {/* Header */}
-      <div style={{paddingTop:`max(18px,${SAT})`,paddingLeft:20,paddingRight:20,paddingBottom:16,flexShrink:0,background:C.bg,borderBottom:`1px solid ${C.border}`}}>
-        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");setPol("");}} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:600,fontFamily:"'DM Sans',sans-serif",marginBottom:16,padding:0,touchAction:"manipulation"}}>
-          <Ico d={I.back} size={15} stroke={C.textMid} sw={2}/> Nazad
+    <div className="fi" style={{height:"100dvh",background:"#FAF5F7",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
+      {/* Aurora glow */}
+      <div style={{position:"absolute",top:-60,left:"50%",transform:"translateX(-50%)",width:320,height:320,borderRadius:"50%",background:"radial-gradient(ellipse,rgba(216,152,172,.38) 0%,rgba(248,244,251,0) 70%)",pointerEvents:"none",zIndex:0}}/>
+
+      {/* Back button */}
+      <div style={{paddingTop:`max(14px,${SAT})`,paddingLeft:22,paddingRight:22,flexShrink:0,position:"relative",zIndex:1}}>
+        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");setPol("");}} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:5,color:C.textMid,fontSize:13,fontWeight:600,fontFamily:"'DM Sans',sans-serif",padding:0,touchAction:"manipulation"}}>
+          <Ico d={I.back} size={14} stroke={C.textMid} sw={2}/> Nazad
         </button>
-        <span style={{fontSize:10,fontWeight:800,letterSpacing:2,textTransform:"uppercase",color:C.primary,background:C.primaryLight,padding:"3px 10px",borderRadius:100,display:"inline-block",marginBottom:8}}>{isL?"Prijava":"Registracija"}</span>
-        <h2 className="serif" style={{fontSize:26,letterSpacing:-.3,color:C.text,lineHeight:1.2,fontWeight:400,margin:0}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
-        <p style={{color:C.textMid,fontSize:13,fontWeight:500,marginTop:4}}>{isL?"Nastavi odakle si stala.":"Besplatno. Bez osude."}</p>
+      </div>
+
+      {/* Centered branding */}
+      <div style={{display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center",padding:"18px 28px 20px",flexShrink:0,position:"relative",zIndex:1}}>
+        <div style={{width:56,height:56,borderRadius:18,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 24px rgba(192,120,144,.30)`,marginBottom:10}}>
+          <Ico d={I.leaf} size={24} stroke="#fff" sw={1.8}/>
+        </div>
+        <p style={{fontSize:10,fontWeight:800,letterSpacing:3,textTransform:"uppercase",color:C.primary,marginBottom:8}}>Unpick</p>
+        <h2 className="serif" style={{fontSize:26,letterSpacing:-.3,color:C.text,lineHeight:1.2,fontWeight:400,marginBottom:4}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
+        <p style={{color:C.textMid,fontSize:13,fontWeight:500}}>{isL?"Nastavi odakle si stala.":"Besplatno. Bez osude."}</p>
       </div>
 
       {/* Form */}
-      <div style={{flex:1,overflowY:"auto",padding:"20px 20px 0"}}>
-        <div style={{display:"flex",flexDirection:"column",gap:14,paddingBottom:`calc(32px + env(safe-area-inset-bottom,0px))`}}>
+      <div style={{flex:1,overflowY:"auto",position:"relative",zIndex:1}}>
+        <div style={{display:"flex",flexDirection:"column",gap:13,padding:"0 22px",paddingBottom:`calc(32px + env(safe-area-inset-bottom,0px))`}}>
           {errs.general&&<div style={{background:"#FEF2F2",borderRadius:14,padding:"11px 14px",border:`1px solid #FCA5A5`}}><p style={{color:"#991B1B",fontSize:13,fontWeight:600}}>{errs.general}</p></div>}
           {uspeh&&<div style={{background:C.greenLight,borderRadius:14,padding:"11px 14px",border:`1px solid ${C.green}44`}}><p style={{color:C.green,fontSize:13,fontWeight:600}}>{uspeh}</p></div>}
 
           {!isL&&<div>
-            <FldLabel>Ime</FldLabel>
+            <span style={lbl}>Ime</span>
             <IcoField ico={I.user} err={!!errs.ime}>
-              <input className="inp-el" placeholder="Tvoje ime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={{paddingLeft:46,...(errs.ime?{boxShadow:`0 0 0 2px ${C.red}`}:{})}} autoComplete="given-name"/>
+              <input className="inp-el" placeholder="Tvoje ime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inp(errs.ime)} autoComplete="given-name"/>
             </IcoField>
-            {prevErr("ime")}
+            {errs.ime&&<p style={{color:C.red,fontSize:12,fontWeight:600,marginTop:5,paddingLeft:2}}>{errs.ime}</p>}
           </div>}
 
           {!isL&&<div>
-            <FldLabel>Pol</FldLabel>
-            <div style={{display:"flex",background:C.bgMuted,borderRadius:16,padding:4,gap:4}}>
+            <span style={lbl}>Pol</span>
+            <div style={{display:"flex",background:C.primaryLight,borderRadius:16,padding:4,gap:4}}>
               {[["Z","Žensko"],["M","Muško"]].map(([v,l])=>(
-                <button key={v} type="button" onClick={()=>{setPol(v);if(errs.pol)setErrs(e=>({...e,pol:""}));}} style={{flex:1,padding:"10px 0",borderRadius:12,border:"none",background:pol===v?C.bgCard:"transparent",color:pol===v?C.primary:C.textMid,fontWeight:pol===v?700:500,fontSize:13,cursor:"pointer",transition:"all .15s",fontFamily:"'DM Sans',sans-serif",boxShadow:pol===v?`0 2px 8px ${C.shadow}`:undefined}}>
+                <button key={v} type="button" onClick={()=>{setPol(v);if(errs.pol)setErrs(e=>({...e,pol:""}));}} style={{flex:1,padding:"11px 0",borderRadius:12,border:"none",background:pol===v?C.primaryGrad:"transparent",color:pol===v?"#fff":C.textMid,fontWeight:pol===v?700:500,fontSize:13,cursor:"pointer",transition:"all .15s",fontFamily:"'DM Sans',sans-serif",boxShadow:pol===v?`0 3px 10px rgba(192,120,144,.30)`:undefined}}>
                   {l}
                 </button>
               ))}
             </div>
-            {prevErr("pol")}
+            {errs.pol&&<p style={{color:C.red,fontSize:12,fontWeight:600,marginTop:5,paddingLeft:2}}>{errs.pol}</p>}
           </div>}
 
           <div>
-            <FldLabel>Email</FldLabel>
+            <span style={lbl}>Email</span>
             <IcoField ico={I.mail} err={!!errs.em}>
-              <input className="inp-el" placeholder="tvoj@email.com" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" autoComplete="email" inputMode="email" style={{paddingLeft:46,...(errs.em?{boxShadow:`0 0 0 2px ${C.red}`}:{})}}/>
+              <input className="inp-el" placeholder="tvoj@email.com" value={em} onChange={e=>{setEm(e.target.value);if(errs.em)setErrs(v=>({...v,em:""}));}} type="email" autoComplete="email" inputMode="email" style={inp(errs.em)}/>
             </IcoField>
-            {prevErr("em")}
+            {errs.em&&<p style={{color:C.red,fontSize:12,fontWeight:600,marginTop:5,paddingLeft:2}}>{errs.em}</p>}
           </div>
 
           <div>
-            <FldLabel>Lozinka</FldLabel>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:7}}>
+              <span style={{...lbl,marginBottom:0}}>Lozinka</span>
+              {!isL&&<span style={{fontSize:11,color:C.textLight,fontWeight:500}}>min. 6 karaktera</span>}
+            </div>
             <IcoField ico={I.lockIco} err={!!errs.loz}>
-              <input className="inp-el" type={showLoz?"text":"password"} placeholder="••••••••" value={loz} onChange={e=>{setLoz(e.target.value);if(errs.loz)setErrs(v=>({...v,loz:""}));}} autoComplete={isL?"current-password":"new-password"} style={{paddingLeft:46,paddingRight:44,...(errs.loz?{boxShadow:`0 0 0 2px ${C.red}`}:{})}}/>
+              <input className="inp-el" type={showLoz?"text":"password"} placeholder="••••••••" value={loz} onChange={e=>{setLoz(e.target.value);if(errs.loz)setErrs(v=>({...v,loz:""}));}} autoComplete={isL?"current-password":"new-password"} style={{...inp(errs.loz),paddingRight:44}}/>
               <EyeBtn show={showLoz} toggle={()=>setShowLoz(v=>!v)}/>
             </IcoField>
-            {prevErr("loz",!isL?"Najmanje 6 karaktera":null)}
+            {errs.loz&&<p style={{color:C.red,fontSize:12,fontWeight:600,marginTop:5,paddingLeft:2}}>{errs.loz}</p>}
           </div>
 
           {!isL&&<div>
-            <FldLabel>Ponovi lozinku</FldLabel>
+            <span style={lbl}>Ponovi lozinku</span>
             <IcoField ico={I.lockIco} err={!!errs.loz2}>
-              <input className="inp-el" type={showLoz2?"text":"password"} placeholder="••••••••" value={loz2} onChange={e=>{setLoz2(e.target.value);if(errs.loz2)setErrs(v=>({...v,loz2:""}));}} autoComplete="new-password" style={{paddingLeft:46,paddingRight:44,...(errs.loz2?{boxShadow:`0 0 0 2px ${C.red}`}:{})}}/>
+              <input className="inp-el" type={showLoz2?"text":"password"} placeholder="••••••••" value={loz2} onChange={e=>{setLoz2(e.target.value);if(errs.loz2)setErrs(v=>({...v,loz2:""}));}} autoComplete="new-password" style={{...inp(errs.loz2),paddingRight:44}}/>
               <EyeBtn show={showLoz2} toggle={()=>setShowLoz2(v=>!v)}/>
             </IcoField>
-            {prevErr("loz2")}
+            {errs.loz2&&<p style={{color:C.red,fontSize:12,fontWeight:600,marginTop:5,paddingLeft:2}}>{errs.loz2}</p>}
           </div>}
 
-          <button type="button" disabled={dis} className="btn-p" style={{opacity:dis?0.55:1,cursor:dis?"default":"pointer",touchAction:"manipulation",marginTop:4,display:"flex",alignItems:"center",justifyContent:"center",gap:8}} onTouchStart={e=>{e.preventDefault();if(!dis)handleSubmit();}} onClick={()=>{if(!dis)handleSubmit();}}>
+          <button type="button" disabled={dis} className="btn-p" style={{opacity:dis?0.55:1,cursor:dis?"default":"pointer",touchAction:"manipulation",marginTop:6,display:"flex",alignItems:"center",justifyContent:"center",gap:8}} onTouchStart={e=>{e.preventDefault();if(!dis)handleSubmit();}} onClick={()=>{if(!dis)handleSubmit();}}>
             {loading?"Molimo sačekajte...":(isL?"Prijavi se":"Registruj se")}
             {!loading&&<span style={{fontSize:18,lineHeight:1}}>→</span>}
           </button>
