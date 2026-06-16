@@ -1285,7 +1285,8 @@ function Napredak({unosi,niz}){
     const hasTry=du.some(e=>e.ish==="try");
     const hasRes=du.some(e=>e.ish==="res");
     const isToday=i===6;
-    const status=hasEp?"ep":hasTry?"try":hasRes?"res":"none";
+    const isPast=!isToday;
+    const status=hasEp?"ep":hasTry?"try":hasRes?"res":(isPast?"clean":"none");
     const epCount=du.filter(e=>e.ish==="ep").length;
     const tryCount=du.filter(e=>e.ish==="try").length;
     const resCount=du.filter(e=>e.ish==="res").length;
@@ -1373,9 +1374,9 @@ function Napredak({unosi,niz}){
         </div>
         <div style={{display:"flex",gap:5}}>
           {sedmica.map((d,i)=>{
-            const bg=d.status==="ep"?C.red:d.status==="try"?C.amber:d.status==="res"?C.green:d.isToday?C.primaryLight:C.bgMuted;
-            const fg=d.status!=="none"?"#fff":d.isToday?C.primary:C.textLight;
-            const ico=d.status==="ep"?"✕":d.status==="try"?"∼":d.status==="res"?"✓":d.isToday?"·":"";
+            const bg=d.status==="ep"?C.red:d.status==="try"?C.amber:(d.status==="res"||d.status==="clean")?C.green:d.isToday?C.primaryLight:C.bgMuted;
+            const fg=(d.status!=="none"&&d.status!=="clean")||d.status==="clean"?"#fff":d.isToday?C.primary:C.textLight;
+            const ico=d.status==="ep"?"✕":d.status==="try"?"∼":(d.status==="res"||d.status==="clean")?"✓":d.isToday?"·":"";
             return(
               <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:5}}>
                 <div style={{width:"100%",aspectRatio:"1",borderRadius:10,background:bg,border:d.isToday&&d.status==="none"?`2px solid ${C.primary}`:"2px solid transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -1390,7 +1391,7 @@ function Napredak({unosi,niz}){
           {[
             {l:"Epizoda",v:sedmica.reduce((s,d)=>s+d.epCount,0),c:C.red},
             {l:"Pokušaja",v:sedmica.reduce((s,d)=>s+d.tryCount,0),c:C.amber},
-            {l:"Odolelo",v:sedmica.reduce((s,d)=>s+d.resCount,0),c:C.green},
+            {l:"Odolelo",v:sedmica.reduce((s,d)=>s+d.resCount,0)+sedmica.filter(d=>d.status==="clean").length,c:C.green},
           ].map((s,i)=>(
             <div key={s.l} style={{flex:1,textAlign:"center",borderRight:i<2?`1px solid ${C.border}`:"none"}}>
               <p style={{fontSize:22,fontWeight:900,color:s.v>0?s.c:C.textLight,lineHeight:1,marginBottom:3}}>{s.v}</p>
