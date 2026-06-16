@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
+import { subscribeToPush } from "./notifications";
 
 const isPWA = typeof window !== "undefined" && (window.matchMedia("(display-mode: standalone)").matches || Boolean(window.navigator.standalone));
 
@@ -868,7 +869,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
   );
 }
 
-function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
+function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,onNotif,notifStatus}){
   const [izvestaj,setIzvestaj]=useState(null);
   const h=new Date().getHours();
   const pozdrav=h<12?"Dobro jutro":h<18?"Dobar dan":"Dobro veče";
@@ -1035,6 +1036,15 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
           <span style={{display:"inline-block",background:"rgba(192,120,144,.12)",color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:14}}>Poruka dana</span>
           <p className="serif" style={{fontSize:16,color:C.text,lineHeight:1.85,fontWeight:400}}>{poruka}</p>
         </div>
+        {notifStatus!=="granted"&&(
+          <button onClick={onNotif} style={{width:"100%",background:"transparent",border:`1.5px solid ${C.border}`,borderRadius:18,padding:"14px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+            <div style={{width:38,height:38,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:20}}>🔔</div>
+            <div style={{textAlign:"left"}}>
+              <p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:2}}>Uključi podsetnik</p>
+              <p style={{fontSize:12,color:C.textLight}}>Dnevni podsetnik za unos</p>
+            </div>
+          </button>
+        )}
       </div>
     </div>
   );
@@ -1495,6 +1505,31 @@ export default function App(){
   const contentRef=useRef(null);
   useEffect(()=>{if(contentRef.current)contentRef.current.scrollTop=0;},[ekran]);
 
+  const [installPrompt,setInstallPrompt]=useState(null);
+  const [showInstall,setShowInstall]=useState(false);
+  useEffect(()=>{
+    const handler=(e)=>{e.preventDefault();setInstallPrompt(e);setShowInstall(true);};
+    window.addEventListener("beforeinstallprompt",handler);
+    return()=>window.removeEventListener("beforeinstallprompt",handler);
+  },[]);
+  async function handleInstall(){
+    if(!installPrompt) return;
+    installPrompt.prompt();
+    const{outcome}=await installPrompt.userChoice;
+    if(outcome==="accepted") setShowInstall(false);
+  }
+
+  const [notifStatus,setNotifStatus]=useState(typeof Notification!=="undefined"?Notification.permission:"default");
+  async function enableNotifications(){
+    if(typeof Notification==="undefined") return;
+    const permission=await Notification.requestPermission();
+    setNotifStatus(permission);
+    if(permission!=="granted") return;
+    const sub=await subscribeToPush();
+    if(!sub||!kor?.id) return;
+    await supabase.from("profiles").update({push_subscription:JSON.stringify(sub)}).eq("id",kor.id);
+  }
+
   // forsiraj ažuriranje Service Workera pri svakom pokretanju
   useEffect(()=>{
     if('serviceWorker' in navigator){
@@ -1598,6 +1633,16 @@ export default function App(){
             </div>
           :<Auth onDone={u=>{setKor(u);supabase.auth.getSession().then(({data:{session}})=>{if(session){loadJournalEntries(session.user.id);}});setFaza("app");}}/>
       )}
+      {faza==="app"&&showInstall&&!isPWA&&(
+        <div style={{position:"fixed",bottom:80,left:"50%",transform:"translateX(-50%)",width:"calc(100% - 40px)",maxWidth:350,zIndex:200,background:"#fff",borderRadius:20,padding:"16px 18px",boxShadow:"0 8px 32px rgba(192,120,144,0.22)",border:`1.5px solid ${C.border}`,display:"flex",alignItems:"center",gap:14}}>
+          <div style={{flex:1}}>
+            <p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:2}}>Dodaj Unpick na ekran</p>
+            <p style={{fontSize:12,color:C.textLight}}>Brži pristup, radi offline</p>
+          </div>
+          <button onClick={handleInstall} style={{background:C.primaryGrad,color:"#fff",border:"none",borderRadius:100,padding:"9px 16px",fontSize:13,fontWeight:700,fontFamily:"inherit",cursor:"pointer",flexShrink:0}}>Dodaj</button>
+          <button onClick={()=>setShowInstall(false)} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:18,lineHeight:1,padding:4,flexShrink:0}}>✕</button>
+        </div>
+      )}
       {faza==="app"&&(
         priSOS?(
           <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto",flex:isDesk?1:undefined}} className="fi"><SOS onZatvori={()=>setPriSOS(false)}/></div>
@@ -1632,7 +1677,7 @@ export default function App(){
               ?{flex:1,minWidth:0,display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden"}
               :{display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}}>
               <div ref={contentRef} style={{display:ekran==="chat"?"none":"flex",flexDirection:"column",flex:1,minHeight:0,paddingBottom:isDesk?"24px":"calc(63px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
-                {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
+                {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout} onNotif={enableNotifications} notifStatus={notifStatus}/>}
                 {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
                 {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
                 {ekran==="bib"&&<Biblioteka/>}
