@@ -875,9 +875,8 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
   );
 }
 
-function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,onNotif,notifStatus}){
+function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
   const [izvestaj,setIzvestaj]=useState(null);
-  const [showPWAHint,setShowPWAHint]=useState(false);
   const h=new Date().getHours();
   const pozdrav=h<12?"Dobro jutro":h<18?"Dobar dan":"Dobro veče";
   const prikazIme=ime&&!ime.includes("@")?ime:"";
@@ -1043,30 +1042,6 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,onNotif,n
           <span style={{display:"inline-block",background:"rgba(192,120,144,.12)",color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:14}}>Poruka dana</span>
           <p className="serif" style={{fontSize:16,color:C.text,lineHeight:1.85,fontWeight:400}}>{poruka}</p>
         </div>
-        {notifStatus!=="granted"&&isPWA&&(
-          <button onClick={onNotif} style={{width:"100%",background:"transparent",border:`1.5px solid ${C.border}`,borderRadius:18,padding:"14px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
-            <div style={{width:38,height:38,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:20}}>🔔</div>
-            <div style={{textAlign:"left"}}>
-              <p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:2}}>Uključi podsetnik</p>
-              <p style={{fontSize:12,color:C.textLight}}>Dnevni podsetnik za unos</p>
-            </div>
-          </button>
-        )}
-        {notifStatus!=="granted"&&!isPWA&&(
-          <button onClick={()=>setShowPWAHint(h=>!h)} style={{width:"100%",background:"transparent",border:`1.5px solid ${C.border}`,borderRadius:18,padding:"14px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
-            <div style={{width:38,height:38,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:20}}>🔔</div>
-            <div style={{textAlign:"left"}}>
-              <p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:2}}>Uključi podsetnik</p>
-              <p style={{fontSize:12,color:C.textLight}}>Dnevni podsetnik za unos</p>
-            </div>
-          </button>
-        )}
-        {showPWAHint&&!isPWA&&(
-          <div style={{background:C.amberLight,border:`1.5px solid ${C.amber}`,borderRadius:14,padding:"12px 16px",display:"flex",gap:10,alignItems:"flex-start"}}>
-            <span style={{fontSize:18,flexShrink:0}}>📲</span>
-            <p style={{fontSize:13,color:C.text,lineHeight:1.5}}>Da bi primala podsetnnike, prvo <strong>dodaj Unpick na početni ekran</strong> (Share → Dodaj na početni ekran u Safariju).</p>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -1563,6 +1538,7 @@ function Profil({kor,onLogout,onNotif,notifStatus}){
   const [potvrda,setPotvrda]=useState("");
   const [poruka,setPoruka]=useState(null);
   const [loading,setLoading]=useState(false);
+  const initijali=(kor?.ime||"").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase()||"🌸";
 
   async function promeniLozinku(){
     if(novaLoz!==potvrda){setPoruka({tip:"greska",t:"Lozinke se ne podudaraju."});return;}
@@ -1577,56 +1553,65 @@ function Profil({kor,onLogout,onNotif,notifStatus}){
 
   return(
     <div style={{minHeight:"100vh",background:C.bg}} className="fi">
-      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:22,paddingRight:22,paddingBottom:14}}>
-        <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Nalog</span>
-        <h1 className="serif" style={{fontSize:24,letterSpacing:-0.3}}>Profil</h1>
-      </div>
-      <div style={{padding:"20px 20px",display:"flex",flexDirection:"column",gap:12}}>
-        <div style={{background:C.bgCard,borderRadius:22,padding:"20px 20px",border:`1px solid ${C.border}`}}>
-          <div style={{width:56,height:56,borderRadius:18,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,marginBottom:14}}>🌸</div>
-          <p style={{fontWeight:700,fontSize:17,color:C.text,marginBottom:4}}>{kor?.ime||"Korisnik"}</p>
-          <p style={{fontSize:13,color:C.textLight,fontWeight:500}}>{kor?.email||""}</p>
+      {/* Header */}
+      <div style={{paddingTop:HDR_PT,paddingBottom:32,paddingLeft:24,paddingRight:24,background:`linear-gradient(160deg,#FFF8FA 0%,#FAE0EB 100%)`,borderBottom:`1px solid ${C.border}`}}>
+        <span style={{display:"inline-block",background:"rgba(192,120,144,.13)",color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:16}}>Nalog</span>
+        <div style={{display:"flex",alignItems:"center",gap:16}}>
+          <div style={{width:64,height:64,borderRadius:22,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 16px rgba(192,120,144,.3)`}}>
+            <span style={{fontSize:initijali.length>1?20:26,fontWeight:800,color:"#fff",fontFamily:"'DM Sans',sans-serif"}}>{initijali}</span>
+          </div>
+          <div>
+            <p style={{fontWeight:800,fontSize:18,color:C.text,marginBottom:3,letterSpacing:-0.3}}>{kor?.ime||"Korisnik"}</p>
+            <p style={{fontSize:13,color:C.textMid,fontWeight:500}}>{kor?.email||""}</p>
+          </div>
         </div>
-        {notifStatus!=="granted"&&(
-          <button onClick={onNotif} style={{width:"100%",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"16px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
-            <div style={{width:40,height:40,borderRadius:13,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🔔</div>
-            <div style={{textAlign:"left",flex:1}}>
+      </div>
+
+      <div style={{padding:"20px 20px",display:"flex",flexDirection:"column",gap:10}}>
+        {/* Notifikacije */}
+        {notifStatus!=="granted"?(
+          <button onClick={isPWA?onNotif:undefined} style={{width:"100%",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:isPWA?"pointer":"default",fontFamily:"inherit",textAlign:"left"}}>
+            <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🔔</div>
+            <div style={{flex:1}}>
               <p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:2}}>Uključi podsetnik</p>
-              <p style={{fontSize:12,color:C.textLight}}>Dnevna notifikacija u 13h</p>
+              <p style={{fontSize:12,color:C.textLight}}>{isPWA?"Tapni da uključiš dnevnu notifikaciju":"Dodaj app na početni ekran da bi primala podsetnike"}</p>
             </div>
-            <Ico d={I.chev} size={14} stroke={C.textLight} sw={2.5}/>
+            {isPWA&&<Ico d={I.chev} size={14} stroke={C.textLight} sw={2.5}/>}
           </button>
-        )}
-        {notifStatus==="granted"&&(
-          <div style={{background:C.greenLight,borderRadius:18,padding:"16px 18px",display:"flex",alignItems:"center",gap:14}}>
-            <div style={{width:40,height:40,borderRadius:13,background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🔔</div>
+        ):(
+          <div style={{background:C.greenLight,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,border:`1px solid rgba(122,158,120,.2)`}}>
+            <div style={{width:42,height:42,borderRadius:14,background:"rgba(122,158,120,.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🔔</div>
             <div>
               <p style={{fontWeight:700,fontSize:14,color:C.green,marginBottom:2}}>Podsetnik uključen</p>
-              <p style={{fontSize:12,color:C.green,opacity:0.8}}>Svaki dan u 13h</p>
+              <p style={{fontSize:12,color:C.green,opacity:0.75}}>Svaki dan u 13h</p>
             </div>
           </div>
         )}
-        <div style={{background:C.bgCard,borderRadius:22,border:`1px solid ${C.border}`,overflow:"hidden"}}>
-          <button onClick={()=>setMenjaLozinku(m=>!m)} style={{width:"100%",background:"none",border:"none",padding:"16px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
-            <div style={{width:40,height:40,borderRadius:13,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>🔑</div>
+
+        {/* Promena lozinke */}
+        <div style={{background:C.bgCard,borderRadius:18,border:`1px solid ${C.border}`,overflow:"hidden"}}>
+          <button onClick={()=>{setMenjaLozinku(m=>!m);setPoruka(null);}} style={{width:"100%",background:"none",border:"none",padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+            <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>🔑</div>
             <div style={{textAlign:"left",flex:1}}>
               <p style={{fontWeight:700,fontSize:14,color:C.text}}>Promeni lozinku</p>
             </div>
-            <Ico d={I.chev} size={14} stroke={C.textLight} sw={2.5}/>
+            <Ico d={I.chev} size={14} stroke={C.textLight} sw={2.5} style={{transform:menjaLozinku?"rotate(90deg)":"none",transition:"transform .2s"}}/>
           </button>
           {menjaLozinku&&(
             <div style={{padding:"0 18px 18px",display:"flex",flexDirection:"column",gap:10,borderTop:`1px solid ${C.border}`,paddingTop:16}}>
               <input className="inp" type="password" placeholder="Nova lozinka" value={novaLoz} onChange={e=>setNovaLoz(e.target.value)}/>
               <input className="inp" type="password" placeholder="Potvrdi novu lozinku" value={potvrda} onChange={e=>setPotvrda(e.target.value)}/>
-              {poruka&&<p style={{fontSize:13,color:poruka.tip==="ok"?C.green:C.red,fontWeight:600}}>{poruka.t}</p>}
-              <button onClick={promeniLozinku} disabled={loading} style={{background:C.primaryGrad,color:"#fff",border:"none",borderRadius:14,padding:"13px",fontSize:14,fontWeight:700,fontFamily:"inherit",cursor:"pointer"}}>
+              {poruka&&<p style={{fontSize:13,color:poruka.tip==="ok"?C.green:C.red,fontWeight:600,textAlign:"center"}}>{poruka.t}</p>}
+              <button onClick={promeniLozinku} disabled={loading} className="btn-p" style={{borderRadius:14,padding:"13px"}}>
                 {loading?"Čuvam...":"Sačuvaj lozinku"}
               </button>
             </div>
           )}
         </div>
-        <button onClick={onLogout} style={{width:"100%",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"16px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
-          <div style={{width:40,height:40,borderRadius:13,background:"#FFF0F0",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🚪</div>
+
+        {/* Odjava */}
+        <button onClick={onLogout} style={{width:"100%",background:C.bgCard,border:`1.5px solid rgba(196,104,120,.25)`,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+          <div style={{width:42,height:42,borderRadius:14,background:"#FFF0F2",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🚪</div>
           <p style={{fontWeight:700,fontSize:14,color:C.red}}>Odjavi se</p>
         </button>
       </div>
@@ -1711,7 +1696,7 @@ export default function App(){
   async function resolveSession(session){
     const uid=session.user.id;
     const imePrivremeno=session.user.user_metadata?.name||session.user.email||"";
-    setKor({ime:imePrivremeno,id:uid,registeredAt:session.user.created_at});
+    setKor({ime:imePrivremeno,id:uid,registeredAt:session.user.created_at,email:session.user.email||""});
     // keš → instant prikaz; sveži podaci dolaze u pozadini i ažuriraju
     try{const c=localStorage.getItem(`unpick_entries_${uid}`);if(c)setNoviUnosi(JSON.parse(c));}catch{}
     setFaza("app");
@@ -1856,7 +1841,7 @@ export default function App(){
               ?{flex:1,minWidth:0,display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden"}
               :{display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}}>
               <div ref={contentRef} style={{display:ekran==="chat"?"none":"flex",flexDirection:"column",flex:1,minHeight:0,paddingBottom:isDesk?"24px":"calc(63px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
-                {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout} onNotif={enableNotifications} notifStatus={notifStatus}/>}
+                {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout}/>}
                 {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
                 {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
                 {ekran==="bib"&&<Biblioteka/>}
