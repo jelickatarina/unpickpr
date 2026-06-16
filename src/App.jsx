@@ -1361,7 +1361,7 @@ function Napredak({unosi,niz}){
       {/* Sekcija 1 — 7-day calendar */}
       <div style={{margin:"16px 20px 10px",background:C.bgCard,borderRadius:24,padding:"18px",border:`1px solid ${C.border}`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-          <p style={{fontSize:13,fontWeight:700,color:C.text}}>Ova sedmica</p>
+          <p style={{fontSize:13,fontWeight:700,color:C.text}}>Ova nedelja</p>
           <div style={{display:"flex",gap:10}}>
             {[{c:C.red,l:"Epizoda"},{c:C.amber,l:"Pokušaj"},{c:C.green,l:"Odolelo"}].map(x=>(
               <div key={x.l} style={{display:"flex",alignItems:"center",gap:4}}>
