@@ -577,11 +577,11 @@ function SOS({onZatvori}){
         <ToolHdr emoji="🫁" title="4 · 7 · 8 Disanje"/>
         <div style={{padding:"24px 20px 48px",display:"flex",flexDirection:"column",alignItems:"center",gap:20}}>
           <p style={{fontSize:13,color:C.textMid,fontWeight:500,textAlign:"center"}}>Prati krug i diši zajedno sa njim</p>
-          <div style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:28,padding:"32px 24px",display:"flex",flexDirection:"column",alignItems:"center",gap:16,width:"100%",boxShadow:`0 2px 16px ${C.shadow}`}}>
-            <div style={{position:"relative",width:180,height:180}}>
-              <svg width={180} height={180} style={{position:"absolute",top:0,left:0,transform:"rotate(-90deg)"}}>
-                <circle cx={90} cy={90} r={r} fill="none" stroke={cur.c+"22"} strokeWidth={8}/>
-                <circle key={dk} cx={90} cy={90} r={r} fill="none" stroke={cur.c} strokeWidth={8} strokeLinecap="round"
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:16}}>
+            <div style={{position:"relative",width:200,height:200}}>
+              <svg width={200} height={200} style={{position:"absolute",top:0,left:0,transform:"rotate(-90deg)"}}>
+                <circle cx={100} cy={100} r={r} fill="none" stroke={cur.c+"22"} strokeWidth={8}/>
+                <circle key={dk} cx={100} cy={100} r={r} fill="none" stroke={cur.c} strokeWidth={8} strokeLinecap="round"
                   strokeDasharray={circ} strokeDashoffset={circ*(1-prog)} style={{transition:"stroke-dashoffset 1s linear,stroke .4s"}}/>
               </svg>
               <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:4}}>
@@ -609,11 +609,11 @@ function SOS({onZatvori}){
         <ToolHdr emoji="⏱️" title={done?"Uspela si!":"Čekaj malo"}/>
         <div style={{padding:"24px 20px 48px",display:"flex",flexDirection:"column",alignItems:"center",gap:20}}>
           <p style={{fontSize:13,color:C.textMid,fontWeight:500,textAlign:"center"}}>{done?"Impuls je prošao. Budi ponosna 💪":"Impulsi prolaze. Samo 5 minuta."}</p>
-          <div style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:28,padding:"32px 24px",display:"flex",flexDirection:"column",alignItems:"center",gap:12,width:"100%",boxShadow:`0 2px 16px ${C.shadow}`}}>
-            <div style={{position:"relative",width:180,height:180}}>
-              <svg width={180} height={180} style={{position:"absolute",top:0,left:0,transform:"rotate(-90deg)"}}>
-                <circle cx={90} cy={90} r={r} fill="none" stroke={done?C.green+"33":C.primary+"22"} strokeWidth={8}/>
-                <circle cx={90} cy={90} r={r} fill="none" stroke={done?C.green:C.primary} strokeWidth={8} strokeLinecap="round"
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:12}}>
+            <div style={{position:"relative",width:200,height:200}}>
+              <svg width={200} height={200} style={{position:"absolute",top:0,left:0,transform:"rotate(-90deg)"}}>
+                <circle cx={100} cy={100} r={r} fill="none" stroke={done?C.green+"33":C.primary+"22"} strokeWidth={8}/>
+                <circle cx={100} cy={100} r={r} fill="none" stroke={done?C.green:C.primary} strokeWidth={8} strokeLinecap="round"
                   strokeDasharray={circ} strokeDashoffset={circ*(1-prog)} style={{transition:"stroke-dashoffset 1s linear,stroke .5s"}}/>
               </svg>
               <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:4}}>
