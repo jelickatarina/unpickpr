@@ -1090,7 +1090,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
             ):(
               <>
                 <div style={{display:"flex",alignItems:"center",gap:5}}>
-                  <span style={{fontSize:54,fontWeight:800,color:C.text,fontFamily:"'DM Sans',sans-serif",lineHeight:1,letterSpacing:-3}}>{niz}</span>
+                  <span style={{fontSize:58,fontWeight:400,color:C.text,fontFamily:"'Playfair Display',serif",lineHeight:1,letterSpacing:-1}}>{niz}</span>
                   <span style={{fontSize:24,lineHeight:1,marginTop:4}}>🔥</span>
                 </div>
                 <p style={{fontSize:10,fontWeight:800,color:C.textLight,letterSpacing:2,textTransform:"uppercase",marginTop:4}}>Dana u nizu</p>
