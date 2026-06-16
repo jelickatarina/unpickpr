@@ -1957,7 +1957,7 @@ export default function App(){
     }
   },[]);
 
-  function hideSplash(){const s=document.getElementById("splash");if(s){s.style.opacity="0";setTimeout(()=>s.remove(),400);}}
+  function hideSplash(){document.getElementById("root").style.display="block";const s=document.getElementById("splash");if(s){s.style.transition="opacity 0.4s";s.style.opacity="0";setTimeout(()=>s.remove(),400);}}
 
   useEffect(()=>{
     const splashTimer=setTimeout(hideSplash,600);

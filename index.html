@@ -19,13 +19,14 @@
 
     <link rel="icon" type="image/png" href="/icon-192.png" />
     <title>Unpick</title>
+    <style>#root{display:none}</style>
   </head>
   <body>
-    <div id="splash" style="position:fixed;inset:0;background:#F8F4FB;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.4s ease;">
+    <div id="root"></div>
+    <div id="splash" style="position:fixed;inset:0;background:#F8F4FB;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;">
       <img src="/icon-192.png" style="width:80px;height:80px;border-radius:24px;margin-bottom:16px;" />
       <p style="font-family:sans-serif;font-size:14px;color:#B8A0AC;font-weight:500;">Učitava se...</p>
     </div>
-    <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
