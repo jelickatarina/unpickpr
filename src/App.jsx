@@ -1450,6 +1450,54 @@ const CLANCI=[
     {tip:"tekst",t:"Ponekad ljudi ne razumeju odmah. To nije odraz vaše vrednosti. Ako ostanu nerazumevajući, to govori o njima, ne o vama."},
     {tip:"vazno",t:"Ne nosite ovo sami. Podrška okoline je jedan od najjačih faktora oporavka."},
   ]},
+  {e:"💆",n:"Stres kao okidač",k:"Edukacija",v:"4 min",sadrzaj:[
+    {tip:"uvod",t:"Stres je jedan od najčešćih okidača za čačkanje. Razumevanje te veze pomaže da se bolje pripremite u teškim momentima."},
+    {tip:"naslov",t:"Zašto stres pokreće čačkanje?"},
+    {tip:"tekst",t:"Kada smo pod stresom, telo traži načine da se reguliše. Čačkanje pruža trenutno oslobađanje napetosti — to je telo koje pokušava da se umiri na jedini način koji zna."},
+    {tip:"naslov",t:"Prepoznajte svoje okidače"},
+    {tip:"tekst",t:"Ispiti, rokovi, svađe, dosada, gledanje u ekran — svako ima svoje. Koristite dnevnik u aplikaciji da pratite kada se čačkanje pojavljuje i šta mu prethodi."},
+    {tip:"vazno",t:"Okidač nije krivac. On je signal da vam je potrebna briga o sebi."},
+  ]},
+  {e:"🌬️",n:"Disanje koje smiruje",k:"Tehnika",v:"4 min",sadrzaj:[
+    {tip:"uvod",t:"Dijafragmalno disanje aktivira parasimpatički nervni sistem — deo koji smiruje telo i smanjuje impuls za čačkanjem."},
+    {tip:"naslov",t:"Tehnika 4-7-8"},
+    {tip:"tekst",t:"Udahnite 4 sekunde. Zadržite 7 sekundi. Polako izdahnite 8 sekundi. Ponovite 4 puta. Ova tehnika brzo snižava kortizol i smiruje nervni sistem."},
+    {tip:"naslov",t:"Kvadratno disanje (Box breathing)"},
+    {tip:"tekst",t:"Udahnite 4 sekunde → zadržite 4 → izdahnite 4 → zadržite 4. Ovaj ritam koriste vojnici i sportisti za brzu regulaciju stresa."},
+    {tip:"vazno",t:"Vežbajte disanje i kada niste u krizi — tada će biti dostupno kada vam zatreba."},
+  ]},
+  {e:"🤲",n:"Barijere i alternative",k:"Tehnika",v:"5 min",sadrzaj:[
+    {tip:"uvod",t:"Fizičke barijere između ruku i kože su jedna od najefikasnijih strategija — posebno za period dok gradite svest o okidačima."},
+    {tip:"naslov",t:"Šta funkcioniše?"},
+    {tip:"tekst",t:"Flasteri na mestima koja najčešće čačkate, rukavice dok radite za računarom, duge rukave, nošenje stres lopte ili fidzet igračke u džepu."},
+    {tip:"naslov",t:"Alternative koje pomažu"},
+    {tip:"tekst",t:"Masaža kremom za ruke, kotrljanje olovke između prstiju, igranje sa kosom, gnetenje plastelina. Cilj je da ruke budu zauzete nečim bezopasnim."},
+    {tip:"vazno",t:"Barijere nisu rešenje — one su most dok učite nove obrasce. Koristite ih bez stida."},
+  ]},
+  {e:"🌙",n:"Čačkanje pre spavanja",k:"Edukacija",v:"4 min",sadrzaj:[
+    {tip:"uvod",t:"Večernje sate mnoge osobe opisuju kao najtežepostoji poseban razlog — telo i mozak su umorniji, a kontrola impulsa slabija."},
+    {tip:"naslov",t:"Zašto baš uveče?"},
+    {tip:"tekst",t:"Prefrontalni korteks — deo mozga zadužen za kontrolu — slabi tokom dana od umora. Uveče je doslovno teže odoleti impulsima nego ujutru."},
+    {tip:"naslov",t:"Večernja rutina koja pomaže"},
+    {tip:"tekst",t:"Topla kupka ili tuš pre spavanja, kratka meditacija, čitanje fizičke knjige, stavljanje kreme na lice i ruke — sve to smanjuje napetost i signalizira mozgu da je vreme za odmor."},
+    {tip:"vazno",t:"Planirajte večernju rutinu unapred — umoran mozak loše donosi odluke u poslednji čas."},
+  ]},
+  {e:"💪",n:"Proslavljanje malih pobeda",k:"Podrška",v:"3 min",sadrzaj:[
+    {tip:"uvod",t:"Oporavak nije linearan. Jedan dobar dan, pa loš — to nije neuspeh, to je proces. Naučiti slaviti male pobede menja sve."},
+    {tip:"naslov",t:"Šta je mala pobeda?"},
+    {tip:"tekst",t:"Primetila si impuls pre nego što si počela. Zaustavila si se posle par sekundi. Pitala si se 'šta osećam?' umesto da čačkaš automatski. Sve ovo je napredak."},
+    {tip:"naslov",t:"Kako proslaviti?"},
+    {tip:"tekst",t:"Zabeležite u dnevniku. Recite sebi naglas 'dobro sam uradila'. Pošaljite poruku osobi koja vas podržava. Mali rituali učvršćuju nova neurološka kola u mozgu."},
+    {tip:"vazno",t:"Ne čekaj 'savršen dan' da bi bila ponosna na sebe. Svaki korak se računa."},
+  ]},
+  {e:"🏥",n:"Kada potražiti pomoć?",k:"Podrška",v:"4 min",sadrzaj:[
+    {tip:"uvod",t:"Dermatilomanija je medicinski poremećaj i postoje stručnjaci koji mogu da pomognu. Tražiti pomoć je čin hrabrosti, ne slabosti."},
+    {tip:"naslov",t:"Znaci da je vreme za stručnjaka"},
+    {tip:"tekst",t:"Čačkanje uzrokuje vidljive rane ili infekcije, utiče na svakodnevni život, posao ili odnose, osećaš stid koji te sprečava da izlaziš ili nosiš određenu odeću, pokušavala si da prestaneš ali ne uspeva."},
+    {tip:"naslov",t:"Ko može da pomogne?"},
+    {tip:"tekst",t:"Psiholog ili psihoterapeut sa iskustvom u KBT i HRT terapiji, psihijatar ako se razmatra medikamentna podrška. U Srbiji možeš početi od izabranog lekara koji može da uputi."},
+    {tip:"vazno",t:"Ova aplikacija je podrška — ne zamena za terapiju. Ako osećaš da ti treba više, potraži stručnjaka."},
+  ]},
 ];
 const kBoja=k=>k==="Edukacija"?[C.purpleLight,C.purple]:k==="Tehnika"?[C.primaryLight,C.primaryDark]:[C.amberLight,C.amber];
 
@@ -1507,7 +1555,84 @@ function Biblioteka(){
   );
 }
 
-const NAV=[{id:"poc",l:"Početna",ico:"home"},{id:"dnv",l:"Dnevnik",ico:"journal"},{id:"nap",l:"Napredak",ico:"chart"},{id:"bib",l:"Biblioteka",ico:"library"},{id:"chat",l:"Chat",ico:"chat"}];
+const NAV=[{id:"poc",l:"Početna",ico:"home"},{id:"dnv",l:"Dnevnik",ico:"journal"},{id:"nap",l:"Napredak",ico:"chart"},{id:"bib",l:"Biblioteka",ico:"library"},{id:"chat",l:"Chat",ico:"chat"},{id:"profil",l:"Profil",ico:"user"}];
+
+function Profil({kor,onLogout,onNotif,notifStatus}){
+  const [menjaLozinku,setMenjaLozinku]=useState(false);
+  const [novaLoz,setNovaLoz]=useState("");
+  const [potvrda,setPotvrda]=useState("");
+  const [poruka,setPoruka]=useState(null);
+  const [loading,setLoading]=useState(false);
+
+  async function promeniLozinku(){
+    if(novaLoz!==potvrda){setPoruka({tip:"greska",t:"Lozinke se ne podudaraju."});return;}
+    if(novaLoz.length<6){setPoruka({tip:"greska",t:"Lozinka mora imati najmanje 6 karaktera."});return;}
+    setLoading(true);
+    const{error}=await supabase.auth.updateUser({password:novaLoz});
+    setLoading(false);
+    if(error){setPoruka({tip:"greska",t:error.message});return;}
+    setPoruka({tip:"ok",t:"Lozinka uspešno promenjena! 🎉"});
+    setMenjaLozinku(false);setNovaLoz("");setPotvrda("");
+  }
+
+  return(
+    <div style={{minHeight:"100vh",background:C.bg}} className="fi">
+      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:22,paddingRight:22,paddingBottom:14}}>
+        <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Nalog</span>
+        <h1 className="serif" style={{fontSize:24,letterSpacing:-0.3}}>Profil</h1>
+      </div>
+      <div style={{padding:"20px 20px",display:"flex",flexDirection:"column",gap:12}}>
+        <div style={{background:C.bgCard,borderRadius:22,padding:"20px 20px",border:`1px solid ${C.border}`}}>
+          <div style={{width:56,height:56,borderRadius:18,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,marginBottom:14}}>🌸</div>
+          <p style={{fontWeight:700,fontSize:17,color:C.text,marginBottom:4}}>{kor?.ime||"Korisnik"}</p>
+          <p style={{fontSize:13,color:C.textLight,fontWeight:500}}>{kor?.email||""}</p>
+        </div>
+        {notifStatus!=="granted"&&(
+          <button onClick={onNotif} style={{width:"100%",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"16px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+            <div style={{width:40,height:40,borderRadius:13,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🔔</div>
+            <div style={{textAlign:"left",flex:1}}>
+              <p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:2}}>Uključi podsetnik</p>
+              <p style={{fontSize:12,color:C.textLight}}>Dnevna notifikacija u 13h</p>
+            </div>
+            <Ico d={I.chev} size={14} stroke={C.textLight} sw={2.5}/>
+          </button>
+        )}
+        {notifStatus==="granted"&&(
+          <div style={{background:C.greenLight,borderRadius:18,padding:"16px 18px",display:"flex",alignItems:"center",gap:14}}>
+            <div style={{width:40,height:40,borderRadius:13,background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🔔</div>
+            <div>
+              <p style={{fontWeight:700,fontSize:14,color:C.green,marginBottom:2}}>Podsetnik uključen</p>
+              <p style={{fontSize:12,color:C.green,opacity:0.8}}>Svaki dan u 13h</p>
+            </div>
+          </div>
+        )}
+        <div style={{background:C.bgCard,borderRadius:22,border:`1px solid ${C.border}`,overflow:"hidden"}}>
+          <button onClick={()=>setMenjaLozinku(m=>!m)} style={{width:"100%",background:"none",border:"none",padding:"16px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+            <div style={{width:40,height:40,borderRadius:13,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>🔑</div>
+            <div style={{textAlign:"left",flex:1}}>
+              <p style={{fontWeight:700,fontSize:14,color:C.text}}>Promeni lozinku</p>
+            </div>
+            <Ico d={I.chev} size={14} stroke={C.textLight} sw={2.5}/>
+          </button>
+          {menjaLozinku&&(
+            <div style={{padding:"0 18px 18px",display:"flex",flexDirection:"column",gap:10,borderTop:`1px solid ${C.border}`,paddingTop:16}}>
+              <input className="inp" type="password" placeholder="Nova lozinka" value={novaLoz} onChange={e=>setNovaLoz(e.target.value)}/>
+              <input className="inp" type="password" placeholder="Potvrdi novu lozinku" value={potvrda} onChange={e=>setPotvrda(e.target.value)}/>
+              {poruka&&<p style={{fontSize:13,color:poruka.tip==="ok"?C.green:C.red,fontWeight:600}}>{poruka.t}</p>}
+              <button onClick={promeniLozinku} disabled={loading} style={{background:C.primaryGrad,color:"#fff",border:"none",borderRadius:14,padding:"13px",fontSize:14,fontWeight:700,fontFamily:"inherit",cursor:"pointer"}}>
+                {loading?"Čuvam...":"Sačuvaj lozinku"}
+              </button>
+            </div>
+          )}
+        </div>
+        <button onClick={onLogout} style={{width:"100%",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"16px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+          <div style={{width:40,height:40,borderRadius:13,background:"#FFF0F0",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🚪</div>
+          <p style={{fontWeight:700,fontSize:14,color:C.red}}>Odjavi se</p>
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function App(){
   const [faza,setFaza]=useState("loading");const [kor,setKor]=useState(null);const [ekran,setEkran]=useState("poc");
@@ -1735,6 +1860,7 @@ export default function App(){
                 {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
                 {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
                 {ekran==="bib"&&<Biblioteka/>}
+                {ekran==="profil"&&<Profil kor={kor} onLogout={handleLogout} onNotif={enableNotifications} notifStatus={notifStatus}/>}
               </div>
               <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",flex:1,minHeight:0,overflow:"hidden",paddingBottom:isDesk||kbOpen?0:"63px"}}>
                 <AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)} isVisible={ekran==="chat"}/>
