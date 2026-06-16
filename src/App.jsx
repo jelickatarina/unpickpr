@@ -1958,6 +1958,8 @@ export default function App(){
   },[]);
 
   useEffect(()=>{
+    const cachedKey=Object.keys(localStorage).find(k=>k.startsWith('sb-')&&k.endsWith('-auth-token'));
+    if(cachedKey){try{const parsed=JSON.parse(localStorage.getItem(cachedKey));if(parsed?.access_token){resolveSession({user:parsed.user||{id:parsed.user_id,email:parsed.email,user_metadata:parsed.user_metadata,created_at:parsed.created_at}});}}catch{}}
     supabase.auth.getSession().then(({data:{session}})=>{
       if(session) resolveSession(session);
       else setFaza("auth");
