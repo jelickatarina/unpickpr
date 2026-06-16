@@ -540,25 +540,27 @@ function SOS({onZatvori}){
         </div>
       </div>
 
-      <div style={{padding:"20px 20px 48px",display:"flex",flexDirection:"column",gap:10}}>
-        <p style={{fontSize:11,fontWeight:800,color:C.textLight,letterSpacing:1.5,textTransform:"uppercase",marginBottom:4}}>Tehnike smirenja</p>
+      <div style={{padding:"24px 16px 60px",display:"flex",flexDirection:"column",gap:8}}>
+        <p style={{fontSize:12,fontWeight:700,color:C.textMid,letterSpacing:0.3,marginBottom:2,paddingLeft:4}}>Tehnike smirenja</p>
         {ALATI.slice(0,4).map(a=>(
-          <button key={a.id} onClick={()=>{setAlat(a.id);setFaza("alat")}} style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:20,padding:"14px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:14,textAlign:"left",boxShadow:`0 2px 8px ${C.shadow}`,fontFamily:"inherit"}}>
-            <div style={{width:48,height:48,borderRadius:16,background:a.bg,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:22}}>{a.emoji}</div>
+          <button key={a.id} onClick={()=>{setAlat(a.id);setFaza("alat")}} style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:22,padding:"15px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:14,textAlign:"left",boxShadow:`0 2px 10px ${C.shadow}`,fontFamily:"inherit",transition:"all .15s"}}>
+            <div style={{width:46,height:46,borderRadius:15,background:a.bg,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:22}}>{a.emoji}</div>
             <div style={{flex:1}}>
               <p style={{fontWeight:700,fontSize:15,color:C.text,marginBottom:2}}>{a.l}</p>
-              <p style={{fontSize:12,color:C.textLight,fontWeight:500}}>{a.op}</p>
+              <p style={{fontSize:12,color:C.textMid,fontWeight:500}}>{a.op}</p>
             </div>
             <Ico d={I.chev} size={16} stroke={C.textLight} sw={2}/>
           </button>
         ))}
-        <p style={{fontSize:11,fontWeight:800,color:C.textLight,letterSpacing:1.5,textTransform:"uppercase",marginTop:10,marginBottom:4}}>Igrice za distrakciju</p>
-        <div style={{display:"flex",gap:10}}>
+        <p style={{fontSize:12,fontWeight:700,color:C.textMid,letterSpacing:0.3,marginTop:12,marginBottom:2,paddingLeft:4}}>Igrice za distrakciju</p>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
           {ALATI.slice(4).map(a=>(
-            <button key={a.id} onClick={()=>{setAlat(a.id);setFaza("alat")}} style={{flex:1,background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:20,padding:"16px 12px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:8,textAlign:"center",boxShadow:`0 2px 8px ${C.shadow}`,fontFamily:"inherit"}}>
-              <div style={{width:52,height:52,borderRadius:16,background:a.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24}}>{a.emoji}</div>
-              <p style={{fontWeight:700,fontSize:13,color:C.text,lineHeight:1.3}}>{a.l}</p>
-              <p style={{fontSize:11,color:C.textLight,fontWeight:500}}>{a.op}</p>
+            <button key={a.id} onClick={()=>{setAlat(a.id);setFaza("alat")}} style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:22,padding:"20px 12px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:10,textAlign:"center",boxShadow:`0 2px 10px ${C.shadow}`,fontFamily:"inherit"}}>
+              <div style={{width:56,height:56,borderRadius:18,background:a.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26}}>{a.emoji}</div>
+              <div>
+                <p style={{fontWeight:700,fontSize:14,color:C.text,lineHeight:1.3,marginBottom:2}}>{a.l}</p>
+                <p style={{fontSize:11,color:C.textMid,fontWeight:500}}>{a.op}</p>
+              </div>
             </button>
           ))}
         </div>
