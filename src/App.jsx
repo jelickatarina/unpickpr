@@ -1054,46 +1054,53 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
         </div>
       )}
 
-      {/* ── TOP SECTION: gradient hero ── */}
-      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:22,paddingRight:22,paddingBottom:16}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
-          <div>
-            <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Početna</span>
-            <h1 className="serif" style={{fontSize:24,lineHeight:1,letterSpacing:-0.3,color:C.text}}>{prikazIme?`${pozdrav}, ${prikazIme}`:pozdrav}</h1>
+      {/* ── HEADER ── */}
+      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:14}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:36,height:36,borderRadius:11,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 3px 10px rgba(168,90,116,.3)`}}>
+              <Ico d={I.leaf} size={17} stroke="#fff" sw={2}/>
+            </div>
+            <span style={{fontSize:14,fontWeight:800,color:C.text,letterSpacing:2.5,textTransform:"uppercase"}}>Unpick</span>
           </div>
-          <button onClick={()=>setShowProfil(true)} style={{width:38,height:38,borderRadius:12,background:C.primaryLight,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0}}>
-            <Ico d={I.user} size={18} stroke={C.primary} sw={1.8}/>
+          <button onClick={()=>setShowProfil(true)} style={{width:38,height:38,borderRadius:12,background:C.bgMuted,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0}}>
+            <Ico d={I.user} size={18} stroke={C.textMid} sw={1.8}/>
           </button>
         </div>
       </div>
 
-      {/* ── Streak ring — scrollable hero ── */}
-      <div style={{background:`linear-gradient(160deg,${C.primaryLight} 0%,${C.bg} 55%)`,padding:"24px 22px 28px",position:"relative",overflow:"hidden"}}>
-        <div style={{display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
-          <div style={{position:"relative",width:r*2+20,height:r*2+20}}>
-            <svg width={r*2+20} height={r*2+20} style={{position:"absolute",inset:0,transform:"rotate(-90deg)"}}>
-              <circle cx={r+10} cy={r+10} r={r} fill="none" stroke={C.primary+"1A"} strokeWidth={7}/>
-              <circle cx={r+10} cy={r+10} r={r} fill="none" stroke={C.primaryGrad.includes("gradient")?"url(#pg)":C.primary} strokeWidth={7}
-                strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={ringOffset}
-                style={{transition:"stroke-dashoffset .6s ease"}}/>
-              <defs>
-                <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#D898AC"/>
-                  <stop offset="100%" stopColor="#A85A74"/>
-                </linearGradient>
-              </defs>
-            </svg>
-            <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2}}>
-              {niz===0
-                ?<><Ico d={I.leaf} size={28} stroke={C.primary} sw={1.8}/><p style={{fontSize:13,fontWeight:700,color:C.textMid}}>Počni!</p></>
-                :<div style={{display:"flex",alignItems:"center",gap:6}}><span style={{fontSize:52,fontWeight:400,color:C.text,fontFamily:"'Playfair Display',serif",lineHeight:1}}>{niz}</span><span style={{fontSize:26,lineHeight:1}}>🔥</span></div>
-              }
-            </div>
+      {/* ── Streak ring ── */}
+      <div style={{background:`linear-gradient(170deg,${C.primaryLight} 0%,#FDEEF4 40%,${C.bg} 75%)`,padding:"28px 22px 24px",display:"flex",flexDirection:"column",alignItems:"center"}}>
+        <div style={{position:"relative",width:r*2+20,height:r*2+20,marginBottom:12}}>
+          <svg width={r*2+20} height={r*2+20} style={{position:"absolute",inset:0,transform:"rotate(-90deg)"}}>
+            <circle cx={r+10} cy={r+10} r={r} fill="none" stroke={C.primary+"18"} strokeWidth={6}/>
+            <circle cx={r+10} cy={r+10} r={r} fill="none" stroke="url(#pg)" strokeWidth={6}
+              strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={ringOffset}
+              style={{transition:"stroke-dashoffset .6s ease"}}/>
+            <defs>
+              <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#D898AC"/>
+                <stop offset="100%" stopColor="#A85A74"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:0}}>
+            {niz===0?(
+              <><Ico d={I.leaf} size={28} stroke={C.primary} sw={1.8}/><p style={{fontSize:12,fontWeight:700,color:C.textMid,marginTop:6,letterSpacing:1,textTransform:"uppercase"}}>Počni!</p></>
+            ):(
+              <>
+                <div style={{display:"flex",alignItems:"center",gap:5}}>
+                  <span style={{fontSize:54,fontWeight:800,color:C.text,fontFamily:"'DM Sans',sans-serif",lineHeight:1,letterSpacing:-3}}>{niz}</span>
+                  <span style={{fontSize:24,lineHeight:1,marginTop:4}}>🔥</span>
+                </div>
+                <p style={{fontSize:10,fontWeight:800,color:C.textLight,letterSpacing:2,textTransform:"uppercase",marginTop:4}}>Dana u nizu</p>
+              </>
+            )}
           </div>
-          <p style={{fontSize:13,color:badDanas?C.red:C.textMid,fontWeight:600,marginTop:10}}>
-            {badDanas?"Resetovano danas":`${faliTekst} do sledeće vatrice`}
-          </p>
         </div>
+        <p style={{fontSize:13,color:badDanas?C.red:C.textMid,fontWeight:600,letterSpacing:0.1}}>
+          {badDanas?"Resetovano danas":`${faliTekst} do sledeće vatrice`}
+        </p>
       </div>
 
       {/* ── BOTTOM SECTION: white panel ── */}
