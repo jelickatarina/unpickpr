@@ -1332,19 +1332,13 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
   return(
     <div style={{paddingBottom:20}} className="fi">
       <div style={{paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:12,background:C.bg}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-          <div>
-            <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Moj dnevnik</span>
-            <h1 className="serif" style={{fontSize:24,letterSpacing:-0.3,lineHeight:1}}>Unosi</h1>
-          </div>
-          <button onClick={onDodaj} style={{width:46,height:46,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",boxShadow:`0 4px 16px rgba(192,120,144,.35)`}}>
-            <Ico d={I.plus} size={20} stroke="#fff" sw={2.5}/>
-          </button>
-        </div>
         <div style={{display:"flex",alignItems:"center",gap:8,background:C.bgMuted,borderRadius:14,padding:"8px 14px",marginBottom:10}}>
           <Ico d={I.search} size={15} stroke={C.textLight} sw={2}/>
           <input value={pretraga} onChange={e=>setPretraga(e.target.value)} placeholder="Pretraži unose..." style={{flex:1,border:"none",background:"transparent",fontSize:14,color:C.text,fontFamily:"'DM Sans',sans-serif",outline:"none"}}/>
           {pretraga&&<button onClick={()=>setPretraga("")} style={{border:"none",background:"none",cursor:"pointer",padding:0,color:C.textLight,fontSize:16,lineHeight:1}}>✕</button>}
+          <button onClick={onDodaj} style={{width:34,height:34,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,boxShadow:`0 3px 10px rgba(192,120,144,.35)`}}>
+            <Ico d={I.plus} size={16} stroke="#fff" sw={2.5}/>
+          </button>
         </div>
         <div style={{display:"flex",gap:6}}>
           {filteri.map(f=><button key={f.v} onClick={()=>setFilIsh(f.v)} style={{padding:"5px 12px",borderRadius:100,border:`1.5px solid ${filIsh===f.v?bc(f.v)||C.primary:C.border}`,background:filIsh===f.v?filIsh==="sve"?C.primaryLight:bc(f.v)+"18":C.bgCard,color:filIsh===f.v?filIsh==="sve"?C.primary:bc(f.v):C.textMid,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>{f.l}</button>)}
@@ -1514,18 +1508,8 @@ function Napredak({unosi,niz}){
   return(
     <div style={{paddingBottom:90}} className="fi">
 
-      {/* Header + insight */}
-      <div style={{paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:14,background:C.bg}}>
-        <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Napredak</span>
-        <h1 className="serif" style={{fontSize:24,fontWeight:700,color:C.text,letterSpacing:-0.3,lineHeight:1}}>Tvoje statistike</h1>
-        <div style={{marginTop:10,background:insightBg,borderRadius:14,padding:"9px 14px",display:"flex",alignItems:"center",gap:8}}>
-          <div style={{width:7,height:7,borderRadius:"50%",background:insightC,flexShrink:0}}/>
-          <span style={{fontSize:13,fontWeight:700,color:insightC,lineHeight:1.3}}>{insight}</span>
-        </div>
-      </div>
-
       {/* Sekcija 1 — 7-day calendar */}
-      <div style={{margin:"16px 20px 10px",background:C.bgCard,borderRadius:24,padding:"18px",border:`1px solid ${C.border}`}}>
+      <div style={{margin:`${HDR_PT} 20px 10px`,marginTop:HDR_PT,background:C.bgCard,borderRadius:24,padding:"18px",border:`1px solid ${C.border}`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
           <p style={{fontSize:13,fontWeight:700,color:C.text}}>Ova nedelja</p>
           <div style={{display:"flex",gap:10}}>
@@ -1785,11 +1769,7 @@ function Biblioteka(){
   if(otvoren!==null) return<Clanak clanak={CLANCI[otvoren]} onNazad={()=>setOtvoren(null)}/>;
   return(
     <div style={{paddingBottom:20}} className="fi">
-      <div style={{paddingTop:HDR_PT,paddingLeft:24,paddingRight:24,paddingBottom:14,background:C.bg}}>
-        <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Resursi</span>
-        <h1 className="serif" style={{fontSize:24,letterSpacing:-0.3}}>Biblioteka</h1>
-      </div>
-      <div style={{padding:"16px 20px 0"}}>
+      <div style={{padding:"16px 20px 0",paddingTop:HDR_PT}}>
         {CLANCI.map((a,idx)=>{const [b,f]=kBoja(a.k);return(
           <div key={a.n} className="card fi" style={{marginBottom:12,display:"flex",gap:14,alignItems:"center",cursor:"pointer"}} onClick={()=>setOtvoren(idx)}>
             <div style={{width:58,height:58,borderRadius:18,background:b,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,flexShrink:0}}>{a.e}</div>
