@@ -36,9 +36,10 @@ textarea.inp{resize:none;min-height:80px;line-height:1.65;}
 .inp-el{width:100%;padding:15px 18px;border-radius:16px;border:none;background:#FAFAFA;box-shadow:0 0 0 1.5px rgba(192,120,144,.14),0 2px 10px rgba(192,120,144,.05);font-size:15px;font-family:'DM Sans',sans-serif;color:${C.text};outline:none;transition:all .2s;font-weight:500;}
 .inp-el:focus{background:#fff;box-shadow:0 0 0 2px ${C.primary},0 4px 18px rgba(192,120,144,.12);}
 .inp-el::placeholder{color:${C.textLight};}
-.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid ${C.border};border-radius:20px 20px 0 0;display:flex;z-index:100;padding:8px 4px env(safe-area-inset-bottom,10px);gap:0;}
-.ni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;cursor:pointer;background:none;border:none;border-radius:14px;flex:1;transition:all .2s;}
-.ni.active{background:${C.primaryLight};}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:rgba(255,255,255,.98);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid ${C.border};display:flex;z-index:100;padding:10px 8px env(safe-area-inset-bottom,12px);gap:0;box-shadow:0 -4px 24px rgba(192,120,144,.08);}
+.ni{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0 4px;cursor:pointer;background:none;border:none;flex:1;transition:all .18s;position:relative;}
+.ni.active{background:none;}
+.ni.active::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:18px;height:3px;border-radius:2px;background:${C.primaryGrad};}
 .tag{display:inline-block;padding:4px 11px;border-radius:100px;font-size:11px;font-weight:700;}
 .fi{animation:fi .25s cubic-bezier(.4,0,.2,1);}
 @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -954,24 +955,27 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
         </div>
       )}
 
-      {/* ── TOP SECTION: gradient hero ── */}
-      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:22,paddingRight:22,paddingBottom:16}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
-          <div>
-            <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Početna</span>
-            <h1 className="serif" style={{fontSize:24,lineHeight:1,letterSpacing:-0.3,color:C.text}}>{prikazIme?`${pozdrav}, ${prikazIme}`:pozdrav}</h1>
+      {/* ── HEADER ── */}
+      <div style={{paddingTop:HDR_PT,paddingLeft:22,paddingRight:22,paddingBottom:20,background:`linear-gradient(170deg,#FFF5F8 0%,#FAE8EF 60%,${C.bg} 100%)`}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <div style={{width:32,height:32,borderRadius:10,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={I.leaf} size={15} stroke="#fff" sw={2}/></div>
+            <span style={{fontSize:16,fontWeight:800,color:C.text,letterSpacing:-0.4}}>Unpick</span>
           </div>
-          <button onClick={onLogout} style={{background:C.bgMuted,border:`1px solid ${C.border}`,borderRadius:100,fontSize:11,color:C.textLight,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",padding:"7px 14px",boxShadow:"0 2px 8px rgba(192,120,144,.1)"}}>Odjavi</button>
+          <span style={{fontSize:12,color:C.textLight,fontWeight:600}}>{new Date().toLocaleDateString("sr",{weekday:"long",day:"numeric",month:"short"})}</span>
         </div>
+        <p style={{fontSize:13,color:C.primary,fontWeight:700,marginBottom:4,letterSpacing:0.2}}>{pozdrav}{prikazIme?",":" 👋"}</p>
+        <h1 style={{fontSize:prikazIme?26:22,fontWeight:800,color:C.text,letterSpacing:-0.5,lineHeight:1.1,fontFamily:"'DM Sans',sans-serif"}}>{prikazIme||"Drago mi je što si tu"}</h1>
       </div>
 
-      {/* ── Streak ring — scrollable hero ── */}
-      <div style={{background:`linear-gradient(160deg,${C.primaryLight} 0%,${C.bg} 55%)`,padding:"24px 22px 28px",position:"relative",overflow:"hidden"}}>
-        <div style={{display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
-          <div style={{position:"relative",width:r*2+20,height:r*2+20}}>
+      {/* ── Streak ring ── */}
+      <div style={{margin:"0 20px 0",background:C.bgCard,borderRadius:24,padding:"22px 20px 20px",border:`1px solid ${C.border}`,boxShadow:`0 4px 20px ${C.shadow}`,position:"relative",overflow:"hidden",marginTop:16}}>
+        <div style={{position:"absolute",top:-20,right:-12,fontSize:100,opacity:.04,lineHeight:1,pointerEvents:"none"}}>🔥</div>
+        <div style={{display:"flex",alignItems:"center",gap:20}}>
+          <div style={{position:"relative",width:r*2+20,height:r*2+20,flexShrink:0}}>
             <svg width={r*2+20} height={r*2+20} style={{position:"absolute",inset:0,transform:"rotate(-90deg)"}}>
-              <circle cx={r+10} cy={r+10} r={r} fill="none" stroke={C.primary+"1A"} strokeWidth={7}/>
-              <circle cx={r+10} cy={r+10} r={r} fill="none" stroke={C.primaryGrad.includes("gradient")?"url(#pg)":C.primary} strokeWidth={7}
+              <circle cx={r+10} cy={r+10} r={r} fill="none" stroke={C.primary+"18"} strokeWidth={8}/>
+              <circle cx={r+10} cy={r+10} r={r} fill="none" stroke="url(#pg)" strokeWidth={8}
                 strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={ringOffset}
                 style={{transition:"stroke-dashoffset .6s ease"}}/>
               <defs>
@@ -981,38 +985,55 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt}){
                 </linearGradient>
               </defs>
             </svg>
-            <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2}}>
+            <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:1}}>
               {niz===0
-                ?<><Ico d={I.leaf} size={28} stroke={C.primary} sw={1.8}/><p style={{fontSize:13,fontWeight:700,color:C.textMid}}>Počni!</p></>
-                :<div style={{display:"flex",alignItems:"center",gap:6}}><span style={{fontSize:52,fontWeight:400,color:C.text,fontFamily:"'Playfair Display',serif",lineHeight:1}}>{niz}</span><span style={{fontSize:26,lineHeight:1}}>🔥</span></div>
+                ?<><Ico d={I.leaf} size={26} stroke={C.primary} sw={1.8}/><p style={{fontSize:11,fontWeight:700,color:C.textMid,marginTop:4}}>Počni!</p></>
+                :<><span style={{fontSize:44,fontWeight:800,color:C.text,fontFamily:"'DM Sans',sans-serif",lineHeight:1,letterSpacing:-2}}>{niz}</span><span style={{fontSize:11,fontWeight:700,color:C.textMid}}>dana</span></>
               }
             </div>
           </div>
-          <p style={{fontSize:13,color:badDanas?C.red:C.textMid,fontWeight:600,marginTop:10}}>
-            {badDanas?"Resetovano danas":`${faliTekst} do sledeće vatrice`}
-          </p>
+          <div style={{flex:1}}>
+            <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:6}}>Niz bez epizode</p>
+            <p style={{fontSize:15,fontWeight:700,color:badDanas?C.red:C.text,marginBottom:12,lineHeight:1.3}}>
+              {badDanas?"Resetovano danas":`${faliTekst} do\nsledeće vatrice`}
+            </p>
+            <div style={{display:"flex",gap:8}}>
+              <div style={{textAlign:"center",background:C.greenLight,borderRadius:12,padding:"6px 10px",flex:1}}>
+                <p style={{fontSize:16,fontWeight:800,color:C.green}}>{nedZelene}</p>
+                <p style={{fontSize:10,color:C.green,fontWeight:600,opacity:.8}}>zeleni</p>
+              </div>
+              <div style={{textAlign:"center",background:C.amberLight,borderRadius:12,padding:"6px 10px",flex:1}}>
+                <p style={{fontSize:16,fontWeight:800,color:C.amber}}>{nedAmber}</p>
+                <p style={{fontSize:10,color:C.amber,fontWeight:600,opacity:.8}}>žuti</p>
+              </div>
+              <div style={{textAlign:"center",background:C.red+"14",borderRadius:12,padding:"6px 10px",flex:1}}>
+                <p style={{fontSize:16,fontWeight:800,color:C.red}}>{nedCrvene}</p>
+                <p style={{fontSize:10,color:C.red,fontWeight:600,opacity:.8}}>crveni</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* ── BOTTOM SECTION: white panel ── */}
-      <div style={{padding:"12px 20px 20px",display:"flex",flexDirection:"column",gap:12}}>
+      {/* ── BOTTOM SECTION ── */}
+      <div style={{padding:"14px 20px 20px",display:"flex",flexDirection:"column",gap:12}}>
 
         {/* Week strip */}
         <div style={{background:C.bgCard,borderRadius:22,padding:"16px 18px",border:`1px solid ${C.border}`}}>
           <p style={{fontSize:10,fontWeight:700,color:C.textLight,letterSpacing:1.2,textTransform:"uppercase",marginBottom:14}}>Ova nedelja</p>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             {weekData.map(({s,preReg},i)=>(
-              <div key={i} onClick={()=>s!==null&&s!=="pre"&&setIzvestaj(i)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,cursor:s!==null&&s!=="pre"?"pointer":"default",opacity:preReg?0.35:1}}>
-                <div style={{width:36,height:36,borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",
-                  background:s==="z"?C.greenLight:s==="ž"?C.amberLight:s==="c"?C.red+"18":C.bgMuted,
-                  boxShadow:izvestaj===i?`0 0 0 2px ${C.primary}`:"none",transition:"box-shadow .18s"}}>
-                  {s==="z"&&<Ico d={I.check} size={14} stroke={C.green} sw={2.5}/>}
-                  {s==="ž"&&<span style={{fontSize:12,color:C.amber,fontWeight:900}}>~</span>}
-                  {s==="c"&&<Ico d={I.x} size={12} stroke={C.red} sw={2.5}/>}
-                  {s==="pre"&&<span style={{fontSize:14,color:C.textLight,fontWeight:300}}>—</span>}
-                  {s===null&&<span style={{width:5,height:5,borderRadius:"50%",background:C.border,display:"block"}}/>}
+              <div key={i} onClick={()=>s!==null&&s!=="pre"&&setIzvestaj(i)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:5,cursor:s!==null&&s!=="pre"?"pointer":"default",opacity:preReg?0.3:1}}>
+                <div style={{width:38,height:38,borderRadius:13,display:"flex",alignItems:"center",justifyContent:"center",
+                  background:s==="z"?C.greenLight:s==="ž"?C.amberLight:s==="c"?"rgba(196,104,120,.12)":C.bgMuted,
+                  boxShadow:izvestaj===i?`0 0 0 2.5px ${C.primary},0 2px 8px ${C.shadow}`:"none",transition:"box-shadow .18s"}}>
+                  {s==="z"&&<Ico d={I.check} size={15} stroke={C.green} sw={2.5}/>}
+                  {s==="ž"&&<span style={{fontSize:16,color:C.amber,fontWeight:900,lineHeight:1}}>·</span>}
+                  {s==="c"&&<Ico d={I.x} size={13} stroke={C.red} sw={2.5}/>}
+                  {s==="pre"&&<span style={{fontSize:12,color:C.textLight,fontWeight:300}}>—</span>}
+                  {s===null&&<span style={{width:6,height:6,borderRadius:"50%",background:C.border,display:"block"}}/>}
                 </div>
-                <span style={{fontSize:9,color:s==="z"?C.green:s==="c"?C.red:s==="ž"?C.amber:C.textLight,fontWeight:700}}>{dani[i]}</span>
+                <span style={{fontSize:9,color:s==="z"?C.green:s==="c"?C.red:s==="ž"?C.amber:C.textLight,fontWeight:700,letterSpacing:.3}}>{dani[i]}</span>
               </div>
             ))}
           </div>
