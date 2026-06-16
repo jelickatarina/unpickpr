@@ -630,7 +630,10 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
         {/* Datum i vreme */}
         <div>
           <span className="lbl">DATUM I VREME</span>
-          <input type="datetime-local" className="inp" value={new Date(u.ts-new Date(u.ts).getTimezoneOffset()*60000).toISOString().slice(0,16)} max={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16)} onChange={e=>e.target.value&&setU(v=>({...v,ts:new Date(e.target.value).getTime()}))} style={{cursor:"pointer"}}/>
+          <div style={{display:"flex",gap:8}}>
+            <input type="date" className="inp" value={new Date(u.ts-new Date(u.ts).getTimezoneOffset()*60000).toISOString().slice(0,10)} max={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)} onChange={e=>{if(!e.target.value)return;const[Y,M,D]=e.target.value.split("-");const d=new Date(u.ts);d.setFullYear(+Y,+M-1,+D);setU(v=>({...v,ts:d.getTime()}));}} style={{cursor:"pointer",flex:1,textAlign:"center"}}/>
+            <input type="time" className="inp" value={new Date(u.ts).toTimeString().slice(0,5)} onChange={e=>{if(!e.target.value)return;const[h,m]=e.target.value.split(":");const d=new Date(u.ts);d.setHours(+h,+m);setU(v=>({...v,ts:d.getTime()}));}} style={{cursor:"pointer",width:100,textAlign:"center"}}/>
+          </div>
         </div>
 
         {/* Okidači */}
@@ -681,9 +684,9 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
         <div style={{display:"flex",flexDirection:"column",gap:10}}>
           <span className="lbl" style={{marginBottom:0}}>BELEŠKA & FOTO <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
           <textarea className="inp" placeholder="Šta se dešavalo?" value={u.bel} onChange={e=>setU(v=>({...v,bel:e.target.value}))} style={{minHeight:64}}/>
-          <label style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRadius:14,border:`1.5px dashed ${C.border}`,background:C.bgMuted,cursor:"pointer"}}>
+          <label style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8,padding:"20px 14px",borderRadius:14,border:`1.5px dashed ${C.border}`,background:C.bgMuted,cursor:"pointer"}}>
             <input type="file" accept="image/*" multiple style={{display:"none"}} onChange={e=>{Promise.all(Array.from(e.target.files).map(f=>new Promise(res=>{const r=new FileReader();r.onload=ev=>res(ev.target.result);r.readAsDataURL(f)}))).then(urls=>setU(v=>({...v,slike:[...v.slike,...urls]})))}}/>
-            <Ico d={I.camera} size={16} stroke={C.primary} sw={1.8}/>
+            <Ico d={I.camera} size={22} stroke={C.primary} sw={1.8}/>
             <p style={{fontWeight:600,fontSize:13,color:C.textMid}}>Dodaj fotografiju</p>
           </label>
           {u.slike.length>0&&<div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{u.slike.map((s,i)=><div key={i} style={{position:"relative"}}><img src={s} alt="" style={{width:70,height:70,borderRadius:12,objectFit:"cover"}}/><button onClick={()=>setU(v=>({...v,slike:v.slike.filter((_,j)=>j!==i)}))} style={{position:"absolute",top:-6,right:-6,width:20,height:20,borderRadius:"50%",background:C.red,color:"#fff",border:"none",fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>✕</button></div>)}</div>}
