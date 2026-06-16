@@ -598,14 +598,9 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
       <div style={{paddingTop:`max(44px,${SAT})`,paddingLeft:20,paddingRight:20,paddingBottom:12,display:"flex",alignItems:"center",gap:14,borderBottom:`1px solid ${C.border}`,background:C.bg,position:"sticky",top:0,zIndex:10}}>
         <button className="btn-g" onClick={onOtkazi} style={{padding:0,flexShrink:0}}><Ico d={I.back} size={22} stroke={C.textMid}/></button>
         <h2 className="serif" style={{fontSize:22,letterSpacing:-0.3,flex:1}}>{editData?"Izmeni unos":"Novi unos"}</h2>
-        <button
-          disabled={!u.ish||saving}
-          onClick={()=>{if(!u.ish||saving)return;setSaving(true);onSacuvaj(u);}}
-          style={{background:u.ish?C.primaryGrad:"transparent",color:u.ish?"#fff":C.textLight,border:u.ish?"none":`1.5px solid ${C.border}`,borderRadius:100,padding:"9px 20px",fontSize:13,fontWeight:700,fontFamily:"'DM Sans',sans-serif",cursor:u.ish?"pointer":"default",transition:"all .2s",opacity:saving?0.6:1,flexShrink:0}}
-        >Sačuvaj</button>
       </div>
 
-      <div style={{padding:"20px 20px 80px",display:"flex",flexDirection:"column",gap:22,overflowY:"auto"}}>
+      <div style={{padding:"20px 20px 40px",display:"flex",flexDirection:"column",gap:22,overflowY:"auto"}}>
 
         {/* Ishod — required */}
         <div>
@@ -702,6 +697,13 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
           <span className="lbl">BELEŠKA <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
           <textarea className="inp" placeholder="Šta se dešavalo?" value={u.bel} onChange={e=>setU(v=>({...v,bel:e.target.value}))} style={{minHeight:80}}/>
         </div>
+
+        {/* Sačuvaj */}
+        <button
+          disabled={!u.ish||saving}
+          onClick={()=>{if(!u.ish||saving)return;setSaving(true);onSacuvaj(u);}}
+          style={{background:u.ish?C.primaryGrad:"#EEE0E6",color:u.ish?"#fff":C.textLight,border:"none",borderRadius:100,padding:"16px",fontSize:15,fontWeight:700,fontFamily:"'DM Sans',sans-serif",cursor:u.ish?"pointer":"default",transition:"all .2s",opacity:saving?0.6:1,width:"100%"}}
+        >{saving?"Čuvam...":"Sačuvaj"}</button>
 
       </div>
     </div>
