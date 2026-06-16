@@ -600,22 +600,18 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
         <h2 className="serif" style={{fontSize:22,letterSpacing:-0.3,flex:1}}>{editData?"Izmeni unos":"Novi unos"}</h2>
       </div>
 
-      <div style={{padding:"20px 20px 40px",display:"flex",flexDirection:"column",gap:22,overflowY:"auto"}}>
+      <div style={{padding:"16px 20px 40px",display:"flex",flexDirection:"column",gap:16,overflowY:"auto"}}>
 
         {/* Ishod — required */}
         <div>
           <span className="lbl">KAKAV JE BIO ISHOD?</span>
-          <div style={{display:"flex",flexDirection:"column",gap:8}}>
-            {ishodi.map(({v,l,sub,c,bg})=>(
-              <button key={v} onClick={()=>setU(x=>({...x,ish:v}))} style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",borderRadius:18,border:`2px solid ${u.ish===v?c:C.border}`,background:u.ish===v?bg:C.bgCard,cursor:"pointer",textAlign:"left",transition:"all .15s",fontFamily:"inherit"}}>
-                <div style={{width:32,height:32,borderRadius:10,background:u.ish===v?c+"22":C.bgMuted,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                  <Ico d={v==="res"?I.check:v==="try"?I.spark:I.x} size={15} stroke={u.ish===v?c:C.textLight} sw={2.5}/>
+          <div style={{display:"flex",gap:8}}>
+            {ishodi.map(({v,l,c,bg})=>(
+              <button key={v} onClick={()=>setU(x=>({...x,ish:v}))} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:6,padding:"12px 8px",borderRadius:16,border:`2px solid ${u.ish===v?c:C.border}`,background:u.ish===v?bg:C.bgCard,cursor:"pointer",transition:"all .15s",fontFamily:"inherit"}}>
+                <div style={{width:30,height:30,borderRadius:10,background:u.ish===v?c+"22":C.bgMuted,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  <Ico d={v==="res"?I.check:v==="try"?I.spark:I.x} size={14} stroke={u.ish===v?c:C.textLight} sw={2.5}/>
                 </div>
-                <div>
-                  <p style={{fontWeight:700,fontSize:15,color:u.ish===v?c:C.text,lineHeight:1}}>{l}</p>
-                  <p style={{fontSize:12,color:C.textLight,fontWeight:500,marginTop:3}}>{sub}</p>
-                </div>
-                {u.ish===v&&<div style={{marginLeft:"auto",width:20,height:20,borderRadius:"50%",background:c,display:"flex",alignItems:"center",justifyContent:"center"}}><Ico d={I.check} size={10} stroke="#fff" sw={3}/></div>}
+                <p style={{fontWeight:700,fontSize:13,color:u.ish===v?c:C.text,lineHeight:1,textAlign:"center"}}>{l}</p>
               </button>
             ))}
           </div>
@@ -623,12 +619,12 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
 
         {/* Intenzitet */}
         <div>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:10}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:8}}>
             <span className="lbl" style={{marginBottom:0}}>JAK IMPULS</span>
-            <span style={{fontSize:26,fontWeight:400,color:C.primary,fontFamily:"'Playfair Display',serif",lineHeight:1}}>{u.int}</span>
+            <span style={{fontSize:22,fontWeight:400,color:C.primary,fontFamily:"'Playfair Display',serif",lineHeight:1}}>{u.int}</span>
           </div>
           <input type="range" min={1} max={10} value={u.int} onChange={e=>setU(v=>({...v,int:+e.target.value}))} style={{width:"100%",accentColor:C.primary}}/>
-          <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:C.textLight,fontWeight:600,marginTop:4}}><span>Jedva primetno</span><span>Nepodnošljivo</span></div>
+          <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:C.textLight,fontWeight:600,marginTop:3}}><span>Jedva primetno</span><span>Nepodnošljivo</span></div>
         </div>
 
         {/* Datum i vreme */}
@@ -640,10 +636,10 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
         {/* Okidači */}
         <div>
           <span className="lbl">OKIDAČI <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
-          <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:ostaloAkt?10:0}}>
+          <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:ostaloAkt?8:0}}>
             {OKI.map(o=><button key={o} className={`chip${(o==="Ostalo"?ostaloAkt:u.ok.includes(o))?" on":""}`} onClick={()=>toggleOk(o)}>{o}</button>)}
           </div>
-          {ostaloAkt&&<input className="inp" placeholder="Opiši okidač..." value={ostaloTekst} onChange={e=>{const t=e.target.value;setU(v=>({...v,ok:[...v.ok.filter(x=>x!=="Ostalo"&&!x.startsWith("Ostalo:")),t?"Ostalo:"+t:"Ostalo"]}));}} style={{marginTop:8}}/>}
+          {ostaloAkt&&<input className="inp" placeholder="Opiši okidač..." value={ostaloTekst} onChange={e=>{const t=e.target.value;setU(v=>({...v,ok:[...v.ok.filter(x=>x!=="Ostalo"&&!x.startsWith("Ostalo:")),t?"Ostalo:"+t:"Ostalo"]}));}} style={{marginTop:6}}/>}
         </div>
 
         {/* Lokacija */}
@@ -653,7 +649,7 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
           return(
             <div>
               <span className="lbl">LOKACIJA <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
-              <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:lokOstaloAkt?10:0}}>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:lokOstaloAkt?8:0}}>
                 {LOK.map(l=><button key={l} className={`chip${u.lok===l?" on":""}`} onClick={()=>setU(v=>({...v,lok:v.lok===l?"":l}))} style={{fontSize:13}}>{l}</button>)}
                 <button className={`chip${lokOstaloAkt?" on":""}`} onClick={()=>setU(v=>({...v,lok:lokOstaloAkt?"":"Ostalo"}))} style={{fontSize:13}}>Ostalo</button>
               </div>
@@ -665,37 +661,32 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
         {/* Emocije */}
         <div>
           <span className="lbl">EMOCIJE <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
-          <div style={{display:"flex",gap:10,marginBottom:10}}>
+          <div style={{display:"flex",gap:10}}>
             <div style={{flex:1}}>
-              <p style={{fontSize:11,color:C.textLight,fontWeight:600,marginBottom:6}}>Pre</p>
-              <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-                {EMOCIJE.map(([e,l])=><button key={l} onClick={()=>setU(v=>({...v,epre:v.epre===l?"":l}))} style={{padding:"6px 10px",borderRadius:100,border:`1.5px solid ${u.epre===l?C.primary:C.border}`,background:u.epre===l?C.primaryLight:C.bgCard,fontSize:13,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>{e}</button>)}
+              <p style={{fontSize:11,color:C.textLight,fontWeight:600,marginBottom:5}}>Pre</p>
+              <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+                {EMOCIJE.map(([e,l])=><button key={l} onClick={()=>setU(v=>({...v,epre:v.epre===l?"":l}))} style={{padding:"5px 8px",borderRadius:100,border:`1.5px solid ${u.epre===l?C.primary:C.border}`,background:u.epre===l?C.primaryLight:C.bgCard,fontSize:12,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>{e}</button>)}
               </div>
             </div>
             <div style={{flex:1}}>
-              <p style={{fontSize:11,color:C.textLight,fontWeight:600,marginBottom:6}}>Posle</p>
-              <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-                {EMOCIJE.map(([e,l])=><button key={l+"p"} onClick={()=>setU(v=>({...v,epost:v.epost===l?"":l}))} style={{padding:"6px 10px",borderRadius:100,border:`1.5px solid ${u.epost===l?C.primary:C.border}`,background:u.epost===l?C.primaryLight:C.bgCard,fontSize:13,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>{e}</button>)}
+              <p style={{fontSize:11,color:C.textLight,fontWeight:600,marginBottom:5}}>Posle</p>
+              <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+                {EMOCIJE.map(([e,l])=><button key={l+"p"} onClick={()=>setU(v=>({...v,epost:v.epost===l?"":l}))} style={{padding:"5px 8px",borderRadius:100,border:`1.5px solid ${u.epost===l?C.primary:C.border}`,background:u.epost===l?C.primaryLight:C.bgCard,fontSize:12,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>{e}</button>)}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Fotografija */}
-        <div>
-          <span className="lbl">FOTOGRAFIJA</span>
-          <label style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",borderRadius:18,border:`1.5px dashed ${C.border}`,background:C.bgMuted,cursor:"pointer"}}>
+        {/* Beleška + Fotografija */}
+        <div style={{display:"flex",flexDirection:"column",gap:10}}>
+          <span className="lbl" style={{marginBottom:0}}>BELEŠKA & FOTO <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
+          <textarea className="inp" placeholder="Šta se dešavalo?" value={u.bel} onChange={e=>setU(v=>({...v,bel:e.target.value}))} style={{minHeight:64}}/>
+          <label style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRadius:14,border:`1.5px dashed ${C.border}`,background:C.bgMuted,cursor:"pointer"}}>
             <input type="file" accept="image/*" multiple style={{display:"none"}} onChange={e=>{Promise.all(Array.from(e.target.files).map(f=>new Promise(res=>{const r=new FileReader();r.onload=ev=>res(ev.target.result);r.readAsDataURL(f)}))).then(urls=>setU(v=>({...v,slike:[...v.slike,...urls]})))}}/>
-            <div style={{width:38,height:38,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.camera} size={18} stroke={C.primary} sw={1.8}/></div>
-            <div><p style={{fontWeight:600,fontSize:14,color:C.textMid}}>Dodaj fotografiju</p><p style={{fontSize:12,color:C.textLight}}>Ostaje privatno</p></div>
+            <Ico d={I.camera} size={16} stroke={C.primary} sw={1.8}/>
+            <p style={{fontWeight:600,fontSize:13,color:C.textMid}}>Dodaj fotografiju</p>
           </label>
-          {u.slike.length>0&&<div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>{u.slike.map((s,i)=><div key={i} style={{position:"relative"}}><img src={s} alt="" style={{width:80,height:80,borderRadius:14,objectFit:"cover"}}/><button onClick={()=>setU(v=>({...v,slike:v.slike.filter((_,j)=>j!==i)}))} style={{position:"absolute",top:-6,right:-6,width:22,height:22,borderRadius:"50%",background:C.red,color:"#fff",border:"none",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>✕</button></div>)}</div>}
-        </div>
-
-        {/* Beleška */}
-        <div>
-          <span className="lbl">BELEŠKA <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:10}}>(opciono)</span></span>
-          <textarea className="inp" placeholder="Šta se dešavalo?" value={u.bel} onChange={e=>setU(v=>({...v,bel:e.target.value}))} style={{minHeight:80}}/>
+          {u.slike.length>0&&<div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{u.slike.map((s,i)=><div key={i} style={{position:"relative"}}><img src={s} alt="" style={{width:70,height:70,borderRadius:12,objectFit:"cover"}}/><button onClick={()=>setU(v=>({...v,slike:v.slike.filter((_,j)=>j!==i)}))} style={{position:"absolute",top:-6,right:-6,width:20,height:20,borderRadius:"50%",background:C.red,color:"#fff",border:"none",fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>✕</button></div>)}</div>}
         </div>
 
         {/* Sačuvaj */}
