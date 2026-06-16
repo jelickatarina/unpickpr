@@ -531,19 +531,12 @@ function SOS({onZatvori}){
 
   if(faza==="izb") return(
     <div style={{minHeight:"100vh",background:C.bg}} className="fi">
-      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:14}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-          <div>
-            <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Podrška</span>
-            <h1 className="serif" style={{fontSize:24,letterSpacing:-0.3,lineHeight:1}}>Sve će biti u redu</h1>
-          </div>
-          <button onClick={onZatvori} style={{width:38,height:38,borderRadius:12,background:C.bgMuted,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,marginTop:4}}>
+      <div style={{padding:"20px 20px 60px",paddingTop:HDR_PT,display:"flex",flexDirection:"column",gap:8}}>
+        <div style={{display:"flex",justifyContent:"flex-end",marginBottom:4}}>
+          <button onClick={onZatvori} style={{width:36,height:36,borderRadius:12,background:C.bgMuted,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0}}>
             <Ico d={I.x} size={15} stroke={C.textMid} sw={2.5}/>
           </button>
         </div>
-      </div>
-
-      <div style={{padding:"20px 20px 60px",display:"flex",flexDirection:"column",gap:8}}>
         <span style={{display:"inline-block",background:C.greenLight,color:C.green,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:4,alignSelf:"flex-start"}}>Tehnike smirenja</span>
         {ALATI.slice(0,4).map(a=>(
           <button key={a.id} onClick={()=>{setAlat(a.id);setFaza("alat")}} style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:20,padding:"14px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:14,textAlign:"left",boxShadow:`0 2px 10px ${C.shadow}`,fontFamily:"inherit"}}>
@@ -1193,23 +1186,19 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
         </div>
       )}
 
-      {/* ── HEADER ── */}
-      <div style={{paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:14,background:C.bg}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+      {/* ── Header + Streak ring ── */}
+      <div style={{background:`linear-gradient(170deg,${C.primaryLight} 0%,#FDEEF4 40%,${C.bg} 75%)`,paddingTop:HDR_PT,paddingLeft:22,paddingRight:22,paddingBottom:24,display:"flex",flexDirection:"column",alignItems:"center"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",width:"100%",marginBottom:20}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <div style={{width:36,height:36,borderRadius:11,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 3px 10px rgba(168,90,116,.3)`}}>
-              <Ico d={I.leaf} size={17} stroke="#fff" sw={2}/>
+            <div style={{width:32,height:32,borderRadius:10,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 3px 10px rgba(168,90,116,.3)`}}>
+              <Ico d={I.leaf} size={15} stroke="#fff" sw={2}/>
             </div>
-            <span style={{fontSize:14,fontWeight:800,color:C.text,letterSpacing:2.5,textTransform:"uppercase"}}>Unpick</span>
+            <span style={{fontSize:13,fontWeight:800,color:C.text,letterSpacing:2.5,textTransform:"uppercase"}}>Unpick</span>
           </div>
-          <button onClick={()=>setShowProfil(true)} style={{width:38,height:38,borderRadius:12,background:C.bgMuted,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0}}>
-            <Ico d={I.user} size={18} stroke={C.textMid} sw={1.8}/>
+          <button onClick={()=>setShowProfil(true)} style={{width:36,height:36,borderRadius:11,background:"rgba(255,255,255,.7)",border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0}}>
+            <Ico d={I.user} size={17} stroke={C.textMid} sw={1.8}/>
           </button>
         </div>
-      </div>
-
-      {/* ── Streak ring ── */}
-      <div style={{background:`linear-gradient(170deg,${C.primaryLight} 0%,#FDEEF4 40%,${C.bg} 75%)`,padding:"28px 22px 24px",display:"flex",flexDirection:"column",alignItems:"center"}}>
         <div style={{position:"relative",width:r*2+20,height:r*2+20,marginBottom:12}}>
           <svg width={r*2+20} height={r*2+20} style={{position:"absolute",inset:0,transform:"rotate(-90deg)"}}>
             <circle cx={r+10} cy={r+10} r={r} fill="none" stroke={C.primary+"18"} strokeWidth={6}/>
@@ -1332,13 +1321,16 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
   return(
     <div style={{paddingBottom:20}} className="fi">
       <div style={{paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:12,background:C.bg}}>
-        <div style={{display:"flex",alignItems:"center",gap:8,background:C.bgMuted,borderRadius:14,padding:"8px 14px",marginBottom:10}}>
-          <Ico d={I.search} size={15} stroke={C.textLight} sw={2}/>
-          <input value={pretraga} onChange={e=>setPretraga(e.target.value)} placeholder="Pretraži unose..." style={{flex:1,border:"none",background:"transparent",fontSize:14,color:C.text,fontFamily:"'DM Sans',sans-serif",outline:"none"}}/>
-          {pretraga&&<button onClick={()=>setPretraga("")} style={{border:"none",background:"none",cursor:"pointer",padding:0,color:C.textLight,fontSize:16,lineHeight:1}}>✕</button>}
-          <button onClick={onDodaj} style={{width:34,height:34,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,boxShadow:`0 3px 10px rgba(192,120,144,.35)`}}>
-            <Ico d={I.plus} size={16} stroke="#fff" sw={2.5}/>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,background:C.bgMuted,borderRadius:14,padding:"8px 14px",flex:1,marginRight:10}}>
+            <Ico d={I.search} size={15} stroke={C.textLight} sw={2}/>
+            <input value={pretraga} onChange={e=>setPretraga(e.target.value)} placeholder="Pretraži unose..." style={{flex:1,border:"none",background:"transparent",fontSize:14,color:C.text,fontFamily:"'DM Sans',sans-serif",outline:"none"}}/>
+            {pretraga&&<button onClick={()=>setPretraga("")} style={{border:"none",background:"none",cursor:"pointer",padding:0,color:C.textLight,fontSize:16,lineHeight:1}}>✕</button>}
+          </div>
+          <button onClick={onDodaj} style={{width:46,height:46,borderRadius:"50%",background:C.primaryGrad,border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,boxShadow:`0 4px 16px rgba(192,120,144,.35)`}}>
+            <Ico d={I.plus} size={20} stroke="#fff" sw={2.5}/>
           </button>
+        </div>
         </div>
         <div style={{display:"flex",gap:6}}>
           {filteri.map(f=><button key={f.v} onClick={()=>setFilIsh(f.v)} style={{padding:"5px 12px",borderRadius:100,border:`1.5px solid ${filIsh===f.v?bc(f.v)||C.primary:C.border}`,background:filIsh===f.v?filIsh==="sve"?C.primaryLight:bc(f.v)+"18":C.bgCard,color:filIsh===f.v?filIsh==="sve"?C.primary:bc(f.v):C.textMid,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>{f.l}</button>)}
@@ -1509,7 +1501,8 @@ function Napredak({unosi,niz}){
     <div style={{paddingBottom:90}} className="fi">
 
       {/* Sekcija 1 — 7-day calendar */}
-      <div style={{margin:`${HDR_PT} 20px 10px`,marginTop:HDR_PT,background:C.bgCard,borderRadius:24,padding:"18px",border:`1px solid ${C.border}`}}>
+      <div style={{paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,background:C.bg,paddingBottom:4}}/>
+      <div style={{margin:"0 20px 10px",background:C.bgCard,borderRadius:24,padding:"18px",border:`1px solid ${C.border}`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
           <p style={{fontSize:13,fontWeight:700,color:C.text}}>Ova nedelja</p>
           <div style={{display:"flex",gap:10}}>
