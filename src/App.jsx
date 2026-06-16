@@ -1962,7 +1962,7 @@ export default function App(){
     if(cachedKey){try{const parsed=JSON.parse(localStorage.getItem(cachedKey));if(parsed?.access_token){resolveSession({user:parsed.user||{id:parsed.user_id,email:parsed.email,user_metadata:parsed.user_metadata,created_at:parsed.created_at}});}}catch{}}
     supabase.auth.getSession().then(({data:{session}})=>{
       if(session) resolveSession(session);
-      else setFaza("auth");
+      else{setFaza("auth");const splash=document.getElementById("splash");if(splash){splash.style.opacity="0";setTimeout(()=>splash.remove(),400);}}
     });
     const {data:{subscription}}=supabase.auth.onAuthStateChange((event,session)=>{
       if(event==="SIGNED_OUT"){setFaza("auth");setKor(null);}
@@ -1977,6 +1977,7 @@ export default function App(){
     // keš → instant prikaz; sveži podaci dolaze u pozadini i ažuriraju
     try{const c=localStorage.getItem(`unpick_entries_${uid}`);if(c)setNoviUnosi(JSON.parse(c));}catch{}
     setFaza("app");
+    const splash=document.getElementById("splash");if(splash){splash.style.opacity="0";setTimeout(()=>splash.remove(),400);}
     loadJournalEntries(uid);
     supabase.from("profiles").select("ime").eq("id",uid).single().then(({data,error})=>{
       if(data?.ime){setKor(prev=>({...prev,ime:data.ime}));}
