@@ -329,7 +329,7 @@ function Auth({onDone}){
           <Ico d={I.leaf} size={24} stroke="#fff" sw={1.8}/>
         </div>
         <p style={{fontSize:10,fontWeight:800,letterSpacing:3,textTransform:"uppercase",color:C.primary,marginBottom:8}}>Unpick</p>
-        <h2 className="serif" style={{fontSize:26,letterSpacing:-.3,color:C.text,lineHeight:1.2,fontWeight:400,marginBottom:4}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
+        <h2 className="serif" style={{fontSize:26,letterSpacing:-.3,color:C.text,lineHeight:1.2,fontWeight:400,marginBottom:4}}>{isL?"Dobrodošli nazad":"Napravi nalog"}</h2>
         <p style={{color:C.textMid,fontSize:13,fontWeight:500}}>{isL?"Nastavi odakle si stala.":"Besplatno. Bez osude."}</p>
       </div>
 
