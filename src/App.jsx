@@ -961,7 +961,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
         {poruke.map(p=>(
           <div key={p.id} style={{display:"flex",flexDirection:"column",alignItems:p.ko==="user"?"flex-end":"flex-start"}}>
             {p.ko==="ai"&&<div style={{display:"flex",alignItems:"flex-end",gap:8}}>
-              <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginBottom:2}}><Ico d={I.heart} size={14} stroke={C.primary} sw={1.8}/></div>
+              <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginBottom:2,fontSize:17,lineHeight:1}}>🤖</div>
               <div style={{display:"flex",flexDirection:"column",gap:8,maxWidth:"84%"}}>
                 <div className="bba">{p.tekst}</div>
                 {p.sos&&<button onClick={onSOS} style={{alignSelf:"flex-start",display:"flex",alignItems:"center",gap:8,padding:"9px 16px 9px 12px",borderRadius:100,background:C.red,border:"none",cursor:"pointer",boxShadow:`0 4px 12px ${C.red}55`}}>
@@ -974,7 +974,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
           </div>
         ))}
         {ucitava&&<div style={{display:"flex",alignItems:"flex-end",gap:8}}>
-          <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Ico d={I.heart} size={14} stroke={C.primary} sw={1.8}/></div>
+          <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:17,lineHeight:1}}>🤖</div>
           <div className="bba"><div className="typing"><div className="dot"/><div className="dot"/><div className="dot"/></div></div>
         </div>}
         <div ref={krajRef}/>
