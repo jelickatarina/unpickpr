@@ -190,31 +190,31 @@ function Auth({onDone}){
   if(mode==="w") return(
     <div className="fi" style={{height:"100dvh",background:C.bg,display:"flex",flexDirection:"column",overflow:"hidden"}}>
       <div style={{flex:1,minHeight:0,overflowY:"auto"}}>
-        <div style={{minHeight:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",paddingTop:`max(32px,${SAT})`,paddingLeft:28,paddingRight:28,paddingBottom:16}}>
-          <div style={{width:52,height:52,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 24px rgba(192,120,144,.28)`,marginBottom:12,flexShrink:0}}>
-            <Ico d={I.leaf} size={22} stroke="#fff" sw={1.8}/>
+        <div style={{minHeight:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",paddingTop:`max(40px,${SAT})`,paddingLeft:28,paddingRight:28,paddingBottom:24}}>
+          <div style={{width:64,height:64,borderRadius:20,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 28px rgba(192,120,144,.30)`,marginBottom:14,flexShrink:0}}>
+            <Ico d={I.leaf} size={26} stroke="#fff" sw={1.8}/>
           </div>
-          <p style={{fontSize:10,fontWeight:700,letterSpacing:3,textTransform:"uppercase",color:C.textLight,marginBottom:6}}>Unpick</p>
-          <h1 style={{fontSize:24,lineHeight:1.3,marginBottom:6,letterSpacing:-0.2,color:C.text,fontFamily:"'DM Sans',sans-serif",fontWeight:700}}>
-            Your skin<br/><span style={{color:C.primary,fontWeight:800}}>deserves kindness.</span>
+          <span style={{fontSize:10,fontWeight:800,letterSpacing:3,textTransform:"uppercase",color:C.primary,background:C.primaryLight,padding:"3px 12px",borderRadius:100,marginBottom:14}}>Unpick</span>
+          <h1 className="serif" style={{fontSize:28,lineHeight:1.25,marginBottom:10,letterSpacing:-0.3,color:C.text,textAlign:"center",fontWeight:400}}>
+            Nežni pratilac<br/><span style={{color:C.primary}}>na putu ka slobodi</span>
           </h1>
-          <p style={{fontSize:13,color:C.textMid,lineHeight:1.55,fontWeight:500,marginBottom:16}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
-          <div style={{width:"100%",display:"flex",flexDirection:"column",gap:6,textAlign:"left"}}>
+          <p style={{fontSize:13,color:C.textMid,lineHeight:1.6,fontWeight:500,marginBottom:28,textAlign:"center",maxWidth:280}}>Prati obrasce, pronađi okidače i reaguj u kriznim trenucima.</p>
+          <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8}}>
             {[[I.chart,"Praćenje epizoda","Beleži epizode i prati obrasce"],[I.wind,"SOS alat u krizi","Tehnike za smirenje u trenutku"],[I.chat,"Mia — AI podrška","Uvek dostupna, bez osude"]].map(([ico,t,sub])=>(
-              <div key={t} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",borderRadius:16,background:C.bgCard,border:`1.5px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`}}>
-                <div style={{width:36,height:36,borderRadius:11,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                  <Ico d={ico} size={16} stroke="#fff" sw={1.8}/>
+              <div key={t} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 16px",borderRadius:18,background:C.bgCard,border:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`}}>
+                <div style={{width:38,height:38,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                  <Ico d={ico} size={17} stroke={C.primary} sw={1.8}/>
                 </div>
                 <div style={{flex:1,minWidth:0}}>
-                  <p style={{fontWeight:700,fontSize:13,color:C.text,marginBottom:1}}>{t}</p>
-                  <p style={{fontSize:11,color:C.textLight,fontWeight:500}}>{sub}</p>
+                  <p style={{fontWeight:700,fontSize:13,color:C.text,marginBottom:2}}>{t}</p>
+                  <p style={{fontSize:12,color:C.textLight,fontWeight:500}}>{sub}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
-      <div style={{padding:"14px 28px calc(28px + env(safe-area-inset-bottom,0px))",display:"flex",flexDirection:"column",gap:10,flexShrink:0,background:C.bg}}>
+      <div style={{padding:"14px 28px",paddingBottom:`calc(24px + env(safe-area-inset-bottom,0px))`,display:"flex",flexDirection:"column",gap:10,flexShrink:0,background:C.bg,borderTop:`1px solid ${C.border}`}}>
         <button onClick={()=>{setMode("r");reset();}} className="btn-p">Počni</button>
         <button onClick={()=>{setMode("l");reset();}} className="btn-o">Već imam nalog</button>
       </div>
@@ -237,8 +237,8 @@ function Auth({onDone}){
   }
 
   function prevErr(key,hint){
-    if(errs[key]) return <p style={{color:C.red,fontSize:12,fontWeight:600,paddingLeft:4,marginTop:4}}>{errs[key]}</p>;
-    if(hint) return <p style={{color:C.textLight,fontSize:12,fontWeight:500,paddingLeft:4,marginTop:4}}>{hint}</p>;
+    if(errs[key]) return <p style={{color:C.red,fontSize:12,fontWeight:600,paddingLeft:2,marginTop:5}}>{errs[key]}</p>;
+    if(hint) return <p style={{color:C.textLight,fontSize:12,fontWeight:500,paddingLeft:2,marginTop:5}}>{hint}</p>;
     return null;
   }
 
@@ -285,43 +285,25 @@ function Auth({onDone}){
     }finally{setLoading(false);}
   }
 
-  const inpStyle=(key)=>({borderColor:errs[key]?"#C46878":undefined});
   const dis=loading||!!uspeh;
 
   return(
-    <div className="fi" style={{height:"100dvh",background:"linear-gradient(160deg,#FFF8FA 0%,#FAE0EB 55%,#F2CCDA 100%)",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
-      {/* Botanical decoration */}
-      <svg viewBox="0 0 200 300" fill="none" style={{position:"absolute",top:0,right:-8,width:195,height:285,opacity:.16,pointerEvents:"none",zIndex:0}}>
-        <path d="M115 8 C122 55 102 105 90 158 C78 210 84 258 76 298" stroke={C.primaryDark} strokeWidth="1.1" strokeLinecap="round"/>
-        <ellipse cx="64" cy="88" rx="26" ry="12" transform="rotate(-33 64 88)" fill={C.primaryDark}/>
-        <ellipse cx="122" cy="52" rx="22" ry="10" transform="rotate(26 122 52)" fill={C.primaryDark}/>
-        <ellipse cx="132" cy="128" rx="24" ry="11" transform="rotate(-20 132 128)" fill={C.primaryDark}/>
-        <ellipse cx="60" cy="170" rx="20" ry="9" transform="rotate(-45 60 170)" fill={C.primaryDark}/>
-        <ellipse cx="95" cy="220" rx="18" ry="8" transform="rotate(16 95 220)" fill={C.primaryDark}/>
-        <ellipse cx="80" cy="138" rx="14" ry="6" transform="rotate(38 80 138)" fill={C.primaryDark} opacity=".6"/>
-        <circle cx="115" cy="8" r="2.5" fill={C.primaryDark}/>
-      </svg>
-
-      {/* Top branding */}
-      <div style={{position:"relative",zIndex:1,paddingTop:isPWA?HDR_PT:"max(18px,env(safe-area-inset-top,0px))",paddingLeft:24,paddingRight:24,paddingBottom:22,flexShrink:0}}>
-        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");setPol("");}} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:600,fontFamily:"'DM Sans',sans-serif",marginBottom:20,padding:0,touchAction:"manipulation",opacity:.75}}>
+    <div className="fi" style={{height:"100dvh",background:C.bg,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      {/* Header */}
+      <div style={{paddingTop:`max(18px,${SAT})`,paddingLeft:20,paddingRight:20,paddingBottom:16,flexShrink:0,background:C.bg,borderBottom:`1px solid ${C.border}`}}>
+        <button type="button" onClick={()=>{setMode("w");reset();setIme("");setEm("");setLoz("");setLoz2("");setPol("");}} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:6,color:C.textMid,fontSize:13,fontWeight:600,fontFamily:"'DM Sans',sans-serif",marginBottom:16,padding:0,touchAction:"manipulation"}}>
           <Ico d={I.back} size={15} stroke={C.textMid} sw={2}/> Nazad
         </button>
-        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
-          <div style={{width:38,height:38,borderRadius:12,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 4px 14px rgba(192,120,144,.28)`,flexShrink:0}}>
-            <Ico d={I.leaf} size={17} stroke="#fff" sw={1.8}/>
-          </div>
-          <span style={{fontSize:10,fontWeight:800,color:C.primaryDark,letterSpacing:3,textTransform:"uppercase",opacity:.6}}>Unpick</span>
-        </div>
-        <h2 className="serif" style={{fontSize:38,letterSpacing:-.5,color:C.text,marginBottom:5,fontWeight:400,lineHeight:1.15}}>{isL?"Dobrodošla\nnazad":"Napravi\nnalog"}</h2>
-        <p style={{color:C.textMid,fontSize:13,fontWeight:500,opacity:.8}}>{isL?"Nastavi odakle si stala.":"Besplatno. Bez osude."}</p>
+        <span style={{fontSize:10,fontWeight:800,letterSpacing:2,textTransform:"uppercase",color:C.primary,background:C.primaryLight,padding:"3px 10px",borderRadius:100,display:"inline-block",marginBottom:8}}>{isL?"Prijava":"Registracija"}</span>
+        <h2 className="serif" style={{fontSize:26,letterSpacing:-.3,color:C.text,lineHeight:1.2,fontWeight:400,margin:0}}>{isL?"Dobrodošla nazad":"Napravi nalog"}</h2>
+        <p style={{color:C.textMid,fontSize:13,fontWeight:500,marginTop:4}}>{isL?"Nastavi odakle si stala.":"Besplatno. Bez osude."}</p>
       </div>
 
-      {/* White card */}
-      <div style={{flex:1,position:"relative",zIndex:1,background:"#fff",borderRadius:"30px 30px 0 0",overflowY:"auto",padding:"26px 22px calc(40px + env(safe-area-inset-bottom,0px))"}}>
-        <div style={{display:"flex",flexDirection:"column",gap:16}}>
-          {errs.general&&<div style={{background:"#FEF2F2",borderRadius:14,padding:"12px 16px",border:"1px solid #FCA5A5"}}><p style={{color:"#991B1B",fontSize:13,fontWeight:600,textAlign:"center"}}>{errs.general}</p></div>}
-          {uspeh&&<div style={{background:"#F0FDF4",borderRadius:14,padding:"12px 16px",border:"1px solid #86EFAC"}}><p style={{color:"#166534",fontSize:13,fontWeight:600,textAlign:"center"}}>{uspeh}</p></div>}
+      {/* Form */}
+      <div style={{flex:1,overflowY:"auto",padding:"20px 20px 0"}}>
+        <div style={{display:"flex",flexDirection:"column",gap:14,paddingBottom:`calc(32px + env(safe-area-inset-bottom,0px))`}}>
+          {errs.general&&<div style={{background:"#FEF2F2",borderRadius:14,padding:"11px 14px",border:`1px solid #FCA5A5`}}><p style={{color:"#991B1B",fontSize:13,fontWeight:600}}>{errs.general}</p></div>}
+          {uspeh&&<div style={{background:C.greenLight,borderRadius:14,padding:"11px 14px",border:`1px solid ${C.green}44`}}><p style={{color:C.green,fontSize:13,fontWeight:600}}>{uspeh}</p></div>}
 
           {!isL&&<div>
             <FldLabel>Ime</FldLabel>
@@ -333,11 +315,10 @@ function Auth({onDone}){
 
           {!isL&&<div>
             <FldLabel>Pol</FldLabel>
-            <div style={{display:"flex",background:"#F5EEF1",borderRadius:16,padding:4}}>
-              {[["M","Muško","♂"],["Z","Žensko","♀"]].map(([v,l,sym])=>(
-                <button key={v} type="button" onClick={()=>{setPol(v);if(errs.pol)setErrs(e=>({...e,pol:""}));}} style={{flex:1,padding:"11px 0",borderRadius:13,border:"none",background:pol===v?"#fff":"transparent",color:pol===v?C.primaryDark:C.textMid,fontWeight:pol===v?700:500,fontSize:13,display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer",transition:"all .2s",fontFamily:"'DM Sans',sans-serif",boxShadow:pol===v?`0 2px 10px rgba(192,120,144,.15)`:undefined}}>
-                  <span style={{fontSize:20,lineHeight:1}}>{sym}</span>
-                  <span>{l}</span>
+            <div style={{display:"flex",background:C.bgMuted,borderRadius:16,padding:4,gap:4}}>
+              {[["Z","Žensko"],["M","Muško"]].map(([v,l])=>(
+                <button key={v} type="button" onClick={()=>{setPol(v);if(errs.pol)setErrs(e=>({...e,pol:""}));}} style={{flex:1,padding:"10px 0",borderRadius:12,border:"none",background:pol===v?C.bgCard:"transparent",color:pol===v?C.primary:C.textMid,fontWeight:pol===v?700:500,fontSize:13,cursor:"pointer",transition:"all .15s",fontFamily:"'DM Sans',sans-serif",boxShadow:pol===v?`0 2px 8px ${C.shadow}`:undefined}}>
+                  {l}
                 </button>
               ))}
             </div>
@@ -375,9 +356,9 @@ function Auth({onDone}){
             {!loading&&<span style={{fontSize:18,lineHeight:1}}>→</span>}
           </button>
 
-          <p style={{textAlign:"center",fontSize:14,color:C.textLight,fontWeight:500}}>
+          <p style={{textAlign:"center",fontSize:13,color:C.textLight,fontWeight:500,marginTop:2}}>
             {isL?"Nemaš nalog? ":"Već imaš nalog? "}
-            <button type="button" onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");setPol("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.primary,fontSize:14,fontWeight:700,fontFamily:"'DM Sans',sans-serif",padding:0,touchAction:"manipulation",textDecoration:"underline",textUnderlineOffset:3}}>
+            <button type="button" onClick={()=>{setMode(isL?"r":"l");reset();setLoz("");setLoz2("");setPol("");}} style={{background:"none",border:"none",cursor:"pointer",color:C.primary,fontSize:13,fontWeight:700,fontFamily:"'DM Sans',sans-serif",padding:0,touchAction:"manipulation",textDecoration:"underline",textUnderlineOffset:3}}>
               {isL?"Registruj se":"Prijavi se"}
             </button>
           </p>
