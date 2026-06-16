@@ -1957,12 +1957,16 @@ export default function App(){
     }
   },[]);
 
+  function hideSplash(){const s=document.getElementById("splash");if(s){s.style.opacity="0";setTimeout(()=>s.remove(),400);}}
+
   useEffect(()=>{
+    const splashTimer=setTimeout(hideSplash,600);
     const cachedKey=Object.keys(localStorage).find(k=>k.startsWith('sb-')&&k.endsWith('-auth-token'));
     if(cachedKey){try{const parsed=JSON.parse(localStorage.getItem(cachedKey));if(parsed?.access_token){resolveSession({user:parsed.user||{id:parsed.user_id,email:parsed.email,user_metadata:parsed.user_metadata,created_at:parsed.created_at}});}}catch{}}
     supabase.auth.getSession().then(({data:{session}})=>{
+      clearTimeout(splashTimer);
       if(session) resolveSession(session);
-      else{setFaza("auth");const splash=document.getElementById("splash");if(splash){splash.style.opacity="0";setTimeout(()=>splash.remove(),400);}}
+      else{setFaza("auth");hideSplash();}
     });
     const {data:{subscription}}=supabase.auth.onAuthStateChange((event,session)=>{
       if(event==="SIGNED_OUT"){setFaza("auth");setKor(null);}
@@ -1977,7 +1981,7 @@ export default function App(){
     // keš → instant prikaz; sveži podaci dolaze u pozadini i ažuriraju
     try{const c=localStorage.getItem(`unpick_entries_${uid}`);if(c)setNoviUnosi(JSON.parse(c));}catch{}
     setFaza("app");
-    const splash=document.getElementById("splash");if(splash){splash.style.opacity="0";setTimeout(()=>splash.remove(),400);}
+    hideSplash();
     loadJournalEntries(uid);
     supabase.from("profiles").select("ime").eq("id",uid).single().then(({data,error})=>{
       if(data?.ime){setKor(prev=>({...prev,ime:data.ime}));}
