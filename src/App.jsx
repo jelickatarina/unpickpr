@@ -975,61 +975,65 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
       {/* Profil popup */}
       {showProfil&&(
         <div style={{position:"fixed",inset:0,zIndex:300,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={()=>{setShowProfil(false);setMenjaLozinku(false);setLozPoruka(null);}}>
-          <div style={{position:"absolute",inset:0,background:"rgba(42,24,32,.45)",backdropFilter:"blur(5px)"}}/>
-          <div onClick={e=>e.stopPropagation()} style={{position:"relative",background:C.bg,borderRadius:"28px 28px 0 0",padding:"0 0 calc(80px + env(safe-area-inset-bottom,0px))",maxHeight:"85vh",overflowY:"auto",boxShadow:"0 -12px 48px rgba(168,90,116,.2)"}} className="fi">
-            <div style={{width:36,height:4,borderRadius:2,background:C.border,margin:"14px auto 0"}}/>
-            {/* User info */}
-            <div style={{padding:"18px 22px 16px",display:"flex",alignItems:"center",gap:14,borderBottom:`1px solid ${C.border}`}}>
-              <div style={{width:52,height:52,borderRadius:17,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 14px rgba(192,120,144,.3)`}}>
-                <span style={{fontSize:initijali.length>1?18:24,fontWeight:800,color:"#fff",fontFamily:"'DM Sans',sans-serif"}}>{initijali}</span>
+          <div style={{position:"absolute",inset:0,background:"rgba(42,24,32,.5)",backdropFilter:"blur(6px)"}}/>
+          <div onClick={e=>e.stopPropagation()} style={{position:"relative",background:C.bgCard,borderRadius:"32px 32px 0 0",paddingBottom:"calc(80px + env(safe-area-inset-bottom,0px))",maxHeight:"85vh",overflowY:"auto",boxShadow:"0 -12px 48px rgba(168,90,116,.18)"}} className="fi">
+            <div style={{width:36,height:4,borderRadius:2,background:C.border,margin:"14px auto 18px"}}/>
+
+            {/* User info strip */}
+            <div style={{margin:"0 20px 16px",background:`linear-gradient(135deg,${C.primaryLight} 0%,#F3EEFB 100%)`,borderRadius:22,padding:"16px 18px",display:"flex",alignItems:"center",gap:14,border:`1px solid ${C.border}`}}>
+              <div style={{width:50,height:50,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 14px rgba(192,120,144,.35)`}}>
+                <span style={{fontSize:initijali.length>1?18:22,fontWeight:800,color:"#fff",fontFamily:"'DM Sans',sans-serif"}}>{initijali}</span>
               </div>
               <div>
-                <p style={{fontWeight:800,fontSize:16,color:C.text,marginBottom:2}}>{kor?.ime||"Korisnik"}</p>
-                <p style={{fontSize:12,color:C.textLight,fontWeight:500}}>{kor?.email||""}</p>
+                <p style={{fontWeight:800,fontSize:15,color:C.text,marginBottom:3,letterSpacing:-0.2}}>{kor?.ime||"Korisnik"}</p>
+                <p style={{fontSize:12,color:C.textMid,fontWeight:500}}>{kor?.email||""}</p>
               </div>
             </div>
-            {/* Options */}
-            <div style={{padding:"12px 16px",display:"flex",flexDirection:"column",gap:8}}>
+
+            {/* Rows */}
+            <div style={{margin:"0 20px",background:C.bg,borderRadius:20,border:`1px solid ${C.border}`,overflow:"hidden",marginBottom:10}}>
               {/* Notifikacije */}
               {notifStatus!=="granted"?(
-                <button onClick={isPWA?onNotif:undefined} style={{width:"100%",background:C.bgCard,border:`1px solid ${C.border}`,borderRadius:16,padding:"14px 16px",display:"flex",alignItems:"center",gap:12,cursor:isPWA?"pointer":"default",fontFamily:"inherit"}}>
-                  <div style={{width:38,height:38,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>🔔</div>
+                <button onClick={isPWA?()=>{onNotif();setShowProfil(false);}:undefined} style={{width:"100%",background:"none",border:"none",borderBottom:`1px solid ${C.border}`,padding:"14px 16px",display:"flex",alignItems:"center",gap:14,cursor:isPWA?"pointer":"default",fontFamily:"inherit"}}>
+                  <div style={{width:36,height:36,borderRadius:11,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:17,flexShrink:0}}>🔔</div>
                   <div style={{flex:1,textAlign:"left"}}>
                     <p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:1}}>Uključi podsetnik</p>
                     <p style={{fontSize:12,color:C.textLight}}>{isPWA?"Dnevna notifikacija u 13h":"Dodaj app na početni ekran prvo"}</p>
                   </div>
-                  {isPWA&&<Ico d={I.chev} size={14} stroke={C.textLight} sw={2}/>}
+                  {isPWA&&<Ico d={I.chev} size={13} stroke={C.textLight} sw={2}/>}
                 </button>
               ):(
-                <div style={{background:C.greenLight,borderRadius:16,padding:"14px 16px",display:"flex",alignItems:"center",gap:12,border:`1px solid rgba(122,158,120,.2)`}}>
-                  <div style={{width:38,height:38,borderRadius:12,background:"rgba(122,158,120,.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>🔔</div>
-                  <div>
+                <div style={{borderBottom:`1px solid ${C.border}`,padding:"14px 16px",display:"flex",alignItems:"center",gap:14}}>
+                  <div style={{width:36,height:36,borderRadius:11,background:C.greenLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:17,flexShrink:0}}>🔔</div>
+                  <div style={{flex:1}}>
                     <p style={{fontWeight:700,fontSize:14,color:C.green,marginBottom:1}}>Podsetnik uključen</p>
-                    <p style={{fontSize:12,color:C.green,opacity:.75}}>Svaki dan u 13h</p>
+                    <p style={{fontSize:12,color:C.green,opacity:.7}}>Svaki dan u 13h</p>
                   </div>
+                  <div style={{width:8,height:8,borderRadius:"50%",background:C.green,flexShrink:0}}/>
                 </div>
               )}
               {/* Promena lozinke */}
-              <div style={{background:C.bgCard,borderRadius:16,border:`1px solid ${C.border}`,overflow:"hidden"}}>
-                <button onClick={()=>{setMenjaLozinku(m=>!m);setLozPoruka(null);}} style={{width:"100%",background:"none",border:"none",padding:"14px 16px",display:"flex",alignItems:"center",gap:12,cursor:"pointer",fontFamily:"inherit"}}>
-                  <div style={{width:38,height:38,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>🔑</div>
-                  <p style={{fontWeight:700,fontSize:14,color:C.text,flex:1,textAlign:"left"}}>Promeni lozinku</p>
-                  <Ico d={I.chev} size={14} stroke={C.textLight} sw={2}/>
-                </button>
-                {menjaLozinku&&(
-                  <div style={{padding:"0 16px 16px",borderTop:`1px solid ${C.border}`,paddingTop:12,display:"flex",flexDirection:"column",gap:8}}>
-                    <input className="inp" type="password" placeholder="Nova lozinka" value={novaLoz} onChange={e=>setNovaLoz(e.target.value)}/>
-                    <input className="inp" type="password" placeholder="Potvrdi lozinku" value={potvrda} onChange={e=>setPotvrda(e.target.value)}/>
-                    {lozPoruka&&<p style={{fontSize:12,color:lozPoruka.tip==="ok"?C.green:C.red,fontWeight:600,textAlign:"center"}}>{lozPoruka.t}</p>}
-                    <button onClick={promeniLozinku} disabled={lozLoading} className="btn-p" style={{borderRadius:12,padding:"12px"}}>
-                      {lozLoading?"Čuvam...":"Sačuvaj"}
-                    </button>
-                  </div>
-                )}
-              </div>
-              {/* Odjava */}
-              <button onClick={onLogout} style={{width:"100%",background:C.bgCard,border:`1.5px solid rgba(196,104,120,.25)`,borderRadius:16,padding:"14px 16px",display:"flex",alignItems:"center",gap:12,cursor:"pointer",fontFamily:"inherit"}}>
-                <div style={{width:38,height:38,borderRadius:12,background:"#FFF0F2",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>🚪</div>
+              <button onClick={()=>{setMenjaLozinku(m=>!m);setLozPoruka(null);}} style={{width:"100%",background:"none",border:"none",borderBottom:menjaLozinku?`1px solid ${C.border}`:"none",padding:"14px 16px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+                <div style={{width:36,height:36,borderRadius:11,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:17,flexShrink:0}}>🔑</div>
+                <p style={{fontWeight:700,fontSize:14,color:C.text,flex:1,textAlign:"left"}}>Promeni lozinku</p>
+                <Ico d={I.chev} size={13} stroke={C.textLight} sw={2}/>
+              </button>
+              {menjaLozinku&&(
+                <div style={{padding:"12px 16px 16px",display:"flex",flexDirection:"column",gap:10}}>
+                  <input className="inp" type="password" placeholder="Nova lozinka" value={novaLoz} onChange={e=>setNovaLoz(e.target.value)}/>
+                  <input className="inp" type="password" placeholder="Potvrdi lozinku" value={potvrda} onChange={e=>setPotvrda(e.target.value)}/>
+                  {lozPoruka&&<p style={{fontSize:12,color:lozPoruka.tip==="ok"?C.green:C.red,fontWeight:600,textAlign:"center"}}>{lozPoruka.t}</p>}
+                  <button onClick={promeniLozinku} disabled={lozLoading} className="btn-p" style={{borderRadius:14,padding:"13px"}}>
+                    {lozLoading?"Čuvam...":"Sačuvaj lozinku"}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Odjava */}
+            <div style={{margin:"0 20px"}}>
+              <button onClick={onLogout} style={{width:"100%",background:C.bg,border:`1px solid ${C.border}`,borderRadius:20,padding:"14px 16px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+                <div style={{width:36,height:36,borderRadius:11,background:"#FFF0F2",display:"flex",alignItems:"center",justifyContent:"center",fontSize:17,flexShrink:0}}>🚪</div>
                 <p style={{fontWeight:700,fontSize:14,color:C.red}}>Odjavi se</p>
               </button>
             </div>
