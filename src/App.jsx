@@ -533,7 +533,7 @@ function SOS({onZatvori}){
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
           <div>
             <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>🌿 SOS</span>
-            <h1 className="serif" style={{fontSize:24,color:C.text,letterSpacing:-0.3,lineHeight:1}}>Hajde, polako</h1>
+            <h1 className="serif" style={{fontSize:24,color:C.text,letterSpacing:-0.3,lineHeight:1}}>Tu si, diši</h1>
           </div>
           <button style={{background:C.bgMuted,border:"none",borderRadius:50,width:36,height:36,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,marginTop:4}} onClick={onZatvori}>
             <Ico d={I.x} size={15} stroke={C.textMid} sw={2.5}/>
