@@ -389,35 +389,75 @@ function Auth({onDone}){
 
 
 function Mehurici({onDone}){
-  const [ms,setMs]=useState(()=>Array.from({length:9},(_,i)=>({id:i,x:10+(i%3)*33,y:8+Math.floor(i/3)*30,e:["💗","🌸","✨","💜","🌺","💫","🦋","🌷","🍀"][i],p:false})));
-  const [n,setN]=useState(0);const svi=ms.every(m=>m.p);
+  const emojiji=["💗","🌸","✨","💜","🌺","💫","🦋","🌷","🍀","🌙","⭐","🌈"];
+  const novi=()=>Array.from({length:12},(_,i)=>({id:i,e:emojiji[i],p:false}));
+  const [ms,setMs]=useState(novi);
+  const [n,setN]=useState(0);
+  const svi=ms.every(m=>m.p);
+  const pop=(id)=>{setMs(v=>v.map(x=>x.id===id?{...x,p:true}:x));setN(v=>v+1);};
   return(
-    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:16}}>
-      <p style={{fontSize:14,color:C.textMid,fontWeight:500}}>Pritisni svaki mehurić!</p>
-      <div style={{width:290,height:250,background:C.primaryLight,borderRadius:28,position:"relative",overflow:"hidden"}}>
-        {ms.map(m=>!m.p&&<button key={m.id} onClick={()=>{setMs(v=>v.map(x=>x.id===m.id?{...x,p:true}:x));setN(v=>v+1)}} style={{position:"absolute",left:`${m.x}%`,top:`${m.y}%`,width:54,height:54,borderRadius:"50%",background:C.bgCard,border:`2px solid ${C.primary}`,fontSize:24,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transform:"translate(-50%,-50%)",boxShadow:`0 4px 16px rgba(122,158,142,.18)`}}>{m.e}</button>)}
-        {svi&&<div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:44}}>🎉</span><p style={{fontWeight:700,color:C.primaryDark,fontSize:16,marginTop:10}}>Sve si prsnula!</p></div>}
+    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:20}}>
+      <p style={{fontSize:14,color:C.textMid,fontWeight:500,textAlign:"center"}}>Pritisni svaki mehurić da ga prskneš! 🫧</p>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,width:"100%",padding:"20px",background:`linear-gradient(135deg,${C.primaryLight} 0%,${C.purpleLight} 100%)`,borderRadius:28}}>
+        {ms.map(m=>(
+          <button key={m.id} onClick={()=>!m.p&&pop(m.id)} style={{aspectRatio:"1",borderRadius:"50%",background:m.p?"transparent":C.bgCard,border:m.p?"none":`2px solid ${C.primary}44`,fontSize:m.p?28:26,cursor:m.p?"default":"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:m.p?"none":`0 4px 14px rgba(192,120,144,.22)`,transition:"all .15s",transform:m.p?"scale(1.3)":"scale(1)",opacity:m.p?0.3:1}}>
+            {m.e}
+          </button>
+        ))}
       </div>
-      <p style={{fontSize:20,fontWeight:400,color:C.primary,fontFamily:"'Playfair Display',serif"}}>{n} / {ms.length}</p>
-      {svi&&<button className="btn-p" style={{width:"auto",padding:"13px 36px"}} onClick={onDone}>Osećam se bolje →</button>}
+      <div style={{display:"flex",alignItems:"center",gap:8}}>
+        <span style={{fontSize:22,fontWeight:700,color:C.primary}}>{n}</span>
+        <span style={{fontSize:14,color:C.textLight,fontWeight:500}}>/ {ms.length} prsnuto</span>
+      </div>
+      {svi?(
+        <div style={{textAlign:"center",display:"flex",flexDirection:"column",alignItems:"center",gap:12}}>
+          <span style={{fontSize:48}}>🎉</span>
+          <p style={{fontWeight:700,color:C.primaryDark,fontSize:16}}>Sve si prsnula!</p>
+          <button className="btn-p" style={{width:"auto",padding:"13px 36px"}} onClick={onDone}>Osećam se bolje ✨</button>
+        </div>
+      ):<button style={{background:"none",border:`1.5px solid ${C.border}`,borderRadius:100,padding:"10px 24px",fontSize:13,color:C.textMid,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}} onClick={()=>{setMs(novi());setN(0);}}>Još jednom 🔄</button>}
     </div>
   );
 }
 
 function Boje({onDone}){
-  const B=[{b:"#E8A0BF",n:"Roze"},{b:"#9B7FA6",n:"Ljubičasta"},{b:"#7BAF8E",n:"Zelena"},{b:"#E8C452",n:"Žuta"},{b:"#7EB8D4",n:"Plava"}];
-  const [cilj,setCilj]=useState(B[0]);const [ok,setOk]=useState(0);const [ne,setNe]=useState(0);const [msg,setMsg]=useState("");
+  const B=[{b:"#E8A0BF",n:"Roze"},{b:"#9B7FA6",n:"Ljubičasta"},{b:"#7BAF8E",n:"Zelena"},{b:"#E8C452",n:"Žuta"},{b:"#7EB8D4",n:"Plava"},{b:"#F4916A",n:"Narandžasta"}];
+  const [cilj,setCilj]=useState(B[0]);const [ok,setOk]=useState(0);const [ne,setNe]=useState(0);const [flash,setFlash]=useState(null);
   const [red,setRed]=useState(()=>[...B].sort(()=>Math.random()-0.5));
-  function tap(b){if(b.n===cilj.n){setOk(v=>v+1);setMsg("✓");setTimeout(()=>{setCilj(B[Math.floor(Math.random()*B.length)]);setRed([...B].sort(()=>Math.random()-0.5));setMsg("")},500)}else{setNe(v=>v+1);setMsg("✗");setTimeout(()=>setMsg(""),500)}}
+  function tap(b){
+    if(flash) return;
+    if(b.n===cilj.n){
+      setOk(v=>v+1);setFlash("ok");
+      setTimeout(()=>{setCilj(B[Math.floor(Math.random()*B.length)]);setRed([...B].sort(()=>Math.random()-0.5));setFlash(null);},400);
+    }else{
+      setNe(v=>v+1);setFlash("ne");
+      setTimeout(()=>setFlash(null),400);
+    }
+  }
   return(
-    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:16}}>
-      <p style={{fontSize:14,color:C.textMid,fontWeight:500}}>Pritisni ispravnu boju što brže možeš</p>
-      <div style={{textAlign:"center"}}><p style={{fontSize:10,color:C.textLight,marginBottom:6,fontWeight:700,letterSpacing:1}}>PRONAĐI</p><span style={{fontSize:30,fontWeight:400,color:cilj.b,fontFamily:"'Playfair Display',serif"}}>{cilj.n} {msg}</span></div>
-      <div style={{display:"flex",gap:14,flexWrap:"wrap",justifyContent:"center"}}>
-        {red.map(b=><button key={b.n} onClick={()=>tap(b)} style={{width:70,height:70,borderRadius:"50%",background:b.b,border:"none",cursor:"pointer",boxShadow:`0 6px 20px ${b.b}55`}}/>)}
+    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:20}}>
+      <p style={{fontSize:14,color:C.textMid,fontWeight:500,textAlign:"center"}}>Pritisni ispravnu boju što brže možeš!</p>
+      <div style={{background:flash==="ok"?C.greenLight:flash==="ne"?`${C.red}14`:C.bgCard,border:`2px solid ${flash==="ok"?C.green:flash==="ne"?C.red:C.border}`,borderRadius:24,padding:"20px 32px",textAlign:"center",width:"100%",transition:"all .2s"}}>
+        <p style={{fontSize:11,color:C.textLight,fontWeight:800,letterSpacing:2,textTransform:"uppercase",marginBottom:8}}>Pronađi</p>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:12}}>
+          <div style={{width:28,height:28,borderRadius:"50%",background:cilj.b,boxShadow:`0 4px 12px ${cilj.b}88`,flexShrink:0}}/>
+          <span style={{fontSize:28,fontWeight:700,color:cilj.b,fontFamily:"'DM Sans',sans-serif"}}>{cilj.n}</span>
+        </div>
+        {flash&&<span style={{fontSize:20,marginTop:4,display:"block"}}>{flash==="ok"?"✅":"❌"}</span>}
       </div>
-      <div style={{display:"flex",gap:24,fontSize:18}}><span style={{color:C.green,fontWeight:700}}>✓ {ok}</span><span style={{color:C.red,fontWeight:700}}>✗ {ne}</span></div>
-      {ok>=5&&<button className="btn-p" style={{width:"auto",padding:"13px 36px"}} onClick={onDone}>Osećam se bolje →</button>}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,width:"100%"}}>
+        {red.map(b=>(
+          <button key={b.n} onClick={()=>tap(b)} style={{aspectRatio:"1",borderRadius:20,background:b.b,border:"none",cursor:"pointer",boxShadow:`0 6px 20px ${b.b}66`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:"rgba(255,255,255,0.85)",transition:"transform .1s",fontFamily:"inherit"}} onTouchStart={e=>{e.currentTarget.style.transform="scale(0.94)"}} onTouchEnd={e=>{e.currentTarget.style.transform="scale(1)"}}>
+            {b.n}
+          </button>
+        ))}
+      </div>
+      <div style={{display:"flex",gap:24,background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:100,padding:"10px 24px"}}>
+        <span style={{color:C.green,fontWeight:700,fontSize:16}}>✅ {ok}</span>
+        <span style={{color:C.textLight,fontWeight:400}}>|</span>
+        <span style={{color:C.red,fontWeight:700,fontSize:16}}>❌ {ne}</span>
+      </div>
+      {ok>=6&&<button className="btn-p" style={{width:"auto",padding:"13px 36px"}} onClick={onDone}>Osećam se bolje ✨</button>}
     </div>
   );
 }
@@ -478,9 +518,9 @@ function SOS({onZatvori}){
         <button style={{position:"absolute",top:`max(16px,calc(${SAT} - 28px))`,right:20,background:"rgba(255,255,255,0.25)",border:"none",borderRadius:50,width:38,height:38,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}} onClick={onZatvori}>
           <Ico d={I.x} size={16} stroke="#fff" sw={2.5}/>
         </button>
-        <div style={{fontSize:40,marginBottom:12}}>💙</div>
-        <h2 style={{fontSize:26,fontWeight:700,color:"#fff",letterSpacing:-0.3,marginBottom:6,fontFamily:"'DM Sans',sans-serif"}}>Tu sam za tebe</h2>
-        <p style={{fontSize:14,color:"rgba(255,255,255,0.82)",fontWeight:500}}>Odaberi tehniku koja ti odgovara sada</p>
+        <div style={{fontSize:40,marginBottom:12}}>🌿</div>
+        <h2 style={{fontSize:26,fontWeight:700,color:"#fff",letterSpacing:-0.3,marginBottom:6,fontFamily:"'DM Sans',sans-serif"}}>Hajde, polako</h2>
+        <p style={{fontSize:14,color:"rgba(255,255,255,0.82)",fontWeight:500}}>Odaberi šta ti pomaže upravo sada</p>
       </div>
 
       <div style={{padding:"20px 20px 48px",display:"flex",flexDirection:"column",gap:10}}>
