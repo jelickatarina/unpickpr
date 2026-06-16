@@ -1505,11 +1505,19 @@ export default function App(){
   const contentRef=useRef(null);
   useEffect(()=>{if(contentRef.current)contentRef.current.scrollTop=0;},[ekran]);
 
+  const isIOS=typeof window!=="undefined"&&/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
+  const isIOSSafari=isIOS&&/safari/i.test(navigator.userAgent)&&!/crios|fxios/i.test(navigator.userAgent);
+
   const [installPrompt,setInstallPrompt]=useState(null);
   const [showInstall,setShowInstall]=useState(false);
+  const [showIOSHint,setShowIOSHint]=useState(false);
   useEffect(()=>{
     const handler=(e)=>{e.preventDefault();setInstallPrompt(e);setShowInstall(true);};
     window.addEventListener("beforeinstallprompt",handler);
+    if(isIOSSafari&&!isPWA){
+      const dismissed=sessionStorage.getItem("iosHintDismissed");
+      if(!dismissed) setTimeout(()=>setShowIOSHint(true),2500);
+    }
     return()=>window.removeEventListener("beforeinstallprompt",handler);
   },[]);
   async function handleInstall(){
@@ -1641,6 +1649,24 @@ export default function App(){
           </div>
           <button onClick={handleInstall} style={{background:C.primaryGrad,color:"#fff",border:"none",borderRadius:100,padding:"9px 16px",fontSize:13,fontWeight:700,fontFamily:"inherit",cursor:"pointer",flexShrink:0}}>Dodaj</button>
           <button onClick={()=>setShowInstall(false)} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:18,lineHeight:1,padding:4,flexShrink:0}}>✕</button>
+        </div>
+      )}
+      {faza==="app"&&showIOSHint&&!isPWA&&(
+        <div style={{position:"fixed",bottom:80,left:"50%",transform:"translateX(-50%)",width:"calc(100% - 40px)",maxWidth:350,zIndex:200,background:"#fff",borderRadius:20,padding:"18px 18px 16px",boxShadow:"0 8px 32px rgba(192,120,144,0.22)",border:`1.5px solid ${C.border}`}}>
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:10}}>
+            <p style={{fontWeight:700,fontSize:14,color:C.text}}>Dodaj Unpick na ekran</p>
+            <button onClick={()=>{setShowIOSHint(false);sessionStorage.setItem("iosHintDismissed","1");}} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:18,lineHeight:1,padding:"0 0 0 8px",flexShrink:0}}>✕</button>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
+            <span style={{fontSize:20}}>⬆️</span>
+            <p style={{fontSize:13,color:C.textMid}}>Tapni <strong>Share</strong> dugme u Safariju (dole u sredini)</p>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <span style={{fontSize:20}}>📲</span>
+            <p style={{fontSize:13,color:C.textMid}}>Izaberi <strong>„Dodaj na početni ekran"</strong></p>
+          </div>
+          <div style={{marginTop:12,height:1,background:C.border}}/>
+          <p style={{fontSize:11,color:C.textLight,marginTop:10,textAlign:"center"}}>Radi offline · Brži pristup · Bez pregledača</p>
         </div>
       )}
       {faza==="app"&&(
