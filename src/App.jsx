@@ -1286,7 +1286,10 @@ function Napredak({unosi,niz}){
     const hasRes=du.some(e=>e.ish==="res");
     const isToday=i===6;
     const status=hasEp?"ep":hasTry?"try":hasRes?"res":"none";
-    return{dan:dani[d.getDay()],status,isToday};
+    const epCount=du.filter(e=>e.ish==="ep").length;
+    const tryCount=du.filter(e=>e.ish==="try").length;
+    const resCount=du.filter(e=>e.ish==="res").length;
+    return{dan:dani[d.getDay()],status,isToday,epCount,tryCount,resCount};
   });
 
   // this week vs last week (episodes+attempts)
@@ -1385,9 +1388,9 @@ function Napredak({unosi,niz}){
         </div>
         <div style={{display:"flex",marginTop:14,paddingTop:14,borderTop:`1px solid ${C.border}`}}>
           {[
-            {l:"Epizoda",v:sedmica.filter(d=>d.status==="ep").length,c:C.red},
-            {l:"Pokušaja",v:sedmica.filter(d=>d.status==="try").length,c:C.amber},
-            {l:"Odolelo",v:sedmica.filter(d=>d.status==="res").length,c:C.green},
+            {l:"Epizoda",v:sedmica.reduce((s,d)=>s+d.epCount,0),c:C.red},
+            {l:"Pokušaja",v:sedmica.reduce((s,d)=>s+d.tryCount,0),c:C.amber},
+            {l:"Odolelo",v:sedmica.reduce((s,d)=>s+d.resCount,0),c:C.green},
           ].map((s,i)=>(
             <div key={s.l} style={{flex:1,textAlign:"center",borderRight:i<2?`1px solid ${C.border}`:"none"}}>
               <p style={{fontSize:22,fontWeight:900,color:s.v>0?s.c:C.textLight,lineHeight:1,marginBottom:3}}>{s.v}</p>
