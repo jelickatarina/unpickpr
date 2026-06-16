@@ -47,8 +47,7 @@ export default async function handler(req, res) {
         return webpush.sendNotification(
           sub,
           JSON.stringify({
-            title: "Unpick 🌸",
-            body: poruka,
+            title: poruka,
             icon: "/icon-192.png",
             url: "/",
           })
