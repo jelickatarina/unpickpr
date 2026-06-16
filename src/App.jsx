@@ -1374,8 +1374,8 @@ function Napredak({unosi,niz}){
         </div>
         <div style={{display:"flex",gap:5}}>
           {sedmica.map((d,i)=>{
-            const bg=d.status==="ep"?C.red:d.status==="try"?C.amber:(d.status==="res"||d.status==="clean")?C.green:d.isToday?C.primaryLight:C.bgMuted;
-            const fg=(d.status!=="none"&&d.status!=="clean")||d.status==="clean"?"#fff":d.isToday?C.primary:C.textLight;
+            const bg=d.status==="ep"?C.red:d.status==="try"?C.amber:(d.status==="res"||d.status==="clean")?C.greenLight:d.isToday?C.primaryLight:C.bgMuted;
+            const fg=d.status==="ep"||d.status==="try"?"#fff":(d.status==="res"||d.status==="clean")?C.green:d.isToday?C.primary:C.textLight;
             const ico=d.status==="ep"?"✕":d.status==="try"?"∼":(d.status==="res"||d.status==="clean")?"✓":d.isToday?"·":"";
             return(
               <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:5}}>
