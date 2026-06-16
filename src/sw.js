@@ -1,6 +1,6 @@
 import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
-import { CacheFirst } from "workbox-strategies";
+import { CacheFirst, NetworkFirst, StaleWhileRevalidate } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
 
 precacheAndRoute(self.__WB_MANIFEST);
@@ -8,6 +8,15 @@ cleanupOutdatedCaches();
 
 self.skipWaiting();
 self.clients.claim();
+
+registerRoute(
+  ({ request }) => request.destination === 'document',
+  new NetworkFirst({ cacheName: 'html-cache', networkTimeoutSeconds: 3 })
+);
+registerRoute(
+  ({ request }) => request.destination === 'script' || request.destination === 'style',
+  new StaleWhileRevalidate({ cacheName: 'assets-cache' })
+);
 
 registerRoute(
   ({ url }) => url.origin === "https://fonts.googleapis.com",
