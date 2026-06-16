@@ -29,6 +29,24 @@ export default defineConfig({
       },
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']
+      },
+      workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
+        runtimeCaching: [
+          {
+            urlPattern: /^https?.*/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'runtime-cache',
+              networkTimeoutSeconds: 10,
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 7
+              }
+            }
+          }
+        ]
       }
     })
   ]
