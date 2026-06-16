@@ -871,6 +871,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
 
 function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,onNotif,notifStatus}){
   const [izvestaj,setIzvestaj]=useState(null);
+  const [showPWAHint,setShowPWAHint]=useState(false);
   const h=new Date().getHours();
   const pozdrav=h<12?"Dobro jutro":h<18?"Dobar dan":"Dobro veče";
   const prikazIme=ime&&!ime.includes("@")?ime:"";
@@ -1036,7 +1037,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,onNotif,n
           <span style={{display:"inline-block",background:"rgba(192,120,144,.12)",color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:14}}>Poruka dana</span>
           <p className="serif" style={{fontSize:16,color:C.text,lineHeight:1.85,fontWeight:400}}>{poruka}</p>
         </div>
-        {notifStatus!=="granted"&&(
+        {notifStatus!=="granted"&&isPWA&&(
           <button onClick={onNotif} style={{width:"100%",background:"transparent",border:`1.5px solid ${C.border}`,borderRadius:18,padding:"14px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
             <div style={{width:38,height:38,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:20}}>🔔</div>
             <div style={{textAlign:"left"}}>
@@ -1044,6 +1045,21 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,onNotif,n
               <p style={{fontSize:12,color:C.textLight}}>Dnevni podsetnik za unos</p>
             </div>
           </button>
+        )}
+        {notifStatus!=="granted"&&!isPWA&&(
+          <button onClick={()=>setShowPWAHint(h=>!h)} style={{width:"100%",background:"transparent",border:`1.5px solid ${C.border}`,borderRadius:18,padding:"14px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+            <div style={{width:38,height:38,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:20}}>🔔</div>
+            <div style={{textAlign:"left"}}>
+              <p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:2}}>Uključi podsetnik</p>
+              <p style={{fontSize:12,color:C.textLight}}>Dnevni podsetnik za unos</p>
+            </div>
+          </button>
+        )}
+        {showPWAHint&&!isPWA&&(
+          <div style={{background:C.amberLight,border:`1.5px solid ${C.amber}`,borderRadius:14,padding:"12px 16px",display:"flex",gap:10,alignItems:"flex-start"}}>
+            <span style={{fontSize:18,flexShrink:0}}>📲</span>
+            <p style={{fontSize:13,color:C.text,lineHeight:1.5}}>Da bi primala podsetnnike, prvo <strong>dodaj Unpick na početni ekran</strong> (Share → Dodaj na početni ekran u Safariju).</p>
+          </div>
         )}
       </div>
     </div>
@@ -1538,7 +1554,7 @@ export default function App(){
     await supabase.from("profiles").update({push_subscription:JSON.stringify(sub)}).eq("id",kor.id);
   }
   useEffect(()=>{
-    if(faza==="app"&&typeof Notification!=="undefined"&&Notification.permission==="default"){
+    if(faza==="app"&&isPWA&&typeof Notification!=="undefined"&&Notification.permission==="default"){
       enableNotifications();
     }
   },[faza]);
