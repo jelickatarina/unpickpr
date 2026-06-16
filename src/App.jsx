@@ -190,31 +190,31 @@ function Auth({onDone}){
   if(mode==="w") return(
     <div className="fi" style={{height:"100dvh",background:C.bg,display:"flex",flexDirection:"column",overflow:"hidden"}}>
       <div style={{flex:1,minHeight:0,overflowY:"auto"}}>
-        <div style={{minHeight:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",paddingTop:`max(40px,${SAT})`,paddingLeft:28,paddingRight:28,paddingBottom:24}}>
-          <div style={{width:64,height:64,borderRadius:20,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 28px rgba(192,120,144,.30)`,marginBottom:14,flexShrink:0}}>
-            <Ico d={I.leaf} size={26} stroke="#fff" sw={1.8}/>
+        <div style={{minHeight:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",paddingTop:`max(32px,${SAT})`,paddingLeft:28,paddingRight:28,paddingBottom:16}}>
+          <div style={{width:52,height:52,borderRadius:16,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 24px rgba(192,120,144,.28)`,marginBottom:12,flexShrink:0}}>
+            <Ico d={I.leaf} size={22} stroke="#fff" sw={1.8}/>
           </div>
-          <span style={{fontSize:10,fontWeight:800,letterSpacing:3,textTransform:"uppercase",color:C.primary,background:C.primaryLight,padding:"3px 12px",borderRadius:100,marginBottom:14}}>Unpick</span>
-          <h1 className="serif" style={{fontSize:28,lineHeight:1.25,marginBottom:10,letterSpacing:-0.3,color:C.text,textAlign:"center",fontWeight:400}}>
-            Nežni pratilac<br/><span style={{color:C.primary}}>na putu ka slobodi</span>
+          <p style={{fontSize:10,fontWeight:700,letterSpacing:3,textTransform:"uppercase",color:C.textLight,marginBottom:6}}>Unpick</p>
+          <h1 style={{fontSize:24,lineHeight:1.3,marginBottom:6,letterSpacing:-0.2,color:C.text,fontFamily:"'DM Sans',sans-serif",fontWeight:700}}>
+            Your skin<br/><span style={{color:C.primary,fontWeight:800}}>deserves kindness.</span>
           </h1>
-          <p style={{fontSize:13,color:C.textMid,lineHeight:1.6,fontWeight:500,marginBottom:28,textAlign:"center",maxWidth:280}}>Prati obrasce, pronađi okidače i reaguj u kriznim trenucima.</p>
-          <div style={{width:"100%",display:"flex",flexDirection:"column",gap:8}}>
+          <p style={{fontSize:13,color:C.textMid,lineHeight:1.55,fontWeight:500,marginBottom:16}}>Prati obrasce, pronađi okidače, reaguj u kriznim trenucima.</p>
+          <div style={{width:"100%",display:"flex",flexDirection:"column",gap:6,textAlign:"left"}}>
             {[[I.chart,"Praćenje epizoda","Beleži epizode i prati obrasce"],[I.wind,"SOS alat u krizi","Tehnike za smirenje u trenutku"],[I.chat,"Mia — AI podrška","Uvek dostupna, bez osude"]].map(([ico,t,sub])=>(
-              <div key={t} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 16px",borderRadius:18,background:C.bgCard,border:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`}}>
-                <div style={{width:38,height:38,borderRadius:12,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                  <Ico d={ico} size={17} stroke={C.primary} sw={1.8}/>
+              <div key={t} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",borderRadius:16,background:C.bgCard,border:`1.5px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`}}>
+                <div style={{width:36,height:36,borderRadius:11,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                  <Ico d={ico} size={16} stroke="#fff" sw={1.8}/>
                 </div>
                 <div style={{flex:1,minWidth:0}}>
-                  <p style={{fontWeight:700,fontSize:13,color:C.text,marginBottom:2}}>{t}</p>
-                  <p style={{fontSize:12,color:C.textLight,fontWeight:500}}>{sub}</p>
+                  <p style={{fontWeight:700,fontSize:13,color:C.text,marginBottom:1}}>{t}</p>
+                  <p style={{fontSize:11,color:C.textLight,fontWeight:500}}>{sub}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
-      <div style={{padding:"14px 28px",paddingBottom:`calc(24px + env(safe-area-inset-bottom,0px))`,display:"flex",flexDirection:"column",gap:10,flexShrink:0,background:C.bg,borderTop:`1px solid ${C.border}`}}>
+      <div style={{padding:"14px 28px calc(28px + env(safe-area-inset-bottom,0px))",display:"flex",flexDirection:"column",gap:10,flexShrink:0,background:C.bg}}>
         <button onClick={()=>{setMode("r");reset();}} className="btn-p">Počni</button>
         <button onClick={()=>{setMode("l");reset();}} className="btn-o">Već imam nalog</button>
       </div>
