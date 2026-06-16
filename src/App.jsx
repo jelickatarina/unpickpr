@@ -577,7 +577,7 @@ function SOS({onZatvori}){
 
 function NoviUnos({onSacuvaj,onOtkazi,editData}){
   const [saving,setSaving]=useState(false);
-  const [u,setU]=useState(editData?{int:editData.int||5,ok:editData.ok||[],lok:editData.lok||"",epre:editData.epre||"",epost:editData.epost||"",ish:editData.ish||"",bel:editData.bel||"",slike:editData.slike||[]}:{int:5,ok:[],lok:"",epre:"",epost:"",ish:"",bel:"",slike:[]});
+  const [u,setU]=useState(editData?{ts:editData.ts||Date.now(),int:editData.int||5,ok:editData.ok||[],lok:editData.lok||"",epre:editData.epre||"",epost:editData.epost||"",ish:editData.ish||"",bel:editData.bel||"",slike:editData.slike||[]}:{ts:Date.now(),int:5,ok:[],lok:"",epre:"",epost:"",ish:"",bel:"",slike:[]});
 
   function toggleOk(o){
     if(o==="Ostalo"){setU(v=>({...v,ok:v.ok.includes("Ostalo")||v.ok.some(x=>x.startsWith("Ostalo:"))?v.ok.filter(x=>x!=="Ostalo"&&!x.startsWith("Ostalo:")):v.ok.includes("Ostalo")?v.ok:[...v.ok,"Ostalo"]}));return;}
@@ -634,6 +634,12 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
           </div>
           <input type="range" min={1} max={10} value={u.int} onChange={e=>setU(v=>({...v,int:+e.target.value}))} style={{width:"100%",accentColor:C.primary}}/>
           <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:C.textLight,fontWeight:600,marginTop:4}}><span>Jedva primetno</span><span>Nepodnošljivo</span></div>
+        </div>
+
+        {/* Datum i vreme */}
+        <div>
+          <span className="lbl">DATUM I VREME</span>
+          <input type="datetime-local" className="inp" value={new Date(u.ts-new Date(u.ts).getTimezoneOffset()*60000).toISOString().slice(0,16)} max={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16)} onChange={e=>e.target.value&&setU(v=>({...v,ts:new Date(e.target.value).getTime()}))} style={{cursor:"pointer"}}/>
         </div>
 
         {/* Okidači */}
@@ -1619,9 +1625,10 @@ export default function App(){
     if(session){
       const {data}=await supabase.from("journal_entries").insert({
         user_id:session.user.id,intensity:u.int,trigger:JSON.stringify(u.ok),location:u.lok,
-        emotion_before:u.epre,emotion_after:u.epost,outcome:u.ish,note:u.bel,images:u.slike
+        emotion_before:u.epre,emotion_after:u.epost,outcome:u.ish,note:u.bel,images:u.slike,
+        created_at:new Date(u.ts).toISOString()
       }).select().single();
-      if(data) setNoviUnosi(v=>[{id:data.id,datum:"Upravo",ts:Date.now(),int:u.int,ok:u.ok,lok:u.lok,epre:u.epre,epost:u.epost,ish:u.ish,bel:u.bel,slike:u.slike},...v]);
+      if(data) setNoviUnosi(v=>[{id:data.id,datum:new Date(u.ts).toLocaleString("sr"),ts:u.ts,int:u.int,ok:u.ok,lok:u.lok,epre:u.epre,epost:u.epost,ish:u.ish,bel:u.bel,slike:u.slike},...v]);
     }else{
       setNoviUnosi(v=>[{...u,id:Date.now(),datum:"Upravo"},...v]);
     }
