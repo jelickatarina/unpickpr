@@ -21,8 +21,8 @@ registerRoute(
 self.addEventListener("push", (event) => {
   const data = event.data?.json() || {};
   event.waitUntil(
-    self.registration.showNotification(data.title || "Kako si danas? 🌸", {
-      body: data.body || "",
+    self.registration.showNotification(data.title || "🌸", {
+      body: data.body || "Kako si danas?",
       icon: data.icon || "/icon-192.png",
       badge: "/icon-192.png",
       data: { url: data.url || "/" },
