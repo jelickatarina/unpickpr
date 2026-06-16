@@ -1957,14 +1957,13 @@ export default function App(){
     }
   },[]);
 
-  function hideSplash(){document.getElementById("root").style.display="block";const s=document.getElementById("splash");if(s){s.style.transition="opacity 0.4s";s.style.opacity="0";setTimeout(()=>s.remove(),400);}}
+  function hideSplash(){const s=document.getElementById("splash");if(s){s.style.transition="opacity 0.4s";s.style.opacity="0";setTimeout(()=>s.remove(),400);}}
 
   useEffect(()=>{
-    const splashTimer=setTimeout(hideSplash,600);
+    setTimeout(hideSplash,300);
     const cachedKey=Object.keys(localStorage).find(k=>k.startsWith('sb-')&&k.endsWith('-auth-token'));
     if(cachedKey){try{const parsed=JSON.parse(localStorage.getItem(cachedKey));if(parsed?.access_token){resolveSession({user:parsed.user||{id:parsed.user_id,email:parsed.email,user_metadata:parsed.user_metadata,created_at:parsed.created_at}});}}catch{}}
     supabase.auth.getSession().then(({data:{session}})=>{
-      clearTimeout(splashTimer);
       if(session) resolveSession(session);
       else{setFaza("auth");hideSplash();}
     });
