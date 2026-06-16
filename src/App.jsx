@@ -529,15 +529,14 @@ function SOS({onZatvori}){
   if(faza==="izb") return(
     <div style={{minHeight:"100vh",background:C.bg}} className="fi">
       {/* Header */}
-      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:14}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-          <div>
-            <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>🌿 SOS</span>
-            <h1 className="serif" style={{fontSize:24,color:C.text,letterSpacing:-0.3,lineHeight:1}}>Tu si, diši</h1>
-          </div>
-          <button style={{background:C.bgMuted,border:"none",borderRadius:50,width:36,height:36,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,marginTop:4}} onClick={onZatvori}>
-            <Ico d={I.x} size={15} stroke={C.textMid} sw={2.5}/>
+      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,paddingTop:HDR_PT}}>
+        <div style={{position:"relative",textAlign:"center",padding:"14px 20px 18px"}}>
+          <button style={{position:"absolute",top:10,right:16,background:C.bgMuted,border:"none",borderRadius:50,width:34,height:34,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}} onClick={onZatvori}>
+            <Ico d={I.x} size={14} stroke={C.textMid} sw={2.5}/>
           </button>
+          <div style={{fontSize:28,marginBottom:8,lineHeight:1}}>🌿</div>
+          <h1 className="serif italic" style={{fontSize:22,color:C.text,letterSpacing:-0.2,lineHeight:1.1,marginBottom:4}}>Sve će biti u redu</h1>
+          <p style={{fontSize:13,color:C.textMid,fontWeight:500}}>Odaberi šta ti pomaže sada</p>
         </div>
       </div>
 
