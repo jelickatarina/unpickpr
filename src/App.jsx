@@ -1331,7 +1331,6 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
             <Ico d={I.plus} size={20} stroke="#fff" sw={2.5}/>
           </button>
         </div>
-        </div>
         <div style={{display:"flex",gap:6}}>
           {filteri.map(f=><button key={f.v} onClick={()=>setFilIsh(f.v)} style={{padding:"5px 12px",borderRadius:100,border:`1.5px solid ${filIsh===f.v?bc(f.v)||C.primary:C.border}`,background:filIsh===f.v?filIsh==="sve"?C.primaryLight:bc(f.v)+"18":C.bgCard,color:filIsh===f.v?filIsh==="sve"?C.primary:bc(f.v):C.textMid,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>{f.l}</button>)}
         </div>
