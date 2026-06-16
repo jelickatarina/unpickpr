@@ -97,6 +97,7 @@ const I={
   camera:["M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z","M12 17a4 4 0 100-8 4 4 0 000 8z"],
   target:["M12 22a10 10 0 100-20 10 10 0 000 20z","M12 16a4 4 0 100-8 4 4 0 000 8z","M12 12h.01"],
   wind:["M17.7 7.7a2.5 2.5 0 111.8 4.3H2","M9.6 4.6A2 2 0 1111 8H2","M12.6 19.4A2 2 0 1014 16H2"],
+  search:["M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"],
   user:["M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2","M12 11a4 4 0 100-8 4 4 0 000 8z"],
   mail:["M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z","M22 6l-10 7L2 6"],
   lockIco:["M19 11H5a2 2 0 00-2 2v7a2 2 0 002 2h14a2 2 0 002-2v-7a2 2 0 00-2-2z","M17 11V7a5 5 0 00-10 0v4"],
@@ -1155,6 +1156,8 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
 function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
   const [otvoren,setOtvoren]=useState(null);
   const [potvrda,setPotvrda]=useState(null);
+  const [pretraga,setPretraga]=useState("");
+  const [filIsh,setFilIsh]=useState("sve");
   const bc=o=>o==="res"?C.green:o==="try"?C.amber:C.red;
   const bl=o=>o==="res"?"Odolela/o":o==="try"?"Pokušala/o":"Epizoda";
 
@@ -1167,17 +1170,27 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
     if(d.getTime()===yesterMid.getTime()) return "Juče";
     return new Date(ts).toLocaleDateString("sr",{day:"numeric",month:"long"});
   }
+
+  const q=pretraga.toLowerCase().trim();
+  const filtrirani=noviUnosi.filter(u=>{
+    if(filIsh!=="sve"&&u.ish!==filIsh) return false;
+    if(!q) return true;
+    return [u.bel,u.lok,u.epre,u.epost,...(Array.isArray(u.ok)?u.ok:[u.ok||""])].some(v=>v&&v.toLowerCase().includes(q));
+  });
+
   const groupMap=new Map();const groupOrder=[];
-  noviUnosi.forEach(u=>{
+  filtrirani.forEach(u=>{
     const lbl=dayLabel(u.ts);
     if(!groupMap.has(lbl)){groupMap.set(lbl,[]);groupOrder.push(lbl);}
     groupMap.get(lbl).push(u);
   });
 
+  const filteri=[{v:"sve",l:"Sve"},{v:"res",l:"Odolela/o"},{v:"try",l:"Pokušala/o"},{v:"ep",l:"Epizoda"}];
+
   return(
     <div style={{paddingBottom:20}} className="fi">
-      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:24,paddingRight:24,paddingBottom:14}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:12}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
           <div>
             <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Moj dnevnik</span>
             <h1 className="serif" style={{fontSize:24,letterSpacing:-0.3,lineHeight:1}}>Unosi</h1>
@@ -1186,16 +1199,30 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
             <Ico d={I.plus} size={20} stroke="#fff" sw={2.5}/>
           </button>
         </div>
+        <div style={{display:"flex",alignItems:"center",gap:8,background:C.bgMuted,borderRadius:14,padding:"8px 14px",marginBottom:10}}>
+          <Ico d={I.search} size={15} stroke={C.textLight} sw={2}/>
+          <input value={pretraga} onChange={e=>setPretraga(e.target.value)} placeholder="Pretraži unose..." style={{flex:1,border:"none",background:"transparent",fontSize:14,color:C.text,fontFamily:"'DM Sans',sans-serif",outline:"none"}}/>
+          {pretraga&&<button onClick={()=>setPretraga("")} style={{border:"none",background:"none",cursor:"pointer",padding:0,color:C.textLight,fontSize:16,lineHeight:1}}>✕</button>}
+        </div>
+        <div style={{display:"flex",gap:6}}>
+          {filteri.map(f=><button key={f.v} onClick={()=>setFilIsh(f.v)} style={{padding:"5px 12px",borderRadius:100,border:`1.5px solid ${filIsh===f.v?bc(f.v)||C.primary:C.border}`,background:filIsh===f.v?filIsh==="sve"?C.primaryLight:bc(f.v)+"18":C.bgCard,color:filIsh===f.v?filIsh==="sve"?C.primary:bc(f.v):C.textMid,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",transition:"all .15s"}}>{f.l}</button>)}
+        </div>
       </div>
       <div style={{padding:"16px 20px 0"}}>
-        {noviUnosi.length===0&&(
+        {noviUnosi.length===0?(
           <div style={{textAlign:"center",padding:"56px 24px"}}>
             <div style={{width:80,height:80,borderRadius:28,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}><Ico d={I.journal} size={36} stroke={C.primary} sw={1.5}/></div>
             <h3 className="serif" style={{fontSize:24,marginBottom:8}}>Još nema unosa</h3>
             <p style={{fontSize:14,color:C.textLight,fontWeight:500,lineHeight:1.7,marginBottom:28}}>Svaki zabeleženi trenutak<br/>pomaže ti da razumeš svoje obrasce.</p>
             <button onClick={onDodaj} className="btn-p" style={{width:"auto",padding:"14px 36px"}}>Dodaj prvi unos →</button>
           </div>
-        )}
+        ):filtrirani.length===0?(
+          <div style={{textAlign:"center",padding:"48px 24px"}}>
+            <p style={{fontSize:32,marginBottom:12}}>🔍</p>
+            <p style={{fontSize:15,fontWeight:600,color:C.textMid,marginBottom:6}}>Nema rezultata</p>
+            <p style={{fontSize:13,color:C.textLight}}>Pokušaj drugi pojam ili ukloni filter.</p>
+          </div>
+        ):null}
         {groupOrder.map(lbl=>(
           <div key={lbl}>
             <p style={{fontSize:11,fontWeight:700,color:C.textLight,letterSpacing:1,textTransform:"uppercase",marginBottom:10,marginTop:16}}>{lbl}</p>
