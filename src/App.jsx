@@ -1537,6 +1537,11 @@ export default function App(){
     if(!sub||!kor?.id) return;
     await supabase.from("profiles").update({push_subscription:JSON.stringify(sub)}).eq("id",kor.id);
   }
+  useEffect(()=>{
+    if(faza==="app"&&typeof Notification!=="undefined"&&Notification.permission==="default"){
+      enableNotifications();
+    }
+  },[faza]);
 
   // forsiraj ažuriranje Service Workera pri svakom pokretanju
   useEffect(()=>{
@@ -1652,7 +1657,7 @@ export default function App(){
         </div>
       )}
       {faza==="app"&&showIOSHint&&!isPWA&&(
-        <div style={{position:"fixed",bottom:80,left:"50%",transform:"translateX(-50%)",width:"calc(100% - 40px)",maxWidth:350,zIndex:200,background:"#fff",borderRadius:20,padding:"18px 18px 16px",boxShadow:"0 8px 32px rgba(192,120,144,0.22)",border:`1.5px solid ${C.border}`}}>
+        <div style={{position:"fixed",top:"max(16px,env(safe-area-inset-top,0px))",left:"50%",transform:"translateX(-50%)",width:"calc(100% - 40px)",maxWidth:350,zIndex:200,background:"#fff",borderRadius:20,padding:"18px 18px 16px",boxShadow:"0 8px 32px rgba(192,120,144,0.22)",border:`1.5px solid ${C.border}`}}>
           <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:10}}>
             <p style={{fontWeight:700,fontSize:14,color:C.text}}>Dodaj Unpick na ekran</p>
             <button onClick={()=>{setShowIOSHint(false);sessionStorage.setItem("iosHintDismissed","1");}} style={{background:"none",border:"none",cursor:"pointer",color:C.textLight,fontSize:18,lineHeight:1,padding:"0 0 0 8px",flexShrink:0}}>✕</button>
