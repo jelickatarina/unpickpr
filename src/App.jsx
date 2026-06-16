@@ -157,6 +157,28 @@ function calcStreak(entries, registeredAt){
   return Math.max(0,Math.floor((todayMidnight-refMidnight)/86400000));
 }
 
+const MiaAvatar=({size=32})=>(
+  <div style={{width:size,height:size,borderRadius:"50%",background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 10px ${C.primary}44`}}>
+    <svg width={size*.62} height={size*.62} viewBox="0 0 24 24" fill="none">
+      {/* antenna */}
+      <line x1="12" y1="2" x2="12" y2="5.5" stroke="white" strokeWidth="1.6" strokeLinecap="round"/>
+      <circle cx="12" cy="1.5" r="1.2" fill="white"/>
+      {/* head */}
+      <rect x="4" y="5.5" width="16" height="13" rx="4" fill="white" fillOpacity=".92"/>
+      {/* eyes */}
+      <circle cx="8.8" cy="11" r="2.2" fill={C.primary}/>
+      <circle cx="15.2" cy="11" r="2.2" fill={C.primary}/>
+      <circle cx="9.5" cy="10.3" r=".75" fill="white"/>
+      <circle cx="15.9" cy="10.3" r=".75" fill="white"/>
+      {/* smile */}
+      <path d="M9 14.5 Q12 16.5 15 14.5" stroke={C.primary} strokeWidth="1.4" strokeLinecap="round" fill="none"/>
+      {/* ear dots */}
+      <circle cx="4" cy="12" r="1" fill="white" fillOpacity=".6"/>
+      <circle cx="20" cy="12" r="1" fill="white" fillOpacity=".6"/>
+    </svg>
+  </div>
+);
+
 const IcoField=({ico,children,err})=>(
   <div style={{position:"relative"}}>
     <div style={{position:"absolute",left:15,top:"50%",transform:"translateY(-50%)",pointerEvents:"none",display:"flex",zIndex:1}}>
@@ -943,9 +965,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
       <div style={{paddingTop:HDR_PT,paddingBottom:14,paddingLeft:22,paddingRight:22,background:C.bgCard,borderBottom:`1px solid ${C.border}`,flexShrink:0,boxShadow:`0 2px 8px ${C.shadow}`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
           <div style={{display:"flex",alignItems:"flex-end",gap:12}}>
-            <div style={{width:38,height:38,borderRadius:"50%",background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative",boxShadow:`0 4px 10px ${C.primary}44`,marginBottom:2}}>
-              <Ico d={I.heart} size={17} stroke="#fff" sw={1.8}/>
-            </div>
+            <div style={{marginBottom:2}}><MiaAvatar size={42}/></div>
             <div>
               <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>AI podrška</span>
               <h1 className="serif" style={{fontSize:24,lineHeight:1,letterSpacing:-0.3,color:C.text}}>Mia</h1>
@@ -961,7 +981,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
         {poruke.map(p=>(
           <div key={p.id} style={{display:"flex",flexDirection:"column",alignItems:p.ko==="user"?"flex-end":"flex-start"}}>
             {p.ko==="ai"&&<div style={{display:"flex",alignItems:"flex-end",gap:8}}>
-              <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginBottom:2,fontSize:17,lineHeight:1}}>🤖</div>
+              <div style={{marginBottom:2}}><MiaAvatar size={34}/></div>
               <div style={{display:"flex",flexDirection:"column",gap:8,maxWidth:"84%"}}>
                 <div className="bba">{p.tekst}</div>
                 {p.sos&&<button onClick={onSOS} style={{alignSelf:"flex-start",display:"flex",alignItems:"center",gap:8,padding:"9px 16px 9px 12px",borderRadius:100,background:C.red,border:"none",cursor:"pointer",boxShadow:`0 4px 12px ${C.red}55`}}>
@@ -974,7 +994,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
           </div>
         ))}
         {ucitava&&<div style={{display:"flex",alignItems:"flex-end",gap:8}}>
-          <div style={{width:32,height:32,borderRadius:"50%",background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:17,lineHeight:1}}>🤖</div>
+          <MiaAvatar size={34}/>
           <div className="bba"><div className="typing"><div className="dot"/><div className="dot"/><div className="dot"/></div></div>
         </div>}
         <div ref={krajRef}/>
