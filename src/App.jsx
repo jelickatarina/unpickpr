@@ -530,9 +530,8 @@ function SOS({onZatvori}){
     <div style={{minHeight:"100vh",background:C.bg}} className="fi">
       {/* Header */}
       <div style={{paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:16,display:"flex",alignItems:"center",gap:14,borderBottom:`1px solid ${C.border}`,background:C.bgCard,position:"sticky",top:0,zIndex:10}}>
-        <div style={{width:40,height:40,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:20}}>🌿</div>
         <div style={{flex:1}}>
-          <h2 style={{fontSize:18,fontWeight:700,color:C.text,letterSpacing:-0.3,fontFamily:"'DM Sans',sans-serif",lineHeight:1,marginBottom:2}}>Hajde, polako</h2>
+          <h2 style={{fontSize:18,fontWeight:700,color:C.text,letterSpacing:-0.3,fontFamily:"'DM Sans',sans-serif",lineHeight:1,marginBottom:2}}>🌿 Hajde, polako</h2>
           <p style={{fontSize:12,color:C.textLight,fontWeight:500}}>Odaberi šta ti pomaže sada</p>
         </div>
         <button style={{background:C.bgMuted,border:"none",borderRadius:50,width:36,height:36,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0}} onClick={onZatvori}>
