@@ -604,29 +604,38 @@ function SOS({onZatvori}){
         </div>
       </div>
     );}
-    if(alat==="taj"){const TOTAL=300;const prog=tajmer/TOTAL;const r=76;const circ=2*Math.PI*r;const done=tAkt&&tajmer===0;return(
+    if(alat==="taj"){const TOTAL=300;const prog=(TOTAL-tajmer)/TOTAL;const done=tAkt&&tajmer===0;
+      const poruke=["Svaki sekund koji prođe je pobeda. 🌿","Impuls je talas — prolazi sam od sebe.","Ti si jača od ovog trenutka. 💙","Samo dišeš i čekaš. To je dovoljno.","Skoro si stigla. Drži se. ✨"];
+      const porukaIdx=Math.floor((TOTAL-tajmer)/60)%poruke.length;
+      return(
       <div style={{minHeight:"100vh",background:C.bg}} className="fi">
-        <ToolHdr emoji="⏱️" title={done?"Uspela si!":"Čekaj 5 minuta"}/>
-        <div style={{padding:"24px 20px 48px",display:"flex",flexDirection:"column",alignItems:"center",gap:20}}>
-          <p style={{fontSize:13,color:C.textMid,fontWeight:500,textAlign:"center"}}>{done?"Impuls je prošao. Budi ponosna 💪":"Impulsi prolaze — samo 5 minuta."}</p>
-          <div style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:28,padding:"32px 24px",display:"flex",flexDirection:"column",alignItems:"center",gap:12,width:"100%",boxShadow:`0 2px 16px ${C.shadow}`}}>
-            <div style={{position:"relative",width:180,height:180}}>
-              <svg width={180} height={180} style={{position:"absolute",top:0,left:0,transform:"rotate(-90deg)"}}>
-                <circle cx={90} cy={90} r={r} fill="none" stroke={done?C.green+"33":C.amber+"44"} strokeWidth={8}/>
-                <circle cx={90} cy={90} r={r} fill="none" stroke={done?C.green:C.amber} strokeWidth={8} strokeLinecap="round"
-                  strokeDasharray={circ} strokeDashoffset={circ*(1-prog)} style={{transition:"stroke-dashoffset 1s linear,stroke .5s"}}/>
-              </svg>
-              <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:4}}>
-                {done
-                  ?<span style={{fontSize:52}}>🎉</span>
-                  :<><span style={{fontSize:44,fontWeight:300,color:C.amber,lineHeight:1,fontFamily:"-apple-system,sans-serif"}}>{fmt(tajmer)}</span><span style={{fontSize:11,color:C.textLight,fontWeight:700,letterSpacing:1}}>PREOSTALO</span></>
-                }
-              </div>
+        <ToolHdr emoji="🌿" title={done?"Prošlo je":"Čekaj malo"}/>
+        <div style={{padding:"24px 20px 48px",display:"flex",flexDirection:"column",gap:16}}>
+          {done?(
+            <div style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:24,padding:"40px 24px",textAlign:"center",boxShadow:`0 2px 16px ${C.shadow}`}}>
+              <div style={{fontSize:52,marginBottom:16}}>🌸</div>
+              <h3 className="serif" style={{fontSize:26,letterSpacing:-0.3,marginBottom:8}}>Uspela si!</h3>
+              <p style={{fontSize:14,color:C.textMid,fontWeight:500,lineHeight:1.6}}>Impuls je prošao.<br/>Budi ponosna na sebe.</p>
             </div>
-            {tAkt&&!done&&<p style={{fontSize:13,color:C.textLight,fontWeight:500}}>Drži se, ide ti odlično 🌿</p>}
-          </div>
-          {!tAkt&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();try{acRef.current=new(window.AudioContext||window.webkitAudioContext)();}catch{}setTAkt(true);}} onClick={()=>{try{acRef.current=new(window.AudioContext||window.webkitAudioContext)();}catch{}setTAkt(true);}}>▶ Pokreni tajmer</button>}
-          {done&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();onZatvori();}} onClick={()=>onZatvori()}>Nastavi →</button>}
+          ):(
+            <>
+              <div style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:24,padding:"32px 24px",textAlign:"center",boxShadow:`0 2px 16px ${C.shadow}`}}>
+                <p style={{fontSize:13,color:C.textLight,fontWeight:600,letterSpacing:0.5,marginBottom:20}}>PREOSTALO</p>
+                <span style={{fontSize:56,fontWeight:300,color:C.text,letterSpacing:-2,fontFamily:"-apple-system,BlinkMacSystemFont,sans-serif",lineHeight:1}}>{fmt(tajmer)}</span>
+                {tAkt&&(
+                  <>
+                    <div style={{height:6,background:C.bgMuted,borderRadius:100,margin:"24px 0 0",overflow:"hidden"}}>
+                      <div style={{height:"100%",width:`${prog*100}%`,background:C.primaryGrad,borderRadius:100,transition:"width 1s linear"}}/>
+                    </div>
+                    <p style={{fontSize:13,color:C.textMid,fontWeight:500,marginTop:16,lineHeight:1.6,fontStyle:"italic"}}>"{poruke[porukaIdx]}"</p>
+                  </>
+                )}
+              </div>
+              {!tAkt&&<p style={{fontSize:13,color:C.textMid,fontWeight:500,textAlign:"center",lineHeight:1.6}}>Impulsi prolaze za nekoliko minuta.<br/>Samo pričekaj sa mnom.</p>}
+            </>
+          )}
+          {!tAkt&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();try{acRef.current=new(window.AudioContext||window.webkitAudioContext)();}catch{}setTAkt(true);}} onClick={()=>{try{acRef.current=new(window.AudioContext||window.webkitAudioContext)();}catch{}setTAkt(true);}}>Počnimo →</button>}
+          {done&&<button className="btn-p" onTouchStart={e=>{e.preventDefault();onZatvori();}} onClick={()=>onZatvori()}>Zatvori ✓</button>}
         </div>
       </div>
     );}
