@@ -1960,7 +1960,7 @@ export default function App(){
   function hideSplash(){const s=document.getElementById("splash");if(s){s.style.transition="opacity 0.4s";s.style.opacity="0";setTimeout(()=>s.remove(),400);}}
 
   useEffect(()=>{
-    setTimeout(hideSplash,2300);
+    setTimeout(hideSplash,3300);
     const cachedKey=Object.keys(localStorage).find(k=>k.startsWith('sb-')&&k.endsWith('-auth-token'));
     if(cachedKey){try{const parsed=JSON.parse(localStorage.getItem(cachedKey));if(parsed?.access_token){resolveSession({user:parsed.user||{id:parsed.user_id,email:parsed.email,user_metadata:parsed.user_metadata,created_at:parsed.created_at}});}}catch{}}
     supabase.auth.getSession().then(({data:{session}})=>{
