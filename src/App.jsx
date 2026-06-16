@@ -528,23 +528,23 @@ function SOS({onZatvori}){
 
   if(faza==="izb") return(
     <div style={{minHeight:"100vh",background:C.bg}} className="fi">
-      {/* Header */}
-      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,paddingTop:HDR_PT}}>
-        <div style={{position:"relative",textAlign:"center",padding:"14px 20px 18px"}}>
-          <button style={{position:"absolute",top:10,right:16,background:C.bgMuted,border:"none",borderRadius:50,width:34,height:34,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}} onClick={onZatvori}>
-            <Ico d={I.x} size={14} stroke={C.textMid} sw={2.5}/>
+      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,paddingBottom:14}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+          <div>
+            <span style={{display:"inline-block",background:C.primaryLight,color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:7}}>Podrška</span>
+            <h1 className="serif" style={{fontSize:24,letterSpacing:-0.3,lineHeight:1}}>Sve će biti u redu</h1>
+          </div>
+          <button onClick={onZatvori} style={{width:38,height:38,borderRadius:12,background:C.bgMuted,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,marginTop:4}}>
+            <Ico d={I.x} size={15} stroke={C.textMid} sw={2.5}/>
           </button>
-          <div style={{fontSize:28,marginBottom:8,lineHeight:1}}>🌿</div>
-          <h1 className="serif italic" style={{fontSize:22,color:C.text,letterSpacing:-0.2,lineHeight:1.1,marginBottom:4}}>Sve će biti u redu</h1>
-          <p style={{fontSize:13,color:C.textMid,fontWeight:500}}>Odaberi šta ti pomaže sada</p>
         </div>
       </div>
 
-      <div style={{padding:"24px 16px 60px",display:"flex",flexDirection:"column",gap:8}}>
-        <p style={{fontSize:12,fontWeight:700,color:C.textMid,letterSpacing:0.3,marginBottom:2,paddingLeft:4}}>Tehnike smirenja</p>
+      <div style={{padding:"20px 20px 60px",display:"flex",flexDirection:"column",gap:8}}>
+        <span style={{display:"inline-block",background:C.greenLight,color:C.green,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:4,alignSelf:"flex-start"}}>Tehnike smirenja</span>
         {ALATI.slice(0,4).map(a=>(
-          <button key={a.id} onClick={()=>{setAlat(a.id);setFaza("alat")}} style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:22,padding:"15px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:14,textAlign:"left",boxShadow:`0 2px 10px ${C.shadow}`,fontFamily:"inherit",transition:"all .15s"}}>
-            <div style={{width:46,height:46,borderRadius:15,background:a.bg,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:22}}>{a.emoji}</div>
+          <button key={a.id} onClick={()=>{setAlat(a.id);setFaza("alat")}} style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:20,padding:"14px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:14,textAlign:"left",boxShadow:`0 2px 10px ${C.shadow}`,fontFamily:"inherit"}}>
+            <div style={{width:46,height:46,borderRadius:14,background:a.bg,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:22}}>{a.emoji}</div>
             <div style={{flex:1}}>
               <p style={{fontWeight:700,fontSize:15,color:C.text,marginBottom:2}}>{a.l}</p>
               <p style={{fontSize:12,color:C.textMid,fontWeight:500}}>{a.op}</p>
@@ -552,11 +552,11 @@ function SOS({onZatvori}){
             <Ico d={I.chev} size={16} stroke={C.textLight} sw={2}/>
           </button>
         ))}
-        <p style={{fontSize:12,fontWeight:700,color:C.textMid,letterSpacing:0.3,marginTop:12,marginBottom:2,paddingLeft:4}}>Igrice za distrakciju</p>
+        <span style={{display:"inline-block",background:C.amberLight,color:C.amber,fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginTop:10,marginBottom:4,alignSelf:"flex-start"}}>Igrice za distrakciju</span>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
           {ALATI.slice(4).map(a=>(
-            <button key={a.id} onClick={()=>{setAlat(a.id);setFaza("alat")}} style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:22,padding:"20px 12px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:10,textAlign:"center",boxShadow:`0 2px 10px ${C.shadow}`,fontFamily:"inherit"}}>
-              <div style={{width:56,height:56,borderRadius:18,background:a.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26}}>{a.emoji}</div>
+            <button key={a.id} onClick={()=>{setAlat(a.id);setFaza("alat")}} style={{background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:20,padding:"20px 12px 18px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:10,textAlign:"center",boxShadow:`0 2px 10px ${C.shadow}`,fontFamily:"inherit"}}>
+              <div style={{width:52,height:52,borderRadius:16,background:a.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24}}>{a.emoji}</div>
               <div>
                 <p style={{fontWeight:700,fontSize:14,color:C.text,lineHeight:1.3,marginBottom:2}}>{a.l}</p>
                 <p style={{fontSize:11,color:C.textMid,fontWeight:500}}>{a.op}</p>
