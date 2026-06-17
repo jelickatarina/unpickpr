@@ -2227,15 +2227,37 @@ function KozmeticarkaPanel({kor,onLogout}){
             <p style={{fontSize:14,color:C.textMid,fontWeight:600}}>Još nemaš povezanih klijenata.</p>
             <p style={{fontSize:12,color:C.textLight,marginTop:6}}>Podeli svoj kod sa klijentom da se poveže iz svog profila.</p>
           </div>
-        ):klijenti.map(c=>(
-          <div key={c.id} style={{background:C.bgCard,borderRadius:18,border:`1px solid ${C.border}`,padding:"15px 18px",display:"flex",alignItems:"center",gap:14}}>
-            <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-              <Ico d={I.flame} size={18} stroke={C.primary} sw={1.8}/>
+        ):klijenti.map(c=>{
+          const ukupno=(c.total_res||0)+(c.total_try||0)+(c.total_ep||0);
+          const procenat=ukupno>0?Math.round((c.total_res/ukupno)*100):null;
+          return(
+            <div key={c.id} style={{background:C.bgCard,borderRadius:18,border:`1px solid ${C.border}`,padding:"15px 18px"}}>
+              <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:12}}>
+                <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                  <Ico d={I.flame} size={18} stroke={C.primary} sw={1.8}/>
+                </div>
+                <p style={{fontWeight:700,fontSize:14,color:C.text,flex:1}}>{c.ime||"Klijent"}</p>
+                <p style={{fontWeight:800,fontSize:18,color:C.primary}}>{klijentStreak(c)}</p>
+              </div>
+              <div style={{borderTop:`1px solid ${C.border}`,paddingTop:10,display:"flex",flexDirection:"column",gap:6}}>
+                <div style={{display:"flex",justifyContent:"space-between"}}>
+                  <span style={{fontSize:11,fontWeight:700,color:C.textLight,textTransform:"uppercase",letterSpacing:.5}}>Ove nedelje</span>
+                  <span style={{fontSize:12,color:C.textMid,fontWeight:600}}>
+                    <span style={{color:C.green}}>{c.week_res||0} ✓</span>{"  "}
+                    <span style={{color:C.amber}}>{c.week_try||0} ∼</span>{"  "}
+                    <span style={{color:C.red}}>{c.week_ep||0} ✕</span>
+                  </span>
+                </div>
+                <div style={{display:"flex",justifyContent:"space-between"}}>
+                  <span style={{fontSize:11,fontWeight:700,color:C.textLight,textTransform:"uppercase",letterSpacing:.5}}>Ukupno</span>
+                  <span style={{fontSize:12,color:C.textMid,fontWeight:600}}>
+                    {ukupno===0?"Nema unosa":`${procenat}% uspešnosti (${ukupno} unosa)`}
+                  </span>
+                </div>
+              </div>
             </div>
-            <p style={{fontWeight:700,fontSize:14,color:C.text,flex:1}}>{c.ime||"Klijent"}</p>
-            <p style={{fontWeight:800,fontSize:18,color:C.primary}}>{klijentStreak(c)}</p>
-          </div>
-        ))}
+          );
+        })}
         <button onClick={onLogout} style={{width:"100%",background:C.bgCard,border:`1.5px solid rgba(196,104,120,.25)`,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit",marginTop:10}}>
           <div style={{width:42,height:42,borderRadius:14,background:"#FFF0F2",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🚪</div>
           <p style={{fontWeight:700,fontSize:14,color:C.red}}>Odjavi se</p>

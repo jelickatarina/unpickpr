@@ -85,17 +85,30 @@ end;
 $$;
 grant execute on function public.link_to_kozmeticarka(text) to authenticated;
 
--- Kozmetičarka vidi samo broj dana (streak) svojih povezanih klijenata,
--- ne dnevničke unose ni druge lične podatke. security definer da ne mora
--- da se širi profiles/journal_entries SELECT RLS na tuđe redove.
+-- Kozmetičarka vidi samo brojeve (streak + agregatne statistike) svojih
+-- povezanih klijenata — ne dnevničke beleške, okidače, emocije ni slike.
+-- security definer da ne mora da se širi profiles/journal_entries SELECT RLS
+-- na tuđe redove.
+drop function if exists public.get_kozmeticarka_clients();
 create or replace function public.get_kozmeticarka_clients()
-returns table(id uuid, ime text, registered_at timestamptz, last_bad_at timestamptz)
+returns table(
+  id uuid, ime text, registered_at timestamptz, last_bad_at timestamptz,
+  total_res bigint, total_try bigint, total_ep bigint,
+  week_res bigint, week_try bigint, week_ep bigint
+)
 language sql
 security definer
 set search_path = public
 as $$
-  select p.id, p.ime, u.created_at as registered_at,
-    (select max(j.created_at) from journal_entries j where j.user_id = p.id and j.outcome in ('try','ep')) as last_bad_at
+  select
+    p.id, p.ime, u.created_at as registered_at,
+    (select max(j.created_at) from journal_entries j where j.user_id = p.id and j.outcome in ('try','ep')) as last_bad_at,
+    (select count(*) from journal_entries j where j.user_id = p.id and j.outcome = 'res') as total_res,
+    (select count(*) from journal_entries j where j.user_id = p.id and j.outcome = 'try') as total_try,
+    (select count(*) from journal_entries j where j.user_id = p.id and j.outcome = 'ep') as total_ep,
+    (select count(*) from journal_entries j where j.user_id = p.id and j.outcome = 'res' and j.created_at >= date_trunc('week', now())) as week_res,
+    (select count(*) from journal_entries j where j.user_id = p.id and j.outcome = 'try' and j.created_at >= date_trunc('week', now())) as week_try,
+    (select count(*) from journal_entries j where j.user_id = p.id and j.outcome = 'ep' and j.created_at >= date_trunc('week', now())) as week_ep
   from profiles p
   join auth.users u on u.id = p.id
   where p.kozmeticarka_id = auth.uid();
