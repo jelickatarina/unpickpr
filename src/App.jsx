@@ -2201,6 +2201,8 @@ function klijentStreak(c){
 function KozmeticarkaPanel({kor,onLogout}){
   const [klijenti,setKlijenti]=useState([]);
   const [loading,setLoading]=useState(true);
+  const [detalji,setDetalji]=useState(null);
+  const [detLoading,setDetLoading]=useState(false);
 
   useEffect(()=>{
     let aktivno=true;
@@ -2211,6 +2213,27 @@ function KozmeticarkaPanel({kor,onLogout}){
     });
     return()=>{aktivno=false;};
   },[]);
+
+  async function otvoriDetalje(c){
+    setDetLoading(true);
+    const {data,error}=await supabase.rpc("get_kozmeticarka_client_entries",{p_client_id:c.id});
+    setDetLoading(false);
+    if(error||!data) return;
+    const unosi=data.map(e=>({ts:new Date(e.created_at).getTime(),ish:e.outcome,ok:safeParseOk(e.trigger)}));
+    setDetalji({client:c,unosi});
+  }
+
+  if(detalji) return(
+    <div style={{minHeight:"100vh",background:C.bg}} className="fi">
+      <div style={{position:"sticky",top:0,zIndex:10,background:C.bgCard,borderBottom:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:12,padding:"max(14px,env(safe-area-inset-top,0px)) 20px 14px"}}>
+        <button onClick={()=>setDetalji(null)} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",padding:0}}>
+          <Ico d={I.back} size={18} stroke={C.textMid} sw={2}/>
+        </button>
+        <p style={{fontWeight:800,fontSize:16,color:C.text}}>{detalji.client.ime||"Klijent"}</p>
+      </div>
+      <Napredak unosi={detalji.unosi} niz={klijentStreak(detalji.client)} registeredAt={detalji.client.registered_at}/>
+    </div>
+  );
 
   return(
     <div style={{minHeight:"100vh",background:C.bg}} className="fi">
@@ -2231,13 +2254,14 @@ function KozmeticarkaPanel({kor,onLogout}){
           const ukupno=(c.total_res||0)+(c.total_try||0)+(c.total_ep||0);
           const procenat=ukupno>0?Math.round((c.total_res/ukupno)*100):null;
           return(
-            <div key={c.id} style={{background:C.bgCard,borderRadius:18,border:`1px solid ${C.border}`,padding:"15px 18px"}}>
+            <button key={c.id} onClick={()=>otvoriDetalje(c)} disabled={detLoading} style={{background:C.bgCard,border:`1px solid ${C.border}`,borderRadius:18,padding:"15px 18px",textAlign:"left",cursor:"pointer",fontFamily:"inherit",width:"100%"}}>
               <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:12}}>
                 <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                   <Ico d={I.flame} size={18} stroke={C.primary} sw={1.8}/>
                 </div>
                 <p style={{fontWeight:700,fontSize:14,color:C.text,flex:1}}>{c.ime||"Klijent"}</p>
                 <p style={{fontWeight:800,fontSize:18,color:C.primary}}>{klijentStreak(c)}</p>
+                <Ico d={I.chev} size={14} stroke={C.textLight} sw={2.5}/>
               </div>
               <div style={{borderTop:`1px solid ${C.border}`,paddingTop:10,display:"flex",flexDirection:"column",gap:6}}>
                 <div style={{display:"flex",justifyContent:"space-between"}}>
@@ -2255,7 +2279,7 @@ function KozmeticarkaPanel({kor,onLogout}){
                   </span>
                 </div>
               </div>
-            </div>
+            </button>
           );
         })}
         <button onClick={onLogout} style={{width:"100%",background:C.bgCard,border:`1.5px solid rgba(196,104,120,.25)`,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit",marginTop:10}}>

@@ -115,6 +115,25 @@ as $$
 $$;
 grant execute on function public.get_kozmeticarka_clients() to authenticated;
 
+-- Pun "Napredak" prikaz za jednog klijenta (kalendar, trend, okidači) — i ovo
+-- su samo kategorije/brojevi iz unosa (outcome, trigger, datum), bez beleški,
+-- lokacije ili slika. p_client_id mora biti klijent povezan sa pozivajućom
+-- kozmetičarkom, provereno u where klauzi ispod.
+create or replace function public.get_kozmeticarka_client_entries(p_client_id uuid)
+returns table(created_at timestamptz, outcome text, trigger text)
+language sql
+security definer
+set search_path = public
+as $$
+  select j.created_at, j.outcome, j.trigger
+  from journal_entries j
+  join profiles p on p.id = j.user_id
+  where j.user_id = p_client_id
+    and p.kozmeticarka_id = auth.uid()
+  order by j.created_at desc;
+$$;
+grant execute on function public.get_kozmeticarka_client_entries(uuid) to authenticated;
+
 -- Da napraviš kozmetičarku: nek se registruje kroz app kao običan korisnik,
 -- pa pokreni (sa pravim emailom i željenim kodom za deljenje s klijentima):
 -- update profiles set role='kozmeticarka', kod='ABC123'
