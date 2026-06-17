@@ -1234,7 +1234,10 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
             <div style={{width:40,height:4,borderRadius:2,background:C.border,margin:"12px auto 0"}}/>
 
             {/* Hero header */}
-            <div style={{padding:"22px 24px 24px",background:`linear-gradient(160deg,#FFF8FA 0%,#FAE0EB 55%,#F5D8E8 100%)`,textAlign:"center",borderBottom:`1px solid ${C.border}`}}>
+            <div style={{position:"relative",padding:"22px 24px 24px",background:`linear-gradient(160deg,#FFF8FA 0%,#FAE0EB 55%,#F5D8E8 100%)`,textAlign:"center",borderBottom:`1px solid ${C.border}`}}>
+              <button onClick={()=>{setShowProfil(false);setMenjaLozinku(false);setLozPoruka(null);setMenjaIme(false);setImePoruka(null);}} style={{position:"absolute",top:16,right:16,background:"rgba(255,255,255,.6)",border:"none",borderRadius:50,width:32,height:32,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>
+                <Ico d={I.x} size={14} stroke={C.textMid} sw={2.2}/>
+              </button>
               <div style={{width:68,height:68,borderRadius:22,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 14px",boxShadow:`0 6px 20px rgba(168,90,116,.35)`}}>
                 <span style={{fontSize:initijali.length>1?22:28,fontWeight:800,color:"#fff",fontFamily:"'DM Sans',sans-serif",letterSpacing:-1}}>{initijali}</span>
               </div>
