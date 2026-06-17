@@ -145,6 +145,12 @@ const HDR_PT=isPWA?"max(64px,env(safe-area-inset-top,0px))":"max(16px,env(safe-a
 function safeParseOk(v){if(!v)return[];try{const p=JSON.parse(v);return Array.isArray(p)?p:[v];}catch{return v?[v]:[];}}
 function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
 
+function prijaviBug(kor){
+  const subject="Unpick - Prijava bug-a";
+  const body=`Opiši šta se desilo:\n\n\n---\nKorisnik: ${kor?.ime||"?"} (${kor?.email||"?"})`;
+  window.location.href=`mailto:jlckaca@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
 function calcStreak(entries, registeredAt){
   const todayMidnight=new Date();todayMidnight.setHours(0,0,0,0);
   const bad=entries.filter(e=>e.ts&&(e.ish==="try"||e.ish==="ep"));
@@ -1243,6 +1249,15 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
                 )}
               </div>
 
+              {/* Prijavi bug */}
+              <button onClick={()=>prijaviBug(kor)}
+                style={{width:"100%",background:C.bg,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"14px 16px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+                <div style={{width:40,height:40,borderRadius:13,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                  <Ico d={I.mail} size={18} stroke={C.primary} sw={1.8}/>
+                </div>
+                <p style={{fontWeight:700,fontSize:14,color:C.text,flex:1,textAlign:"left"}}>Prijavi bug</p>
+              </button>
+
               {/* Odjava */}
               <button onClick={onLogout}
                 style={{width:"100%",background:"#FFF5F5",border:`1.5px solid rgba(196,104,120,.2)`,borderRadius:18,padding:"14px 16px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit",marginTop:4}}>
@@ -1987,6 +2002,14 @@ function Profil({kor,onLogout,onNotif,notifStatus,onUpdateIme}){
             </div>
           )}
         </div>
+
+        {/* Prijavi bug */}
+        <button onClick={()=>prijaviBug(kor)} style={{width:"100%",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+          <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <Ico d={I.mail} size={18} stroke={C.primary} sw={1.8}/>
+          </div>
+          <p style={{fontWeight:700,fontSize:14,color:C.text}}>Prijavi bug</p>
+        </button>
 
         {/* Odjava */}
         <button onClick={onLogout} style={{width:"100%",background:C.bgCard,border:`1.5px solid rgba(196,104,120,.25)`,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
