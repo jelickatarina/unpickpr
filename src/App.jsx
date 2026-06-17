@@ -1472,7 +1472,7 @@ function Dnevnik({noviUnosi,onDodaj,onIzmeni,onObrisi}){
   );
 }
 
-function Napredak({unosi,niz}){
+function Napredak({unosi,niz,registeredAt}){
   const OKI_BOJE=[C.primary,C.purple,C.amber,C.green,C.textLight];
   const total=unosi.length;
 
@@ -1497,6 +1497,7 @@ function Napredak({unosi,niz}){
 
   // 7-day calendar
   const dani=["ned","pon","uto","sre","čet","pet","sub"];
+  const regTs=registeredAt?new Date(registeredAt).setHours(0,0,0,0):null;
   const sedmica=Array.from({length:7},(_,i)=>{
     const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-6+i);
     const du=unosi.filter(e=>e.ts&&new Date(e.ts).toDateString()===d.toDateString());
@@ -1505,7 +1506,8 @@ function Napredak({unosi,niz}){
     const hasRes=du.some(e=>e.ish==="res");
     const isToday=i===6;
     const isPast=!isToday;
-    const status=hasEp?"ep":hasTry?"try":hasRes?"res":(isPast?"clean":"none");
+    const preReg=regTs&&d.getTime()<regTs;
+    const status=preReg?"pre":hasEp?"ep":hasTry?"try":hasRes?"res":(isPast?"clean":"none");
     const epCount=du.filter(e=>e.ish==="ep").length;
     const tryCount=du.filter(e=>e.ish==="try").length;
     const resCount=du.filter(e=>e.ish==="res").length;
@@ -1584,11 +1586,11 @@ function Napredak({unosi,niz}){
         </div>
         <div style={{display:"flex",gap:5}}>
           {sedmica.map((d,i)=>{
-            const bg=d.status==="ep"?C.red:d.status==="try"?C.amber:(d.status==="res"||d.status==="clean")?C.greenLight:d.isToday?C.primaryLight:C.bgMuted;
-            const fg=d.status==="ep"||d.status==="try"?"#fff":(d.status==="res"||d.status==="clean")?C.green:d.isToday?C.primary:C.textLight;
-            const ico=d.status==="ep"?"✕":d.status==="try"?"∼":(d.status==="res"||d.status==="clean")?"✓":d.isToday?"·":"";
+            const bg=d.status==="pre"?C.bgMuted:d.status==="ep"?C.red:d.status==="try"?C.amber:(d.status==="res"||d.status==="clean")?C.greenLight:d.isToday?C.primaryLight:C.bgMuted;
+            const fg=d.status==="pre"?C.textLight:d.status==="ep"||d.status==="try"?"#fff":(d.status==="res"||d.status==="clean")?C.green:d.isToday?C.primary:C.textLight;
+            const ico=d.status==="pre"?"":d.status==="ep"?"✕":d.status==="try"?"∼":(d.status==="res"||d.status==="clean")?"✓":d.isToday?"·":"";
             return(
-              <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:5}}>
+              <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:5,opacity:d.status==="pre"?0.4:1}}>
                 <div style={{width:"100%",aspectRatio:"1",borderRadius:10,background:bg,border:d.isToday&&d.status==="none"?`2px solid ${C.primary}`:"2px solid transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
                   <span style={{fontSize:13,fontWeight:800,color:fg,lineHeight:1}}>{ico}</span>
                 </div>
@@ -2233,7 +2235,7 @@ export default function App(){
               <div ref={contentRef} style={{display:ekran==="chat"?"none":"flex",flexDirection:"column",flex:1,minHeight:0,paddingBottom:isDesk?"24px":"calc(63px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
                 {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout} kor={kor} onNotif={enableNotifications} notifStatus={notifStatus} onUpdateIme={updateIme}/>}
                 {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
-                {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
+                {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)} registeredAt={kor?.registeredAt}/>}
                 {ekran==="bib"&&<Biblioteka/>}
                 {ekran==="profil"&&<Profil kor={kor} onLogout={handleLogout} onNotif={enableNotifications} notifStatus={notifStatus} onUpdateIme={updateIme}/>}
               </div>
