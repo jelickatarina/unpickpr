@@ -59,6 +59,7 @@ textarea.inp{resize:none;min-height:80px;line-height:1.65;}
 @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(76,217,100,.5)}70%{box-shadow:0 0 0 6px rgba(76,217,100,0)}}
 @keyframes sosPulse{0%,100%{box-shadow:0 0 0 0 rgba(192,120,144,.4),0 2px 10px rgba(192,120,144,.13)}60%{box-shadow:0 0 0 7px rgba(192,120,144,0),0 2px 10px rgba(192,120,144,.13)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 .lbl{font-size:10px;font-weight:700;color:${C.textLight};letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:10px;}
 @media(min-width:768px){
   .app{max-width:1100px;display:flex;flex-direction:row;min-height:100vh;}
@@ -1022,7 +1023,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
   );
 }
 
-function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNotif,notifStatus,onUpdateIme}){
+function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNotif,notifStatus,onUpdateIme,synced}){
   const [izvestaj,setIzvestaj]=useState(null);
   const [showProfil,setShowProfil]=useState(false);
   const [menjaLozinku,setMenjaLozinku]=useState(false);
@@ -1271,9 +1272,9 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
         <div style={{position:"relative",width:r*2+20,height:r*2+20,marginBottom:12}}>
           <svg width={r*2+20} height={r*2+20} style={{position:"absolute",inset:0,transform:"rotate(-90deg)"}}>
             <circle cx={r+10} cy={r+10} r={r} fill="none" stroke={C.primary+"18"} strokeWidth={6}/>
-            <circle cx={r+10} cy={r+10} r={r} fill="none" stroke="url(#pg)" strokeWidth={6}
+            {synced&&<circle cx={r+10} cy={r+10} r={r} fill="none" stroke="url(#pg)" strokeWidth={6}
               strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={ringOffset}
-              style={{transition:"stroke-dashoffset .6s ease"}}/>
+              style={{transition:"stroke-dashoffset .6s ease"}}/>}
             <defs>
               <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#D898AC"/>
@@ -1282,7 +1283,9 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
             </defs>
           </svg>
           <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:0}}>
-            {niz===0?(
+            {!synced?(
+              <div style={{width:34,height:34,borderRadius:"50%",border:`3px solid ${C.border}`,borderTopColor:C.primary,animation:"spin 0.8s linear infinite"}}/>
+            ):niz===0?(
               <><Ico d={I.leaf} size={28} stroke={C.primary} sw={1.8}/><p style={{fontSize:12,fontWeight:700,color:C.textMid,marginTop:6,letterSpacing:1,textTransform:"uppercase"}}>Počni!</p></>
             ):(
               <>
@@ -1295,7 +1298,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
             )}
           </div>
         </div>
-        <p style={{fontSize:13,color:badDanas?C.red:C.textMid,fontWeight:600,letterSpacing:0.1}}>
+        <p style={{fontSize:13,color:badDanas?C.red:C.textMid,fontWeight:600,letterSpacing:0.1,visibility:synced?"visible":"hidden"}}>
           {badDanas?"Resetovano danas":`${faliTekst} do sledeće vatrice`}
         </p>
       </div>
@@ -1999,6 +2002,7 @@ export default function App(){
   const [faza,setFaza]=useState("loading");const [kor,setKor]=useState(null);const [ekran,setEkran]=useState("poc");
   const [priSOS,setPriSOS]=useState(false);const [priUnos,setPriUnos]=useState(false);const [editUnos,setEditUnos]=useState(null);
   const [noviUnosi,setNoviUnosi]=useState([]);
+  const [unosiSynced,setUnosiSynced]=useState(false);
   const [isDesk,setIsDesk]=useState(typeof window!=="undefined"&&window.innerWidth>=768);
   useEffect(()=>{const h=()=>setIsDesk(window.innerWidth>=768);window.addEventListener("resize",h);return()=>window.removeEventListener("resize",h);},[]);
   const [kbOpen,setKbOpen]=useState(false);
@@ -2089,7 +2093,7 @@ export default function App(){
       else{setFaza("auth");document.getElementById("root").style.visibility="visible";hideSplash();}
     });
     const {data:{subscription}}=supabase.auth.onAuthStateChange((event,session)=>{
-      if(event==="SIGNED_OUT"){setFaza("auth");setKor(null);}
+      if(event==="SIGNED_OUT"){setFaza("auth");setKor(null);setUnosiSynced(false);}
     });
     return()=>subscription.unsubscribe();
   },[]);
@@ -2130,6 +2134,7 @@ export default function App(){
       localStorage.setItem(`unpick_entries_${userId}`,JSON.stringify(entries));
       localStorage.setItem(`unpick_sync_${userId}`,Date.now().toString());
     }
+    setUnosiSynced(true);
   }
 
   async function handleSacuvajUnos(u){
@@ -2253,7 +2258,7 @@ export default function App(){
               ?{flex:1,minWidth:0,display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden"}
               :{display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}}>
               <div ref={contentRef} style={{display:ekran==="chat"?"none":"flex",flexDirection:"column",flex:1,minHeight:0,paddingBottom:isDesk?"24px":"calc(63px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
-                {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout} kor={kor} onNotif={enableNotifications} notifStatus={notifStatus} onUpdateIme={updateIme}/>}
+                {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout} kor={kor} onNotif={enableNotifications} notifStatus={notifStatus} onUpdateIme={updateIme} synced={unosiSynced}/>}
                 {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
                 {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)} registeredAt={kor?.registeredAt}/>}
                 {ekran==="bib"&&<Biblioteka/>}
