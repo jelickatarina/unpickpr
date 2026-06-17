@@ -2051,6 +2051,26 @@ export default function App(){
     }
   },[faza]);
 
+  // ako korisnik ručno promeni dozvolu u podešavanjima telefona/browsera dok je app u pozadini,
+  // Notification.permission se ne osvežava sam — provera na fokus/povratak u app
+  useEffect(()=>{
+    if(typeof Notification==="undefined") return;
+    async function recheck(){
+      const current=Notification.permission;
+      setNotifStatus(prev=>{
+        if(prev==="denied"&&current==="granted"){
+          subscribeToPush().then(sub=>{
+            if(sub&&kor?.id) supabase.from("profiles").update({push_subscription:JSON.stringify(sub)}).eq("id",kor.id);
+          });
+        }
+        return current;
+      });
+    }
+    document.addEventListener("visibilitychange",recheck);
+    window.addEventListener("focus",recheck);
+    return()=>{document.removeEventListener("visibilitychange",recheck);window.removeEventListener("focus",recheck);};
+  },[kor?.id]);
+
   // forsiraj ažuriranje Service Workera pri svakom pokretanju
   useEffect(()=>{
     if('serviceWorker' in navigator){
