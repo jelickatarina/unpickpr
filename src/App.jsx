@@ -2162,6 +2162,21 @@ export default function App(){
     return()=>{document.removeEventListener("visibilitychange",recheck);window.removeEventListener("focus",recheck);};
   },[kor?.id]);
 
+  // provera da nalog (auth.users red) još postoji — uhvati slučaj kad je nalog obrisan
+  // dok je sesija u browseru još "važila" (access token nije istekao)
+  useEffect(()=>{
+    if(faza!=="app") return;
+    async function provericNalog(){
+      if(document.visibilityState!=="visible") return;
+      const {data,error}=await supabase.auth.getUser();
+      if(error||!data?.user) await supabase.auth.signOut();
+    }
+    provericNalog();
+    document.addEventListener("visibilitychange",provericNalog);
+    window.addEventListener("focus",provericNalog);
+    return()=>{document.removeEventListener("visibilitychange",provericNalog);window.removeEventListener("focus",provericNalog);};
+  },[faza]);
+
   // forsiraj ažuriranje Service Workera pri svakom pokretanju
   useEffect(()=>{
     if('serviceWorker' in navigator){
@@ -2226,14 +2241,20 @@ export default function App(){
   }
 
   async function loadJournalEntries(userId){
-    const {data}=await supabase.from("journal_entries").select("*").eq("user_id",userId).order("created_at",{ascending:false});
-    if(data){
-      const entries=data.map(e=>({id:e.id,datum:new Date(e.created_at).toLocaleString("sr"),ts:new Date(e.created_at).getTime(),int:e.intensity,ok:safeParseOk(e.trigger),lok:e.location,epre:e.emotion_before,epost:e.emotion_after,ish:e.outcome,bel:e.note,slike:e.images||[]}));
-      setNoviUnosi(entries);
-      localStorage.setItem(`unpick_entries_${userId}`,JSON.stringify(entries));
-      localStorage.setItem(`unpick_sync_${userId}`,Date.now().toString());
+    try{
+      const {data,error}=await supabase.from("journal_entries").select("*").eq("user_id",userId).order("created_at",{ascending:false});
+      if(error) throw error;
+      if(data){
+        const entries=data.map(e=>({id:e.id,datum:new Date(e.created_at).toLocaleString("sr"),ts:new Date(e.created_at).getTime(),int:e.intensity,ok:safeParseOk(e.trigger),lok:e.location,epre:e.emotion_before,epost:e.emotion_after,ish:e.outcome,bel:e.note,slike:e.images||[]}));
+        setNoviUnosi(entries);
+        localStorage.setItem(`unpick_entries_${userId}`,JSON.stringify(entries));
+        localStorage.setItem(`unpick_sync_${userId}`,Date.now().toString());
+      }
+    }catch(e){
+      console.error("loadJournalEntries:",e?.message);
+    }finally{
+      setUnosiSynced(true);
     }
-    setUnosiSynced(true);
   }
 
   async function handleSacuvajUnos(u){
