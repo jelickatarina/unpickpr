@@ -1571,7 +1571,7 @@ function Napredak({unosi,niz,registeredAt}){
     <div style={{paddingBottom:90}} className="fi">
 
       {/* Sekcija 1 — 7-day calendar */}
-      <div style={{paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,background:C.bg,paddingBottom:4}}/>
+      <div style={{paddingTop:HDR_PT,paddingLeft:20,paddingRight:20,background:C.bg,paddingBottom:16}}/>
       <div style={{margin:"0 20px 10px",background:C.bgCard,borderRadius:24,padding:"18px",border:`1px solid ${C.border}`}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
           <p style={{fontSize:13,fontWeight:700,color:C.text}}>Ova nedelja</p>
