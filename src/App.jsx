@@ -914,9 +914,11 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
 
         {/* Sačuvaj */}
         <button
+          type="button"
           disabled={!u.ish||saving}
+          onTouchStart={e=>{e.preventDefault();if(u.ish&&!saving){setSaving(true);onSacuvaj(u);}}}
           onClick={()=>{if(!u.ish||saving)return;setSaving(true);onSacuvaj(u);}}
-          style={{background:u.ish?C.primaryGrad:"#EEE0E6",color:u.ish?"#fff":C.textLight,border:"none",borderRadius:100,padding:"16px",fontSize:15,fontWeight:700,fontFamily:"'DM Sans',sans-serif",cursor:u.ish?"pointer":"default",transition:"all .2s",opacity:saving?0.6:1,width:"100%"}}
+          style={{background:u.ish?C.primaryGrad:"#EEE0E6",color:u.ish?"#fff":C.textLight,border:"none",borderRadius:100,padding:"16px",fontSize:15,fontWeight:700,fontFamily:"'DM Sans',sans-serif",cursor:u.ish?"pointer":"default",transition:"all .2s",opacity:saving?0.6:1,width:"100%",touchAction:"manipulation"}}
         >{saving?"Čuvam...":"Sačuvaj"}</button>
 
       </div>
@@ -2513,10 +2515,10 @@ export default function App(){
       if(session){
         await supabase.from("journal_entries").update({
           intensity:u.int,trigger:JSON.stringify(u.ok),location:u.lok,
-          emotion_before:u.epre,emotion_after:u.epost,outcome:u.ish,note:u.bel
+          emotion_before:u.epre,emotion_after:u.epost,outcome:u.ish,note:u.bel,images:u.slike
         }).eq("id",editUnos.id);
       }
-      setNoviUnosi(v=>v.map(e=>e.id===editUnos.id?{...e,int:u.int,ok:u.ok,lok:u.lok,epre:u.epre,epost:u.epost,ish:u.ish,bel:u.bel}:e));
+      setNoviUnosi(v=>v.map(e=>e.id===editUnos.id?{...e,int:u.int,ok:u.ok,lok:u.lok,epre:u.epre,epost:u.epost,ish:u.ish,bel:u.bel,slike:u.slike}:e));
       setEditUnos(null);setPriUnos(false);return;
     }
     if(session){
