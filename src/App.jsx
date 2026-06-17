@@ -313,8 +313,8 @@ function Auth({onDone,notice}){
 
   function validate(){
     const e={};
-    if(!isL&&!ime.trim()) e.ime="Ime je obavezno.";
-    else if(!isL&&ime.trim().length<2) e.ime="Ime mora imati najmanje 2 karaktera.";
+    if(!isL&&!ime.trim()) e.ime="Ime i prezime su obavezni.";
+    else if(!isL&&ime.trim().split(/\s+/).filter(Boolean).length<2) e.ime="Unesi ime i prezime.";
     if(!isL&&!pol) e.pol="Odaberi pol.";
     if(!em.trim()) e.em="Email adresa je obavezna.";
     else if(!validEmail(em)) e.em="Unesite ispravnu email adresu.";
@@ -406,9 +406,9 @@ function Auth({onDone,notice}){
           {uspeh&&<div style={{background:C.greenLight,borderRadius:14,padding:"11px 14px",border:`1px solid ${C.green}44`}}><p style={{color:C.green,fontSize:13,fontWeight:600}}>{uspeh}</p></div>}
 
           {!isL&&<div>
-            <span style={lbl}>Ime</span>
+            <span style={lbl}>Ime i prezime</span>
             <IcoField ico={I.user} err={!!errs.ime}>
-              <input className="inp-el" placeholder="Tvoje ime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inp(errs.ime)} autoComplete="given-name"/>
+              <input className="inp-el" placeholder="Ime i prezime" value={ime} onChange={e=>{setIme(e.target.value);if(errs.ime)setErrs(v=>({...v,ime:""}));}} style={inp(errs.ime)} autoComplete="name"/>
             </IcoField>
             {errs.ime&&<p style={{color:C.red,fontSize:12,fontWeight:600,marginTop:5,paddingLeft:2}}>{errs.ime}</p>}
           </div>}
