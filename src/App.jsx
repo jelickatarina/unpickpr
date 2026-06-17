@@ -145,10 +145,64 @@ const HDR_PT=isPWA?"max(64px,env(safe-area-inset-top,0px))":"max(16px,env(safe-a
 function safeParseOk(v){if(!v)return[];try{const p=JSON.parse(v);return Array.isArray(p)?p:[v];}catch{return v?[v]:[];}}
 function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
 
-function prijaviBug(kor){
-  const subject="Unpick - Prijava bug-a";
-  const body=`Opiši šta se desilo:\n\n\n---\nKorisnik: ${kor?.ime||"?"} (${kor?.email||"?"})`;
-  window.location.href=`mailto:jlckaca@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+function BugModal({kor,onClose}){
+  const [poruka,setPoruka]=useState("");
+  const [stanje,setStanje]=useState("");
+  const [loading,setLoading]=useState(false);
+
+  async function posalji(){
+    if(!poruka.trim()) return;
+    setLoading(true);setStanje("");
+    try{
+      const res=await fetch("/api/bug-report",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({message:poruka,ime:kor?.ime,email:kor?.email}),
+      });
+      const data=await res.json();
+      if(!res.ok||data.error) throw new Error(data.error||"Greška pri slanju.");
+      setStanje("ok");
+    }catch(e){
+      setStanje("greska");
+    }finally{
+      setLoading(false);
+    }
+  }
+
+  return(
+    <div style={{position:"fixed",inset:0,zIndex:400,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={onClose}>
+      <div style={{position:"absolute",inset:0,background:"rgba(42,24,32,.52)",backdropFilter:"blur(8px)"}}/>
+      <div onClick={e=>e.stopPropagation()} style={{position:"relative",background:C.bgCard,borderRadius:"32px 32px 0 0",padding:"12px 24px calc(28px + env(safe-area-inset-bottom,0px))",maxHeight:"80vh",overflowY:"auto",boxShadow:"0 -16px 64px rgba(168,90,116,.22)"}} className="fi">
+        <div style={{width:40,height:4,borderRadius:2,background:C.border,margin:"0 auto 18px"}}/>
+        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
+          <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <Ico d={I.mail} size={18} stroke={C.primary} sw={1.8}/>
+          </div>
+          <div>
+            <p style={{fontWeight:800,fontSize:16,color:C.text,letterSpacing:-0.3}}>Prijavi bug</p>
+            <p style={{fontSize:12,color:C.textLight}}>Opiši šta se desilo, javljamo se uskoro.</p>
+          </div>
+        </div>
+        {stanje==="ok"?(
+          <div style={{textAlign:"center",padding:"20px 0"}}>
+            <div style={{fontSize:36,marginBottom:8}}>💌</div>
+            <p style={{fontWeight:700,color:C.green,fontSize:15,marginBottom:4}}>Poslato!</p>
+            <p style={{fontSize:13,color:C.textLight,fontWeight:500,marginBottom:16}}>Hvala što si prijavila problem.</p>
+            <button onClick={onClose} className="btn-p" style={{borderRadius:14,padding:"13px"}}>Zatvori</button>
+          </div>
+        ):(
+          <>
+            <textarea value={poruka} onChange={e=>setPoruka(e.target.value)} placeholder="Šta se desilo?" rows={5}
+              style={{width:"100%",background:C.bg,border:`1.5px solid ${C.border}`,borderRadius:16,padding:"14px 16px",fontSize:14,fontFamily:"inherit",color:C.text,resize:"vertical",marginBottom:10}}/>
+            {stanje==="greska"&&<p style={{fontSize:12,color:C.red,fontWeight:600,textAlign:"center",marginBottom:10}}>Nešto je pošlo po zlu, pokušaj ponovo.</p>}
+            <button onClick={posalji} disabled={loading||!poruka.trim()} className="btn-p" style={{borderRadius:14,padding:"13px"}}>
+              {loading?"Šaljem...":"Prijavi"}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
 }
 
 function calcStreak(entries, registeredAt){
@@ -1037,6 +1091,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
 function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNotif,notifStatus,onUpdateIme,synced}){
   const [izvestaj,setIzvestaj]=useState(null);
   const [showProfil,setShowProfil]=useState(false);
+  const [showBug,setShowBug]=useState(false);
   const [menjaLozinku,setMenjaLozinku]=useState(false);
   const [novaLoz,setNovaLoz]=useState("");
   const [potvrda,setPotvrda]=useState("");
@@ -1255,7 +1310,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
               </div>
 
               {/* Prijavi bug */}
-              <button onClick={()=>prijaviBug(kor)}
+              <button onClick={()=>setShowBug(true)}
                 style={{width:"100%",background:C.bg,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"14px 16px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
                 <div style={{width:40,height:40,borderRadius:13,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                   <Ico d={I.mail} size={18} stroke={C.primary} sw={1.8}/>
@@ -1275,6 +1330,8 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
           </div>
         </div>
       )}
+
+      {showBug&&<BugModal kor={kor} onClose={()=>setShowBug(false)}/>}
 
       {/* ── Header + Streak ring ── */}
       <div style={{background:`linear-gradient(170deg,${C.primaryLight} 0%,#FDEEF4 40%,${C.bg} 75%)`,paddingTop:HDR_PT,paddingLeft:22,paddingRight:22,paddingBottom:24,display:"flex",flexDirection:"column",alignItems:"center"}}>
@@ -1877,6 +1934,7 @@ function Biblioteka(){
 const NAV=[{id:"poc",l:"Početna",ico:"home"},{id:"dnv",l:"Dnevnik",ico:"journal"},{id:"nap",l:"Napredak",ico:"chart"},{id:"bib",l:"Biblioteka",ico:"library"},{id:"chat",l:"Chat",ico:"chat"}];
 
 function Profil({kor,onLogout,onNotif,notifStatus,onUpdateIme}){
+  const [showBug,setShowBug]=useState(false);
   const [menjaLozinku,setMenjaLozinku]=useState(false);
   const [novaLoz,setNovaLoz]=useState("");
   const [potvrda,setPotvrda]=useState("");
@@ -2009,7 +2067,7 @@ function Profil({kor,onLogout,onNotif,notifStatus,onUpdateIme}){
         </div>
 
         {/* Prijavi bug */}
-        <button onClick={()=>prijaviBug(kor)} style={{width:"100%",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+        <button onClick={()=>setShowBug(true)} style={{width:"100%",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
           <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
             <Ico d={I.mail} size={18} stroke={C.primary} sw={1.8}/>
           </div>
@@ -2022,6 +2080,7 @@ function Profil({kor,onLogout,onNotif,notifStatus,onUpdateIme}){
           <p style={{fontWeight:700,fontSize:14,color:C.red}}>Odjavi se</p>
         </button>
       </div>
+      {showBug&&<BugModal kor={kor} onClose={()=>setShowBug(false)}/>}
     </div>
   );
 }
