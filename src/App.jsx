@@ -983,7 +983,8 @@ TEHNIKE — samo kad je pravo vreme:
 }
 
 function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
-  const pocetna={id:0,ko:"ai",tekst:`Zdravo${ime?" "+ime:""}! Ja sam Mia — tu sam da te saslušam, bez osude i bez žurbe. Možeš mi reći šta te muči, kako se osećaš, ili šta ti je na umu. Šta se dešava kod tebe?`};
+  const prvoIme=ime?ime.trim().split(/\s+/)[0]:"";
+  const pocetna={id:0,ko:"ai",tekst:`Zdravo${prvoIme?" "+prvoIme:""}! Ja sam Mia — tu sam da te saslušam, bez osude i bez žurbe. Možeš mi reći šta te muči, kako se osećaš, ili šta ti je na umu. Šta se dešava kod tebe?`};
   const [poruke,setPoruke]=useState([pocetna]);
   const [unos,setUnos]=useState("");const [ucitava,setUcitava]=useState(false);const krajRef=useRef(null);const msgsRef=useRef(null);
   const porRef=useRef([pocetna]);
