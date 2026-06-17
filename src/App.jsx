@@ -851,8 +851,8 @@ function NoviUnos({onSacuvaj,onOtkazi,editData}){
         <div>
           <span className="lbl">DATUM I VREME</span>
           <div style={{display:"flex",gap:8}}>
-            <input type="date" className="inp" value={new Date(u.ts-new Date(u.ts).getTimezoneOffset()*60000).toISOString().slice(0,10)} max={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)} onChange={e=>{if(!e.target.value)return;const[Y,M,D]=e.target.value.split("-");const d=new Date(u.ts);d.setFullYear(+Y,+M-1,+D);setU(v=>({...v,ts:d.getTime()}));}} style={{cursor:"pointer",flex:1,textAlign:"center"}}/>
-            <input type="time" className="inp" value={new Date(u.ts).toTimeString().slice(0,5)} onChange={e=>{if(!e.target.value)return;const[h,m]=e.target.value.split(":");const d=new Date(u.ts);d.setHours(+h,+m);setU(v=>({...v,ts:d.getTime()}));}} style={{cursor:"pointer",width:100,textAlign:"center"}}/>
+            <input type="date" className="inp" value={new Date(u.ts-new Date(u.ts).getTimezoneOffset()*60000).toISOString().slice(0,10)} max={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)} onChange={e=>{if(!e.target.value)return;const[Y,M,D]=e.target.value.split("-");const d=new Date(u.ts);d.setFullYear(+Y,+M-1,+D);const ts=Math.min(d.getTime(),Date.now());setU(v=>({...v,ts}));}} style={{cursor:"pointer",flex:1,textAlign:"center"}}/>
+            <input type="time" className="inp" value={new Date(u.ts).toTimeString().slice(0,5)} onChange={e=>{if(!e.target.value)return;const[h,m]=e.target.value.split(":");const d=new Date(u.ts);d.setHours(+h,+m);const ts=Math.min(d.getTime(),Date.now());setU(v=>({...v,ts}));}} style={{cursor:"pointer",width:100,textAlign:"center"}}/>
           </div>
         </div>
 
