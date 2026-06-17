@@ -2244,28 +2244,22 @@ function KozmeticarkaPanel({kor,onLogout}){
 
   return(
     <div style={{minHeight:"100vh",background:C.bg}} className="fi">
-      <div style={{paddingTop:HDR_PT,paddingBottom:24,paddingLeft:24,paddingRight:24,background:`linear-gradient(160deg,#FFF8FA 0%,#FAE0EB 100%)`,borderBottom:`1px solid ${C.border}`}}>
-        <span style={{display:"inline-block",background:"rgba(192,120,144,.13)",color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:16}}>Kozmetičarka</span>
-        <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:18}}>
-          <div style={{width:56,height:56,borderRadius:20,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 16px rgba(192,120,144,.3)`}}>
-            <span style={{fontSize:initijali.length>1?18:24,fontWeight:800,color:"#fff",fontFamily:"'DM Sans',sans-serif"}}>{initijali}</span>
-          </div>
-          <div>
-            <p style={{fontWeight:800,fontSize:19,color:C.text,marginBottom:2,letterSpacing:-0.3}}>{kor?.ime||"Panel"}</p>
-            <p style={{fontSize:13,color:C.textMid,fontWeight:500}}>{loading?"Učitavanje...":`${klijenti.length} ${klijenti.length===1?"klijent":"klijenata"}`}</p>
-          </div>
+      <div style={{paddingTop:HDR_PT,paddingBottom:14,paddingLeft:20,paddingRight:20,background:`linear-gradient(160deg,#FFF8FA 0%,#FAE0EB 100%)`,borderBottom:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:12}}>
+        <div style={{width:42,height:42,borderRadius:15,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 14px rgba(192,120,144,.3)`}}>
+          <span style={{fontSize:initijali.length>1?14:18,fontWeight:800,color:"#fff",fontFamily:"'DM Sans',sans-serif"}}>{initijali}</span>
+        </div>
+        <div style={{flex:1,minWidth:0}}>
+          <p style={{fontWeight:800,fontSize:15,color:C.text,letterSpacing:-0.2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{kor?.ime||"Panel"}</p>
+          <p style={{fontSize:12,color:C.textMid,fontWeight:500}}>{loading?"Učitavanje...":`${klijenti.length} ${klijenti.length===1?"klijent":"klijenata"}`}</p>
         </div>
         {kor?.kod&&(
-          <button onClick={kopirajKod} style={{width:"100%",background:"rgba(255,255,255,.6)",border:`1.5px solid rgba(192,120,144,.25)`,borderRadius:16,padding:"12px 16px",display:"flex",alignItems:"center",gap:12,cursor:"pointer",fontFamily:"inherit",textAlign:"left"}}>
-            <div style={{flex:1}}>
-              <p style={{fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",color:C.textLight,marginBottom:3}}>Tvoj kod za klijente</p>
-              <p style={{fontSize:17,fontWeight:800,color:C.primary,letterSpacing:1}}>{kor.kod}</p>
-            </div>
-            <span style={{fontSize:12,fontWeight:700,color:kodKopiran?C.green:C.textMid,flexShrink:0}}>{kodKopiran?"Kopirano ✓":"Kopiraj"}</span>
+          <button onClick={kopirajKod} style={{background:"rgba(255,255,255,.6)",border:`1.5px solid rgba(192,120,144,.25)`,borderRadius:13,padding:"7px 12px",display:"flex",alignItems:"center",gap:7,cursor:"pointer",fontFamily:"inherit",flexShrink:0}}>
+            <span style={{fontSize:14,fontWeight:800,color:C.primary,letterSpacing:0.5}}>{kor.kod}</span>
+            <span style={{fontSize:11,fontWeight:700,color:kodKopiran?C.green:C.textLight}}>{kodKopiran?"✓":"⧉"}</span>
           </button>
         )}
       </div>
-      <div style={{padding:"22px 20px",display:"flex",flexDirection:"column",gap:10}}>
+      <div style={{padding:"18px 20px",display:"flex",flexDirection:"column",gap:10}}>
         {!loading&&klijenti.length>0&&<p style={{fontSize:11,fontWeight:800,letterSpacing:1,textTransform:"uppercase",color:C.textLight,marginBottom:2,paddingLeft:2}}>Klijenti</p>}
         {loading?(
           <p style={{textAlign:"center",color:C.textLight,fontSize:13,padding:"30px 0"}}>Učitava se...</p>
