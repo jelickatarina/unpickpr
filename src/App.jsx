@@ -2203,6 +2203,13 @@ function KozmeticarkaPanel({kor,onLogout}){
   const [loading,setLoading]=useState(true);
   const [detalji,setDetalji]=useState(null);
   const [detLoading,setDetLoading]=useState(false);
+  const [kodKopiran,setKodKopiran]=useState(false);
+  const initijali=(kor?.ime||"").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase()||"K";
+
+  function kopirajKod(){
+    if(!kor?.kod) return;
+    navigator.clipboard?.writeText(kor.kod).then(()=>{setKodKopiran(true);setTimeout(()=>setKodKopiran(false),1800);});
+  }
 
   useEffect(()=>{
     let aktivno=true;
@@ -2237,30 +2244,54 @@ function KozmeticarkaPanel({kor,onLogout}){
 
   return(
     <div style={{minHeight:"100vh",background:C.bg}} className="fi">
-      <div style={{paddingTop:HDR_PT,paddingBottom:28,paddingLeft:24,paddingRight:24,background:`linear-gradient(160deg,#FFF8FA 0%,#FAE0EB 100%)`,borderBottom:`1px solid ${C.border}`}}>
-        <span style={{display:"inline-block",background:"rgba(192,120,144,.13)",color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:14}}>Kozmetičarka</span>
-        <p style={{fontWeight:800,fontSize:20,color:C.text,marginBottom:4,letterSpacing:-0.3}}>{kor?.ime||"Panel"}</p>
-        {kor?.kod&&<p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Tvoj kod za klijente: <span style={{color:C.primary,fontWeight:800}}>{kor.kod}</span></p>}
+      <div style={{paddingTop:HDR_PT,paddingBottom:24,paddingLeft:24,paddingRight:24,background:`linear-gradient(160deg,#FFF8FA 0%,#FAE0EB 100%)`,borderBottom:`1px solid ${C.border}`}}>
+        <span style={{display:"inline-block",background:"rgba(192,120,144,.13)",color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:16}}>Kozmetičarka</span>
+        <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:18}}>
+          <div style={{width:56,height:56,borderRadius:20,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 16px rgba(192,120,144,.3)`}}>
+            <span style={{fontSize:initijali.length>1?18:24,fontWeight:800,color:"#fff",fontFamily:"'DM Sans',sans-serif"}}>{initijali}</span>
+          </div>
+          <div>
+            <p style={{fontWeight:800,fontSize:19,color:C.text,marginBottom:2,letterSpacing:-0.3}}>{kor?.ime||"Panel"}</p>
+            <p style={{fontSize:13,color:C.textMid,fontWeight:500}}>{loading?"Učitavanje...":`${klijenti.length} ${klijenti.length===1?"klijent":"klijenata"}`}</p>
+          </div>
+        </div>
+        {kor?.kod&&(
+          <button onClick={kopirajKod} style={{width:"100%",background:"rgba(255,255,255,.6)",border:`1.5px solid rgba(192,120,144,.25)`,borderRadius:16,padding:"12px 16px",display:"flex",alignItems:"center",gap:12,cursor:"pointer",fontFamily:"inherit",textAlign:"left"}}>
+            <div style={{flex:1}}>
+              <p style={{fontSize:10,fontWeight:800,letterSpacing:1,textTransform:"uppercase",color:C.textLight,marginBottom:3}}>Tvoj kod za klijente</p>
+              <p style={{fontSize:17,fontWeight:800,color:C.primary,letterSpacing:1}}>{kor.kod}</p>
+            </div>
+            <span style={{fontSize:12,fontWeight:700,color:kodKopiran?C.green:C.textMid,flexShrink:0}}>{kodKopiran?"Kopirano ✓":"Kopiraj"}</span>
+          </button>
+        )}
       </div>
-      <div style={{padding:"20px 20px",display:"flex",flexDirection:"column",gap:10}}>
+      <div style={{padding:"22px 20px",display:"flex",flexDirection:"column",gap:10}}>
+        {!loading&&klijenti.length>0&&<p style={{fontSize:11,fontWeight:800,letterSpacing:1,textTransform:"uppercase",color:C.textLight,marginBottom:2,paddingLeft:2}}>Klijenti</p>}
         {loading?(
           <p style={{textAlign:"center",color:C.textLight,fontSize:13,padding:"30px 0"}}>Učitava se...</p>
         ):klijenti.length===0?(
-          <div style={{background:C.bgCard,borderRadius:18,border:`1px solid ${C.border}`,padding:"24px 18px",textAlign:"center"}}>
+          <div style={{background:C.bgCard,borderRadius:18,border:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,padding:"30px 18px",textAlign:"center"}}>
+            <div style={{width:48,height:48,borderRadius:16,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 14px"}}>
+              <Ico d={I.heart} size={20} stroke={C.primary} sw={1.8}/>
+            </div>
             <p style={{fontSize:14,color:C.textMid,fontWeight:600}}>Još nemaš povezanih klijenata.</p>
-            <p style={{fontSize:12,color:C.textLight,marginTop:6}}>Podeli svoj kod sa klijentom da se poveže iz svog profila.</p>
+            <p style={{fontSize:12,color:C.textLight,marginTop:6,lineHeight:1.5}}>Podeli svoj kod sa klijentom da se poveže iz svog profila.</p>
           </div>
         ):klijenti.map(c=>{
           const ukupno=(c.total_res||0)+(c.total_try||0)+(c.total_ep||0);
           const procenat=ukupno>0?Math.round((c.total_res/ukupno)*100):null;
+          const kIni=(c.ime||"").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase()||"K";
           return(
-            <button key={c.id} onClick={()=>otvoriDetalje(c)} disabled={detLoading} style={{background:C.bgCard,border:`1px solid ${C.border}`,borderRadius:18,padding:"15px 18px",textAlign:"left",cursor:"pointer",fontFamily:"inherit",width:"100%"}}>
+            <button key={c.id} onClick={()=>otvoriDetalje(c)} disabled={detLoading} style={{background:C.bgCard,border:`1px solid ${C.border}`,boxShadow:`0 2px 8px ${C.shadow}`,borderRadius:18,padding:"15px 18px",textAlign:"left",cursor:"pointer",fontFamily:"inherit",width:"100%",opacity:detLoading?.7:1}}>
               <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:12}}>
-                <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                  <Ico d={I.flame} size={18} stroke={C.primary} sw={1.8}/>
+                <div style={{width:42,height:42,borderRadius:14,background:C.primaryGrad,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                  <span style={{fontSize:13,fontWeight:800,color:"#fff",fontFamily:"'DM Sans',sans-serif"}}>{kIni}</span>
                 </div>
-                <p style={{fontWeight:700,fontSize:14,color:C.text,flex:1}}>{c.ime||"Klijent"}</p>
-                <p style={{fontWeight:800,fontSize:18,color:C.primary}}>{klijentStreak(c)}</p>
+                <p style={{fontWeight:700,fontSize:14,color:C.text,flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.ime||"Klijent"}</p>
+                <div style={{display:"flex",alignItems:"center",gap:3,flexShrink:0}}>
+                  <Ico d={I.flame} size={14} stroke={C.primary} sw={2}/>
+                  <p style={{fontWeight:800,fontSize:16,color:C.primary}}>{klijentStreak(c)}</p>
+                </div>
                 <Ico d={I.chev} size={14} stroke={C.textLight} sw={2.5}/>
               </div>
               <div style={{borderTop:`1px solid ${C.border}`,paddingTop:10,display:"flex",flexDirection:"column",gap:6}}>
@@ -2282,7 +2313,7 @@ function KozmeticarkaPanel({kor,onLogout}){
             </button>
           );
         })}
-        <button onClick={onLogout} style={{width:"100%",background:C.bgCard,border:`1.5px solid rgba(196,104,120,.25)`,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit",marginTop:10}}>
+        <button onClick={onLogout} style={{width:"100%",background:C.bgCard,border:`1.5px solid rgba(196,104,120,.25)`,boxShadow:`0 2px 8px ${C.shadow}`,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit",marginTop:10}}>
           <div style={{width:42,height:42,borderRadius:14,background:"#FFF0F2",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🚪</div>
           <p style={{fontWeight:700,fontSize:14,color:C.red}}>Odjavi se</p>
         </button>
