@@ -1307,7 +1307,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
                   </div>
                   <div style={{flex:1}}>
                     <p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:1}}>Povezana sa kozmetičarkom</p>
-                    <p style={{fontSize:12,color:C.textLight}}>Vidi samo tvoj broj dana</p>
+                    <p style={{fontSize:12,color:C.textLight}}>Vidi tvoj napredak (brojeve), ne beleške ni slike</p>
                   </div>
                   <button onClick={prekiniVezu} disabled={povezLoading} style={{background:C.bgMuted,border:"none",borderRadius:10,padding:"8px 12px",cursor:"pointer",fontSize:12,color:C.textMid,fontWeight:600,fontFamily:"inherit",flexShrink:0}}>Prekini</button>
                 </div>
@@ -2115,7 +2115,7 @@ function Profil({kor,onLogout,onNotif,notifStatus,onUpdateIme,onLinkKozmeticarka
             </div>
             <div style={{flex:1}}>
               <p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:1}}>Povezana sa kozmetičarkom</p>
-              <p style={{fontSize:12,color:C.textLight}}>Vidi samo tvoj broj dana</p>
+              <p style={{fontSize:12,color:C.textLight}}>Vidi tvoj napredak (brojeve), ne beleške ni slike</p>
             </div>
             <button onClick={prekiniVezu} disabled={povezLoading} style={{background:C.bgMuted,border:"none",borderRadius:10,padding:"8px 12px",cursor:"pointer",fontSize:12,color:C.textMid,fontWeight:600,fontFamily:"inherit",flexShrink:0}}>Prekini</button>
           </div>
@@ -2127,7 +2127,7 @@ function Profil({kor,onLogout,onNotif,notifStatus,onUpdateIme,onLinkKozmeticarka
               </div>
               <div style={{textAlign:"left",flex:1}}>
                 <p style={{fontWeight:700,fontSize:14,color:C.text}}>Poveži se sa kozmetičarkom</p>
-                <p style={{fontSize:12,color:C.textLight}}>Opciono — vidi samo tvoj broj dana</p>
+                <p style={{fontSize:12,color:C.textLight}}>Opciono — vidi tvoj napredak, ne beleške ni slike</p>
               </div>
               <Ico d={I.chev} size={14} stroke={C.textLight} sw={2.5} style={{transform:showPovezi?"rotate(90deg)":"none",transition:"transform .2s"}}/>
             </button>
