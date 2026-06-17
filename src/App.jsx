@@ -1661,12 +1661,13 @@ function Napredak({unosi,niz,registeredAt}){
   // 8-week bar chart (episodes per week)
   const sedmice=Array.from({length:8},(_,i)=>{
     const s=now-(8-i)*7*86400000,e2=now-(7-i)*7*86400000;
-    const ep=unosi.filter(u=>u.ts&&u.ts>=s&&u.ts<e2&&(u.ish==="ep"||u.ish==="try")).length;
+    const ep=unosi.filter(u=>u.ts&&u.ts>=s&&u.ts<e2&&u.ish==="ep").length;
+    const pok=unosi.filter(u=>u.ts&&u.ts>=s&&u.ts<e2&&u.ish==="try").length;
     const res=unosi.filter(u=>u.ts&&u.ts>=s&&u.ts<e2&&u.ish==="res").length;
     const d=new Date(s);
-    return{ep,res,label:`${d.getDate()}.${d.getMonth()+1}`,isLast:i===7};
+    return{ep,pok,res,label:`${d.getDate()}.${d.getMonth()+1}`,isLast:i===7};
   });
-  const maxSed=Math.max(...sedmice.map(s=>s.ep+s.res),1);
+  const maxSed=Math.max(...sedmice.map(s=>s.ep+s.pok+s.res),1);
 
   // time of day for episodes
   const tod={jutro:0,popodne:0,vece:0,noc:0};
@@ -1761,19 +1762,22 @@ function Napredak({unosi,niz,registeredAt}){
           </div>
           <div style={{display:"flex",gap:10}}>
             <div style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:2,background:C.red+"99"}}/><span style={{fontSize:9,color:C.textLight,fontWeight:600}}>Ep</span></div>
+            <div style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:2,background:C.amber+"99"}}/><span style={{fontSize:9,color:C.textLight,fontWeight:600}}>Pokušaj</span></div>
             <div style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:8,height:8,borderRadius:2,background:C.green+"99"}}/><span style={{fontSize:9,color:C.textLight,fontWeight:600}}>Res</span></div>
           </div>
         </div>
         <div style={{display:"flex",gap:4,alignItems:"flex-end",height:80}}>
           {sedmice.map((s,i)=>{
             const hEp=s.ep>0?Math.max((s.ep/maxSed)*68,6):0;
+            const hPok=s.pok>0?Math.max((s.pok/maxSed)*68,6):0;
             const hRes=s.res>0?Math.max((s.res/maxSed)*68,4):0;
             return(
               <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
                 <div style={{width:"100%",display:"flex",flexDirection:"column",justifyContent:"flex-end",height:72,gap:1}}>
                   {s.ep>0&&<div style={{width:"100%",height:hEp,background:s.isLast?C.red:C.red+"66",borderRadius:"4px 4px 0 0"}}/>}
-                  {s.res>0&&<div style={{width:"100%",height:hRes,background:s.isLast?C.green:C.green+"66",borderRadius:s.ep>0?"0 0 0 0":"4px 4px 0 0"}}/>}
-                  {s.ep===0&&s.res===0&&<div style={{width:"100%",height:3,background:C.bgMuted,borderRadius:2}}/>}
+                  {s.pok>0&&<div style={{width:"100%",height:hPok,background:s.isLast?C.amber:C.amber+"66",borderRadius:s.ep>0?"0 0 0 0":"4px 4px 0 0"}}/>}
+                  {s.res>0&&<div style={{width:"100%",height:hRes,background:s.isLast?C.green:C.green+"66",borderRadius:(s.ep>0||s.pok>0)?"0 0 0 0":"4px 4px 0 0"}}/>}
+                  {s.ep===0&&s.pok===0&&s.res===0&&<div style={{width:"100%",height:3,background:C.bgMuted,borderRadius:2}}/>}
                 </div>
                 <span style={{fontSize:8,fontWeight:s.isLast?700:400,color:s.isLast?C.primary:C.textLight}}>{s.isLast?"ova":s.label}</span>
               </div>
