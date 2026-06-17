@@ -1022,7 +1022,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
   );
 }
 
-function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNotif,notifStatus}){
+function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNotif,notifStatus,onUpdateIme}){
   const [izvestaj,setIzvestaj]=useState(null);
   const [showProfil,setShowProfil]=useState(false);
   const [menjaLozinku,setMenjaLozinku]=useState(false);
@@ -1030,7 +1030,24 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
   const [potvrda,setPotvrda]=useState("");
   const [lozPoruka,setLozPoruka]=useState(null);
   const [lozLoading,setLozLoading]=useState(false);
+  const [showNovaLoz,setShowNovaLoz]=useState(false);
+  const [showPotvrda,setShowPotvrda]=useState(false);
+  const [menjaIme,setMenjaIme]=useState(false);
+  const [novoIme,setNovoIme]=useState("");
+  const [imePoruka,setImePoruka]=useState(null);
+  const [imeLoading,setImeLoading]=useState(false);
   const initijali=(kor?.ime||"").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase()||"🌸";
+
+  async function sacuvajIme(){
+    if(!novoIme.trim()){setImePoruka({tip:"g",t:"Ime ne može biti prazno."});return;}
+    if(novoIme.trim().length<2){setImePoruka({tip:"g",t:"Ime mora imati najmanje 2 karaktera."});return;}
+    setImeLoading(true);
+    const res=await onUpdateIme(novoIme.trim());
+    setImeLoading(false);
+    if(res?.error){setImePoruka({tip:"g",t:res.error});return;}
+    setImePoruka({tip:"ok",t:"Ime sačuvano! 🎉"});
+    setMenjaIme(false);
+  }
 
   async function promeniLozinku(){
     if(novaLoz!==potvrda){setLozPoruka({tip:"g",t:"Lozinke se ne podudaraju."});return;}
@@ -1121,7 +1138,7 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
 
       {/* Profil popup */}
       {showProfil&&(
-        <div style={{position:"fixed",inset:0,zIndex:300,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={()=>{setShowProfil(false);setMenjaLozinku(false);setLozPoruka(null);}}>
+        <div style={{position:"fixed",inset:0,zIndex:300,display:"flex",flexDirection:"column",justifyContent:"flex-end"}} onClick={()=>{setShowProfil(false);setMenjaLozinku(false);setLozPoruka(null);setMenjaIme(false);setImePoruka(null);}}>
           <div style={{position:"absolute",inset:0,background:"rgba(42,24,32,.52)",backdropFilter:"blur(8px)"}}/>
           <div onClick={e=>e.stopPropagation()} style={{position:"relative",background:C.bgCard,borderRadius:"32px 32px 0 0",paddingBottom:"calc(72px + env(safe-area-inset-bottom,0px))",maxHeight:"88vh",overflowY:"auto",boxShadow:"0 -16px 64px rgba(168,90,116,.22)"}} className="fi">
 
@@ -1141,7 +1158,28 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
             <div style={{padding:"16px 20px",display:"flex",flexDirection:"column",gap:8}}>
 
               {/* Notifikacije */}
-              {notifStatus!=="granted"?(
+              {notifStatus==="granted"?(
+                <div style={{background:C.greenLight,border:`1.5px solid rgba(122,158,120,.25)`,borderRadius:18,padding:"14px 16px",display:"flex",alignItems:"center",gap:14}}>
+                  <div style={{width:40,height:40,borderRadius:13,background:"rgba(122,158,120,.18)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                    <Ico d={I.wind} size={18} stroke={C.green} sw={1.8}/>
+                  </div>
+                  <div style={{flex:1}}>
+                    <p style={{fontWeight:700,fontSize:14,color:C.green,marginBottom:2}}>Podsetnik uključen</p>
+                    <p style={{fontSize:12,color:C.green,opacity:.75,fontWeight:500}}>Svaki dan u 13h</p>
+                  </div>
+                  <div style={{width:9,height:9,borderRadius:"50%",background:C.green,boxShadow:`0 0 0 3px rgba(122,158,120,.2)`,flexShrink:0}}/>
+                </div>
+              ):notifStatus==="denied"?(
+                <div style={{background:C.amberLight,border:`1.5px solid rgba(196,168,112,.3)`,borderRadius:18,padding:"14px 16px",display:"flex",alignItems:"flex-start",gap:14}}>
+                  <div style={{width:40,height:40,borderRadius:13,background:"rgba(196,168,112,.18)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                    <Ico d={I.wind} size={18} stroke={C.amber} sw={1.8}/>
+                  </div>
+                  <div style={{flex:1}}>
+                    <p style={{fontWeight:700,fontSize:14,color:C.amber,marginBottom:3}}>Obaveštenja su blokirana</p>
+                    <p style={{fontSize:12,color:C.amber,opacity:.85,fontWeight:500,lineHeight:1.5}}>Pošto si ranije odbila, mora se ručno uključiti: idi u Podešavanja telefona → Unpick (ili ime browsera) → Obaveštenja → Dozvoli.</p>
+                  </div>
+                </div>
+              ):(
                 <button onClick={isPWA?()=>{onNotif();setShowProfil(false);}:undefined}
                   style={{width:"100%",background:C.bg,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"14px 16px",display:"flex",alignItems:"center",gap:14,cursor:isPWA?"pointer":"default",fontFamily:"inherit",textAlign:"left"}}>
                   <div style={{width:40,height:40,borderRadius:13,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
@@ -1153,18 +1191,28 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
                   </div>
                   {isPWA&&<Ico d={I.chev} size={14} stroke={C.textLight} sw={2}/>}
                 </button>
-              ):(
-                <div style={{background:C.greenLight,border:`1.5px solid rgba(122,158,120,.25)`,borderRadius:18,padding:"14px 16px",display:"flex",alignItems:"center",gap:14}}>
-                  <div style={{width:40,height:40,borderRadius:13,background:"rgba(122,158,120,.18)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                    <Ico d={I.wind} size={18} stroke={C.green} sw={1.8}/>
-                  </div>
-                  <div style={{flex:1}}>
-                    <p style={{fontWeight:700,fontSize:14,color:C.green,marginBottom:2}}>Podsetnik uključen</p>
-                    <p style={{fontSize:12,color:C.green,opacity:.75,fontWeight:500}}>Svaki dan u 13h</p>
-                  </div>
-                  <div style={{width:9,height:9,borderRadius:"50%",background:C.green,boxShadow:`0 0 0 3px rgba(122,158,120,.2)`,flexShrink:0}}/>
-                </div>
               )}
+
+              {/* Promena imena */}
+              <div style={{background:C.bg,border:`1.5px solid ${C.border}`,borderRadius:18,overflow:"hidden"}}>
+                <button onClick={()=>{setMenjaIme(m=>{if(!m)setNovoIme(kor?.ime||"");return !m;});setImePoruka(null);}}
+                  style={{width:"100%",background:"none",border:"none",padding:"14px 16px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+                  <div style={{width:40,height:40,borderRadius:13,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                    <Ico d={I.user} size={18} stroke={C.primary} sw={1.8}/>
+                  </div>
+                  <p style={{fontWeight:700,fontSize:14,color:C.text,flex:1,textAlign:"left"}}>Promeni ime</p>
+                  <Ico d={I.chev} size={14} stroke={C.textLight} sw={2}/>
+                </button>
+                {menjaIme&&(
+                  <div style={{borderTop:`1px solid ${C.border}`,padding:"14px 16px 16px",display:"flex",flexDirection:"column",gap:10}}>
+                    <input className="inp" type="text" placeholder="Tvoje ime" value={novoIme} onChange={e=>setNovoIme(e.target.value)} autoComplete="given-name"/>
+                    {imePoruka&&<p style={{fontSize:12,color:imePoruka.tip==="ok"?C.green:C.red,fontWeight:600,textAlign:"center"}}>{imePoruka.t}</p>}
+                    <button onClick={sacuvajIme} disabled={imeLoading} className="btn-p" style={{borderRadius:14,padding:"13px"}}>
+                      {imeLoading?"Čuvam...":"Sačuvaj ime"}
+                    </button>
+                  </div>
+                )}
+              </div>
 
               {/* Promena lozinke */}
               <div style={{background:C.bg,border:`1.5px solid ${C.border}`,borderRadius:18,overflow:"hidden"}}>
@@ -1178,8 +1226,14 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
                 </button>
                 {menjaLozinku&&(
                   <div style={{borderTop:`1px solid ${C.border}`,padding:"14px 16px 16px",display:"flex",flexDirection:"column",gap:10}}>
-                    <input className="inp" type="password" placeholder="Nova lozinka" value={novaLoz} onChange={e=>setNovaLoz(e.target.value)}/>
-                    <input className="inp" type="password" placeholder="Potvrdi lozinku" value={potvrda} onChange={e=>setPotvrda(e.target.value)}/>
+                    <IcoField ico={I.lockIco}>
+                      <input className="inp-el" style={{paddingLeft:46,paddingRight:44}} type={showNovaLoz?"text":"password"} placeholder="Nova lozinka" value={novaLoz} onChange={e=>setNovaLoz(e.target.value)} autoComplete="new-password"/>
+                      <EyeBtn show={showNovaLoz} toggle={()=>setShowNovaLoz(v=>!v)}/>
+                    </IcoField>
+                    <IcoField ico={I.lockIco}>
+                      <input className="inp-el" style={{paddingLeft:46,paddingRight:44}} type={showPotvrda?"text":"password"} placeholder="Potvrdi lozinku" value={potvrda} onChange={e=>setPotvrda(e.target.value)} autoComplete="new-password"/>
+                      <EyeBtn show={showPotvrda} toggle={()=>setShowPotvrda(v=>!v)}/>
+                    </IcoField>
                     {lozPoruka&&<p style={{fontSize:12,color:lozPoruka.tip==="ok"?C.green:C.red,fontWeight:600,textAlign:"center"}}>{lozPoruka.t}</p>}
                     <button onClick={promeniLozinku} disabled={lozLoading} className="btn-p" style={{borderRadius:14,padding:"13px"}}>
                       {lozLoading?"Čuvam...":"Sačuvaj lozinku"}
@@ -1797,12 +1851,18 @@ function Biblioteka(){
 
 const NAV=[{id:"poc",l:"Početna",ico:"home"},{id:"dnv",l:"Dnevnik",ico:"journal"},{id:"nap",l:"Napredak",ico:"chart"},{id:"bib",l:"Biblioteka",ico:"library"},{id:"chat",l:"Chat",ico:"chat"}];
 
-function Profil({kor,onLogout,onNotif,notifStatus}){
+function Profil({kor,onLogout,onNotif,notifStatus,onUpdateIme}){
   const [menjaLozinku,setMenjaLozinku]=useState(false);
   const [novaLoz,setNovaLoz]=useState("");
   const [potvrda,setPotvrda]=useState("");
   const [poruka,setPoruka]=useState(null);
   const [loading,setLoading]=useState(false);
+  const [showNovaLoz,setShowNovaLoz]=useState(false);
+  const [showPotvrda,setShowPotvrda]=useState(false);
+  const [menjaIme,setMenjaIme]=useState(false);
+  const [novoIme,setNovoIme]=useState("");
+  const [imePoruka,setImePoruka]=useState(null);
+  const [imeLoading,setImeLoading]=useState(false);
   const initijali=(kor?.ime||"").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase()||"🌸";
 
   async function promeniLozinku(){
@@ -1814,6 +1874,17 @@ function Profil({kor,onLogout,onNotif,notifStatus}){
     if(error){setPoruka({tip:"greska",t:error.message});return;}
     setPoruka({tip:"ok",t:"Lozinka uspešno promenjena! 🎉"});
     setMenjaLozinku(false);setNovaLoz("");setPotvrda("");
+  }
+
+  async function sacuvajIme(){
+    if(!novoIme.trim()){setImePoruka({tip:"greska",t:"Ime ne može biti prazno."});return;}
+    if(novoIme.trim().length<2){setImePoruka({tip:"greska",t:"Ime mora imati najmanje 2 karaktera."});return;}
+    setImeLoading(true);
+    const res=await onUpdateIme(novoIme.trim());
+    setImeLoading(false);
+    if(res?.error){setImePoruka({tip:"greska",t:res.error});return;}
+    setImePoruka({tip:"ok",t:"Ime sačuvano! 🎉"});
+    setMenjaIme(false);
   }
 
   return(
@@ -1834,7 +1905,23 @@ function Profil({kor,onLogout,onNotif,notifStatus}){
 
       <div style={{padding:"20px 20px",display:"flex",flexDirection:"column",gap:10}}>
         {/* Notifikacije */}
-        {notifStatus!=="granted"?(
+        {notifStatus==="granted"?(
+          <div style={{background:C.greenLight,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,border:`1px solid rgba(122,158,120,.2)`}}>
+            <div style={{width:42,height:42,borderRadius:14,background:"rgba(122,158,120,.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🔔</div>
+            <div>
+              <p style={{fontWeight:700,fontSize:14,color:C.green,marginBottom:2}}>Podsetnik uključen</p>
+              <p style={{fontSize:12,color:C.green,opacity:0.75}}>Svaki dan u 13h</p>
+            </div>
+          </div>
+        ):notifStatus==="denied"?(
+          <div style={{background:C.amberLight,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"flex-start",gap:14,border:`1px solid rgba(196,168,112,.3)`}}>
+            <div style={{width:42,height:42,borderRadius:14,background:"rgba(196,168,112,.18)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🔔</div>
+            <div style={{flex:1}}>
+              <p style={{fontWeight:700,fontSize:14,color:C.amber,marginBottom:3}}>Obaveštenja su blokirana</p>
+              <p style={{fontSize:12,color:C.amber,opacity:.85,fontWeight:500,lineHeight:1.5}}>Pošto si ranije odbila, mora se ručno uključiti: idi u Podešavanja telefona → Unpick (ili ime browsera) → Obaveštenja → Dozvoli.</p>
+            </div>
+          </div>
+        ):(
           <button onClick={isPWA?onNotif:undefined} style={{width:"100%",background:C.bgCard,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:isPWA?"pointer":"default",fontFamily:"inherit",textAlign:"left"}}>
             <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🔔</div>
             <div style={{flex:1}}>
@@ -1843,20 +1930,36 @@ function Profil({kor,onLogout,onNotif,notifStatus}){
             </div>
             {isPWA&&<Ico d={I.chev} size={14} stroke={C.textLight} sw={2.5}/>}
           </button>
-        ):(
-          <div style={{background:C.greenLight,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,border:`1px solid rgba(122,158,120,.2)`}}>
-            <div style={{width:42,height:42,borderRadius:14,background:"rgba(122,158,120,.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🔔</div>
-            <div>
-              <p style={{fontWeight:700,fontSize:14,color:C.green,marginBottom:2}}>Podsetnik uključen</p>
-              <p style={{fontSize:12,color:C.green,opacity:0.75}}>Svaki dan u 13h</p>
-            </div>
-          </div>
         )}
+
+        {/* Promena imena */}
+        <div style={{background:C.bgCard,borderRadius:18,border:`1px solid ${C.border}`,overflow:"hidden"}}>
+          <button onClick={()=>{setMenjaIme(m=>{if(!m)setNovoIme(kor?.ime||"");return !m;});setImePoruka(null);}} style={{width:"100%",background:"none",border:"none",padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+            <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+              <Ico d={I.user} size={18} stroke={C.primary} sw={1.8}/>
+            </div>
+            <div style={{textAlign:"left",flex:1}}>
+              <p style={{fontWeight:700,fontSize:14,color:C.text}}>Promeni ime</p>
+            </div>
+            <Ico d={I.chev} size={14} stroke={C.textLight} sw={2.5} style={{transform:menjaIme?"rotate(90deg)":"none",transition:"transform .2s"}}/>
+          </button>
+          {menjaIme&&(
+            <div style={{padding:"0 18px 18px",display:"flex",flexDirection:"column",gap:10,borderTop:`1px solid ${C.border}`,paddingTop:16}}>
+              <input className="inp" type="text" placeholder="Tvoje ime" value={novoIme} onChange={e=>setNovoIme(e.target.value)} autoComplete="given-name"/>
+              {imePoruka&&<p style={{fontSize:13,color:imePoruka.tip==="ok"?C.green:C.red,fontWeight:600,textAlign:"center"}}>{imePoruka.t}</p>}
+              <button onClick={sacuvajIme} disabled={imeLoading} className="btn-p" style={{borderRadius:14,padding:"13px"}}>
+                {imeLoading?"Čuvam...":"Sačuvaj ime"}
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Promena lozinke */}
         <div style={{background:C.bgCard,borderRadius:18,border:`1px solid ${C.border}`,overflow:"hidden"}}>
           <button onClick={()=>{setMenjaLozinku(m=>!m);setPoruka(null);}} style={{width:"100%",background:"none",border:"none",padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
-            <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>🔑</div>
+            <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+              <Ico d={I.lockIco} size={18} stroke={C.primary} sw={1.8}/>
+            </div>
             <div style={{textAlign:"left",flex:1}}>
               <p style={{fontWeight:700,fontSize:14,color:C.text}}>Promeni lozinku</p>
             </div>
@@ -1864,8 +1967,14 @@ function Profil({kor,onLogout,onNotif,notifStatus}){
           </button>
           {menjaLozinku&&(
             <div style={{padding:"0 18px 18px",display:"flex",flexDirection:"column",gap:10,borderTop:`1px solid ${C.border}`,paddingTop:16}}>
-              <input className="inp" type="password" placeholder="Nova lozinka" value={novaLoz} onChange={e=>setNovaLoz(e.target.value)}/>
-              <input className="inp" type="password" placeholder="Potvrdi novu lozinku" value={potvrda} onChange={e=>setPotvrda(e.target.value)}/>
+              <IcoField ico={I.lockIco}>
+                <input className="inp-el" style={{paddingLeft:46,paddingRight:44}} type={showNovaLoz?"text":"password"} placeholder="Nova lozinka" value={novaLoz} onChange={e=>setNovaLoz(e.target.value)} autoComplete="new-password"/>
+                <EyeBtn show={showNovaLoz} toggle={()=>setShowNovaLoz(v=>!v)}/>
+              </IcoField>
+              <IcoField ico={I.lockIco}>
+                <input className="inp-el" style={{paddingLeft:46,paddingRight:44}} type={showPotvrda?"text":"password"} placeholder="Potvrdi novu lozinku" value={potvrda} onChange={e=>setPotvrda(e.target.value)} autoComplete="new-password"/>
+                <EyeBtn show={showPotvrda} toggle={()=>setShowPotvrda(v=>!v)}/>
+              </IcoField>
               {poruka&&<p style={{fontSize:13,color:poruka.tip==="ok"?C.green:C.red,fontWeight:600,textAlign:"center"}}>{poruka.t}</p>}
               <button onClick={promeniLozinku} disabled={loading} className="btn-p" style={{borderRadius:14,padding:"13px"}}>
                 {loading?"Čuvam...":"Sačuvaj lozinku"}
@@ -1962,6 +2071,15 @@ export default function App(){
     });
     return()=>subscription.unsubscribe();
   },[]);
+
+  async function updateIme(novoIme){
+    if(!kor?.id) return {error:"Nema korisnika."};
+    const {error}=await supabase.from("profiles").upsert({id:kor.id,ime:novoIme});
+    if(error) return {error:error.message};
+    await supabase.auth.updateUser({data:{name:novoIme}});
+    setKor(prev=>({...prev,ime:novoIme}));
+    return {};
+  }
 
   async function resolveSession(session){
     const uid=session.user.id;
@@ -2113,11 +2231,11 @@ export default function App(){
               ?{flex:1,minWidth:0,display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden"}
               :{display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}}>
               <div ref={contentRef} style={{display:ekran==="chat"?"none":"flex",flexDirection:"column",flex:1,minHeight:0,paddingBottom:isDesk?"24px":"calc(63px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
-                {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout} kor={kor} onNotif={enableNotifications} notifStatus={notifStatus}/>}
+                {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout} kor={kor} onNotif={enableNotifications} notifStatus={notifStatus} onUpdateIme={updateIme}/>}
                 {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
                 {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)}/>}
                 {ekran==="bib"&&<Biblioteka/>}
-                {ekran==="profil"&&<Profil kor={kor} onLogout={handleLogout} onNotif={enableNotifications} notifStatus={notifStatus}/>}
+                {ekran==="profil"&&<Profil kor={kor} onLogout={handleLogout} onNotif={enableNotifications} notifStatus={notifStatus} onUpdateIme={updateIme}/>}
               </div>
               <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",flex:1,minHeight:0,overflow:"hidden",paddingBottom:isDesk||kbOpen?0:"63px"}}>
                 <AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)} isVisible={ekran==="chat"}/>
