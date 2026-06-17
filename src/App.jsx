@@ -1088,7 +1088,7 @@ function AIChat({ime,niz,unosi,userId,onSOS,isVisible}){
   );
 }
 
-function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNotif,notifStatus,onUpdateIme,synced}){
+function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNotif,notifStatus,onUpdateIme,synced,onLinkKozmeticarka,onUnlinkKozmeticarka}){
   const [izvestaj,setIzvestaj]=useState(null);
   const [showProfil,setShowProfil]=useState(false);
   const [showBug,setShowBug]=useState(false);
@@ -1103,7 +1103,25 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
   const [novoIme,setNovoIme]=useState("");
   const [imePoruka,setImePoruka]=useState(null);
   const [imeLoading,setImeLoading]=useState(false);
+  const [showPovezi,setShowPovezi]=useState(false);
+  const [povezKod,setPovezKod]=useState("");
+  const [povezPoruka,setPovezPoruka]=useState(null);
+  const [povezLoading,setPovezLoading]=useState(false);
   const initijali=(kor?.ime||"").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase()||"🌸";
+
+  async function poveziSeKozmeticarkom(){
+    setPovezLoading(true);setPovezPoruka(null);
+    const res=await onLinkKozmeticarka(povezKod);
+    setPovezLoading(false);
+    if(res?.error){setPovezPoruka({tip:"g",t:res.error});return;}
+    setPovezPoruka(null);setPovezKod("");setShowPovezi(false);
+  }
+
+  async function prekiniVezu(){
+    setPovezLoading(true);
+    await onUnlinkKozmeticarka();
+    setPovezLoading(false);
+  }
 
   async function sacuvajIme(){
     if(!novoIme.trim()){setImePoruka({tip:"g",t:"Ime ne može biti prazno."});return;}
@@ -1280,6 +1298,40 @@ function Pocetna({ime,niz,onSOS,onNoviUnos,onLogout,unosi,registeredAt,kor,onNot
                   </div>
                 )}
               </div>
+
+              {/* Kozmetičarka — potpuno opciono */}
+              {kor?.kozmeticarka_id?(
+                <div style={{background:C.bg,border:`1.5px solid ${C.border}`,borderRadius:18,padding:"14px 16px",display:"flex",alignItems:"center",gap:14}}>
+                  <div style={{width:40,height:40,borderRadius:13,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                    <Ico d={I.heart} size={18} stroke={C.primary} sw={1.8}/>
+                  </div>
+                  <div style={{flex:1}}>
+                    <p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:1}}>Povezana sa kozmetičarkom</p>
+                    <p style={{fontSize:12,color:C.textLight}}>Vidi samo tvoj broj dana</p>
+                  </div>
+                  <button onClick={prekiniVezu} disabled={povezLoading} style={{background:C.bgMuted,border:"none",borderRadius:10,padding:"8px 12px",cursor:"pointer",fontSize:12,color:C.textMid,fontWeight:600,fontFamily:"inherit",flexShrink:0}}>Prekini</button>
+                </div>
+              ):(
+                <div style={{background:C.bg,border:`1.5px solid ${C.border}`,borderRadius:18,overflow:"hidden"}}>
+                  <button onClick={()=>{setShowPovezi(v=>!v);setPovezPoruka(null);}}
+                    style={{width:"100%",background:"none",border:"none",padding:"14px 16px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+                    <div style={{width:40,height:40,borderRadius:13,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                      <Ico d={I.heart} size={18} stroke={C.primary} sw={1.8}/>
+                    </div>
+                    <p style={{fontWeight:700,fontSize:14,color:C.text,flex:1,textAlign:"left"}}>Poveži se sa kozmetičarkom</p>
+                    <Ico d={I.chev} size={14} stroke={C.textLight} sw={2}/>
+                  </button>
+                  {showPovezi&&(
+                    <div style={{borderTop:`1px solid ${C.border}`,padding:"14px 16px 16px",display:"flex",flexDirection:"column",gap:10}}>
+                      <input className="inp" type="text" placeholder="Kod kozmetičarke" value={povezKod} onChange={e=>setPovezKod(e.target.value)} autoCapitalize="characters"/>
+                      {povezPoruka&&<p style={{fontSize:12,color:C.red,fontWeight:600,textAlign:"center"}}>{povezPoruka.t}</p>}
+                      <button onClick={poveziSeKozmeticarkom} disabled={povezLoading} className="btn-p" style={{borderRadius:14,padding:"13px"}}>
+                        {povezLoading?"Povezujem...":"Poveži se"}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Promena lozinke */}
               <div style={{background:C.bg,border:`1.5px solid ${C.border}`,borderRadius:18,overflow:"hidden"}}>
@@ -2507,7 +2559,7 @@ export default function App(){
               ?{flex:1,minWidth:0,display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden"}
               :{display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}}>
               <div ref={contentRef} style={{display:ekran==="chat"?"none":"flex",flexDirection:"column",flex:1,minHeight:0,paddingBottom:isDesk?"24px":"calc(63px + env(safe-area-inset-bottom,0px))",overflowY:"auto"}}>
-                {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout} kor={kor} onNotif={enableNotifications} notifStatus={notifStatus} onUpdateIme={updateIme} synced={unosiSynced}/>}
+                {ekran==="poc"&&<Pocetna ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} registeredAt={kor?.registeredAt} onSOS={()=>setPriSOS(true)} onNoviUnos={()=>setPriUnos(true)} onLogout={handleLogout} kor={kor} onNotif={enableNotifications} notifStatus={notifStatus} onUpdateIme={updateIme} synced={unosiSynced} onLinkKozmeticarka={linkKozmeticarka} onUnlinkKozmeticarka={unlinkKozmeticarka}/>}
                 {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
                 {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)} registeredAt={kor?.registeredAt}/>}
                 {ekran==="bib"&&<Biblioteka/>}
