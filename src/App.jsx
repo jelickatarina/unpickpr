@@ -207,7 +207,7 @@ const EyeBtn=({show,toggle})=>(
   </button>
 );
 
-function Auth({onDone}){
+function Auth({onDone,notice}){
   const [mode,setMode]=useState("w");
   const [ime,setIme]=useState("");const [em,setEm]=useState("");const [loz,setLoz]=useState("");const [loz2,setLoz2]=useState("");
   const [pol,setPol]=useState("");
@@ -224,6 +224,11 @@ function Auth({onDone}){
             <Ico d={I.leaf} size={22} stroke="#fff" sw={1.8}/>
           </div>
           <p style={{fontSize:10,fontWeight:700,letterSpacing:3,textTransform:"uppercase",color:C.textLight,marginBottom:6}}>Unpick</p>
+          {notice&&(
+            <div style={{width:"100%",background:C.primaryLight,border:`1px solid ${C.border}`,borderRadius:14,padding:"10px 14px",marginBottom:14,fontSize:12.5,color:C.textMid,fontWeight:600,lineHeight:1.5}}>
+              {notice}
+            </div>
+          )}
           <h1 style={{fontSize:24,lineHeight:1.3,marginBottom:6,letterSpacing:-0.2,color:C.text,fontFamily:"'DM Sans',sans-serif",fontWeight:700}}>
             Your skin<br/><span style={{color:C.primary,fontWeight:800}}>deserves kindness.</span>
           </h1>
@@ -2107,6 +2112,10 @@ export default function App(){
 
   function hideSplash(){const s=document.getElementById("splash");if(s){s.style.transition="opacity 0.4s";s.style.opacity="0";setTimeout(()=>s.remove(),400);}}
 
+  const manualSignOutRef=useRef(false);
+  const hadSessionRef=useRef(false);
+  const [authNotice,setAuthNotice]=useState("");
+
   useEffect(()=>{
     setTimeout(hideSplash,3300);
     const cachedKey=Object.keys(localStorage).find(k=>k.startsWith('sb-')&&k.endsWith('-auth-token'));
@@ -2116,7 +2125,14 @@ export default function App(){
       else{setFaza("auth");document.getElementById("root").style.visibility="visible";hideSplash();}
     });
     const {data:{subscription}}=supabase.auth.onAuthStateChange((event,session)=>{
-      if(event==="SIGNED_OUT"){setFaza("auth");setKor(null);setUnosiSynced(false);}
+      if(event==="SIGNED_OUT"){
+        if(!manualSignOutRef.current&&hadSessionRef.current){
+          setAuthNotice("Tvoja prethodna sesija nije više aktivna. Prijavi se ponovo da nastaviš. 💙");
+        }
+        manualSignOutRef.current=false;
+        hadSessionRef.current=false;
+        setFaza("auth");setKor(null);setUnosiSynced(false);
+      }
     });
     return()=>subscription.unsubscribe();
   },[]);
@@ -2133,6 +2149,7 @@ export default function App(){
   async function resolveSession(session){
     const uid=session.user.id;
     const imePrivremeno=session.user.user_metadata?.name||session.user.email||"";
+    hadSessionRef.current=true;
     setKor(prev=>({...prev,ime:imePrivremeno,id:uid,email:session.user.email||"",...(session.user.created_at?{registeredAt:session.user.created_at}:{})}));
     // keš → instant prikaz; sveži podaci dolaze u pozadini i ažuriraju
     try{const c=localStorage.getItem(`unpick_entries_${uid}`);if(c)setNoviUnosi(JSON.parse(c));}catch{}
@@ -2192,6 +2209,7 @@ export default function App(){
   }
 
   async function handleLogout(){
+    manualSignOutRef.current=true;
     await supabase.auth.signOut();
   }
 
@@ -2214,10 +2232,10 @@ export default function App(){
         isDesk
           ?<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:C.bg,flex:1}}>
               <div style={{width:420,background:C.bgCard,borderRadius:28,padding:8,boxShadow:`0 8px 40px ${C.shadow}`}}>
-                <Auth onDone={u=>{setKor(u);supabase.auth.getSession().then(({data:{session}})=>{if(session){loadJournalEntries(session.user.id);}});setFaza("app");}}/>
+                <Auth notice={authNotice} onDone={u=>{hadSessionRef.current=true;setAuthNotice("");setKor(u);supabase.auth.getSession().then(({data:{session}})=>{if(session){loadJournalEntries(session.user.id);}});setFaza("app");}}/>
               </div>
             </div>
-          :<Auth onDone={u=>{setKor(u);supabase.auth.getSession().then(({data:{session}})=>{if(session){loadJournalEntries(session.user.id);}});setFaza("app");}}/>
+          :<Auth notice={authNotice} onDone={u=>{hadSessionRef.current=true;setAuthNotice("");setKor(u);supabase.auth.getSession().then(({data:{session}})=>{if(session){loadJournalEntries(session.user.id);}});setFaza("app");}}/>
       )}
       {faza==="app"&&showInstall&&!isPWA&&(
         <div style={{position:"fixed",bottom:80,left:"50%",transform:"translateX(-50%)",width:"calc(100% - 40px)",maxWidth:350,zIndex:200,background:"#fff",borderRadius:20,padding:"16px 18px",boxShadow:"0 8px 32px rgba(192,120,144,0.22)",border:`1.5px solid ${C.border}`,display:"flex",alignItems:"center",gap:14}}>
