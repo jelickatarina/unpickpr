@@ -2515,10 +2515,11 @@ export default function App(){
       if(session){
         await supabase.from("journal_entries").update({
           intensity:u.int,trigger:JSON.stringify(u.ok),location:u.lok,
-          emotion_before:u.epre,emotion_after:u.epost,outcome:u.ish,note:u.bel,images:u.slike
+          emotion_before:u.epre,emotion_after:u.epost,outcome:u.ish,note:u.bel,images:u.slike,
+          created_at:new Date(u.ts).toISOString()
         }).eq("id",editUnos.id);
       }
-      setNoviUnosi(v=>v.map(e=>e.id===editUnos.id?{...e,int:u.int,ok:u.ok,lok:u.lok,epre:u.epre,epost:u.epost,ish:u.ish,bel:u.bel,slike:u.slike}:e));
+      setNoviUnosi(v=>v.map(e=>e.id===editUnos.id?{...e,int:u.int,ok:u.ok,lok:u.lok,epre:u.epre,epost:u.epost,ish:u.ish,bel:u.bel,slike:u.slike,ts:u.ts,datum:new Date(u.ts).toLocaleString("sr")}:e));
       setEditUnos(null);setPriUnos(false);return;
     }
     if(session){
