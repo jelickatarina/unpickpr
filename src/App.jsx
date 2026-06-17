@@ -1742,7 +1742,7 @@ function Napredak({unosi,niz,registeredAt}){
           {[
             {l:"Epizoda",v:sedmica.reduce((s,d)=>s+d.epCount,0),c:C.red},
             {l:"Pokušaja",v:sedmica.reduce((s,d)=>s+d.tryCount,0),c:C.amber},
-            {l:"Odolelo",v:sedmica.reduce((s,d)=>s+d.resCount,0)+sedmica.filter(d=>d.status==="clean").length,c:C.green},
+            {l:"Odolelo",v:sedmica.reduce((s,d)=>s+d.resCount,0),c:C.green},
           ].map((s,i)=>(
             <div key={s.l} style={{flex:1,textAlign:"center",borderRight:i<2?`1px solid ${C.border}`:"none"}}>
               <p style={{fontSize:22,fontWeight:900,color:s.v>0?s.c:C.textLight,lineHeight:1,marginBottom:3}}>{s.v}</p>
