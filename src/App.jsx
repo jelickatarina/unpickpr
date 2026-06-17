@@ -102,6 +102,7 @@ const I={
   user:["M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2","M12 11a4 4 0 100-8 4 4 0 000 8z"],
   mail:["M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z","M22 6l-10 7L2 6"],
   lockIco:["M19 11H5a2 2 0 00-2 2v7a2 2 0 002 2h14a2 2 0 002-2v-7a2 2 0 00-2-2z","M17 11V7a5 5 0 00-10 0v4"],
+  logout:["M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4","M16 17l5-5-5-5","M21 12H9"],
 };
 
 const PORUKE_DANA=[
@@ -2307,9 +2308,9 @@ function KozmeticarkaPanel({kor,onLogout}){
             </button>
           );
         })}
-        <button onClick={onLogout} style={{width:"100%",background:C.bgCard,border:`1.5px solid rgba(196,104,120,.25)`,boxShadow:`0 2px 8px ${C.shadow}`,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit",marginTop:10}}>
-          <div style={{width:42,height:42,borderRadius:14,background:"#FFF0F2",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🚪</div>
-          <p style={{fontWeight:700,fontSize:14,color:C.red}}>Odjavi se</p>
+        <button onClick={onLogout} style={{background:"none",border:"none",padding:"12px 4px",display:"flex",alignItems:"center",justifyContent:"center",gap:8,cursor:"pointer",fontFamily:"inherit",marginTop:6}}>
+          <Ico d={I.logout} size={15} stroke={C.textLight} sw={2}/>
+          <p style={{fontWeight:600,fontSize:13,color:C.textLight}}>Odjavi se</p>
         </button>
       </div>
     </div>
