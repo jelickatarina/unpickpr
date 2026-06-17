@@ -343,8 +343,8 @@ function Auth({onDone,notice}){
           else setErrs({general:"Prijava nije uspela. Pokušaj ponovo."});
           return;
         }
-        const {data:profile}=await supabase.from("profiles").select("ime").eq("id",data.user.id).single();
-        onDone({ime:profile?.ime||data.user.user_metadata?.name||em,registeredAt:data.user.created_at,id:data.user.id});
+        const {data:profile}=await supabase.from("profiles").select("ime,role,kod,kozmeticarka_id").eq("id",data.user.id).single();
+        onDone({ime:profile?.ime||data.user.user_metadata?.name||em,registeredAt:data.user.created_at,id:data.user.id,role:profile?.role||"user",kod:profile?.kod||null,kozmeticarka_id:profile?.kozmeticarka_id||null});
       }else{
         const res=await supabase.auth.signUp({email:em.trim(),password:loz,options:{data:{name:ime.trim(),pol}}});
         const data=res.data;const error=res.error;
@@ -1933,7 +1933,7 @@ function Biblioteka(){
 
 const NAV=[{id:"poc",l:"Početna",ico:"home"},{id:"dnv",l:"Dnevnik",ico:"journal"},{id:"nap",l:"Napredak",ico:"chart"},{id:"bib",l:"Biblioteka",ico:"library"},{id:"chat",l:"Chat",ico:"chat"}];
 
-function Profil({kor,onLogout,onNotif,notifStatus,onUpdateIme}){
+function Profil({kor,onLogout,onNotif,notifStatus,onUpdateIme,onLinkKozmeticarka,onUnlinkKozmeticarka}){
   const [showBug,setShowBug]=useState(false);
   const [menjaLozinku,setMenjaLozinku]=useState(false);
   const [novaLoz,setNovaLoz]=useState("");
@@ -1946,6 +1946,10 @@ function Profil({kor,onLogout,onNotif,notifStatus,onUpdateIme}){
   const [novoIme,setNovoIme]=useState("");
   const [imePoruka,setImePoruka]=useState(null);
   const [imeLoading,setImeLoading]=useState(false);
+  const [povezKod,setPovezKod]=useState("");
+  const [povezPoruka,setPovezPoruka]=useState(null);
+  const [povezLoading,setPovezLoading]=useState(false);
+  const [showPovezi,setShowPovezi]=useState(false);
   const initijali=(kor?.ime||"").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase()||"🌸";
 
   async function promeniLozinku(){
@@ -1968,6 +1972,20 @@ function Profil({kor,onLogout,onNotif,notifStatus,onUpdateIme}){
     if(res?.error){setImePoruka({tip:"greska",t:res.error});return;}
     setImePoruka({tip:"ok",t:"Ime sačuvano! 🎉"});
     setMenjaIme(false);
+  }
+
+  async function poveziSeKozmeticarkom(){
+    setPovezLoading(true);setPovezPoruka(null);
+    const res=await onLinkKozmeticarka(povezKod);
+    setPovezLoading(false);
+    if(res?.error){setPovezPoruka({tip:"greska",t:res.error});return;}
+    setPovezPoruka(null);setPovezKod("");setShowPovezi(false);
+  }
+
+  async function prekiniVezu(){
+    setPovezLoading(true);
+    await onUnlinkKozmeticarka();
+    setPovezLoading(false);
   }
 
   return(
@@ -2037,6 +2055,42 @@ function Profil({kor,onLogout,onNotif,notifStatus,onUpdateIme}){
           )}
         </div>
 
+        {/* Kozmetičarka — potpuno opciono */}
+        {kor?.kozmeticarka_id?(
+          <div style={{background:C.bgCard,borderRadius:18,border:`1px solid ${C.border}`,padding:"15px 18px",display:"flex",alignItems:"center",gap:14}}>
+            <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+              <Ico d={I.heart} size={18} stroke={C.primary} sw={1.8}/>
+            </div>
+            <div style={{flex:1}}>
+              <p style={{fontWeight:700,fontSize:14,color:C.text,marginBottom:1}}>Povezana sa kozmetičarkom</p>
+              <p style={{fontSize:12,color:C.textLight}}>Vidi samo tvoj broj dana</p>
+            </div>
+            <button onClick={prekiniVezu} disabled={povezLoading} style={{background:C.bgMuted,border:"none",borderRadius:10,padding:"8px 12px",cursor:"pointer",fontSize:12,color:C.textMid,fontWeight:600,fontFamily:"inherit",flexShrink:0}}>Prekini</button>
+          </div>
+        ):(
+          <div style={{background:C.bgCard,borderRadius:18,border:`1px solid ${C.border}`,overflow:"hidden"}}>
+            <button onClick={()=>{setShowPovezi(v=>!v);setPovezPoruka(null);}} style={{width:"100%",background:"none",border:"none",padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
+              <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <Ico d={I.heart} size={18} stroke={C.primary} sw={1.8}/>
+              </div>
+              <div style={{textAlign:"left",flex:1}}>
+                <p style={{fontWeight:700,fontSize:14,color:C.text}}>Poveži se sa kozmetičarkom</p>
+                <p style={{fontSize:12,color:C.textLight}}>Opciono — vidi samo tvoj broj dana</p>
+              </div>
+              <Ico d={I.chev} size={14} stroke={C.textLight} sw={2.5} style={{transform:showPovezi?"rotate(90deg)":"none",transition:"transform .2s"}}/>
+            </button>
+            {showPovezi&&(
+              <div style={{padding:"0 18px 18px",display:"flex",flexDirection:"column",gap:10,borderTop:`1px solid ${C.border}`,paddingTop:16}}>
+                <input className="inp" type="text" placeholder="Kod kozmetičarke" value={povezKod} onChange={e=>setPovezKod(e.target.value)} autoCapitalize="characters"/>
+                {povezPoruka&&<p style={{fontSize:13,color:C.red,fontWeight:600,textAlign:"center"}}>{povezPoruka.t}</p>}
+                <button onClick={poveziSeKozmeticarkom} disabled={povezLoading} className="btn-p" style={{borderRadius:14,padding:"13px"}}>
+                  {povezLoading?"Povezujem...":"Poveži se"}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Promena lozinke */}
         <div style={{background:C.bgCard,borderRadius:18,border:`1px solid ${C.border}`,overflow:"hidden"}}>
           <button onClick={()=>{setMenjaLozinku(m=>!m);setPoruka(null);}} style={{width:"100%",background:"none",border:"none",padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit"}}>
@@ -2081,6 +2135,60 @@ function Profil({kor,onLogout,onNotif,notifStatus,onUpdateIme}){
         </button>
       </div>
       {showBug&&<BugModal kor={kor} onClose={()=>setShowBug(false)}/>}
+    </div>
+  );
+}
+
+function klijentStreak(c){
+  const todayMidnight=new Date();todayMidnight.setHours(0,0,0,0);
+  const ref=c.last_bad_at?new Date(c.last_bad_at):(c.registered_at?new Date(c.registered_at):new Date());
+  ref.setHours(0,0,0,0);
+  return Math.max(0,Math.floor((todayMidnight-ref)/86400000));
+}
+
+function KozmeticarkaPanel({kor,onLogout}){
+  const [klijenti,setKlijenti]=useState([]);
+  const [loading,setLoading]=useState(true);
+
+  useEffect(()=>{
+    let aktivno=true;
+    supabase.rpc("get_kozmeticarka_clients").then(({data,error})=>{
+      if(!aktivno) return;
+      if(!error&&data) setKlijenti(data);
+      setLoading(false);
+    });
+    return()=>{aktivno=false;};
+  },[]);
+
+  return(
+    <div style={{minHeight:"100vh",background:C.bg}} className="fi">
+      <div style={{paddingTop:HDR_PT,paddingBottom:28,paddingLeft:24,paddingRight:24,background:`linear-gradient(160deg,#FFF8FA 0%,#FAE0EB 100%)`,borderBottom:`1px solid ${C.border}`}}>
+        <span style={{display:"inline-block",background:"rgba(192,120,144,.13)",color:C.primary,fontSize:10,fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",padding:"3px 10px",borderRadius:100,marginBottom:14}}>Kozmetičarka</span>
+        <p style={{fontWeight:800,fontSize:20,color:C.text,marginBottom:4,letterSpacing:-0.3}}>{kor?.ime||"Panel"}</p>
+        {kor?.kod&&<p style={{fontSize:13,color:C.textMid,fontWeight:600}}>Tvoj kod za klijente: <span style={{color:C.primary,fontWeight:800}}>{kor.kod}</span></p>}
+      </div>
+      <div style={{padding:"20px 20px",display:"flex",flexDirection:"column",gap:10}}>
+        {loading?(
+          <p style={{textAlign:"center",color:C.textLight,fontSize:13,padding:"30px 0"}}>Učitava se...</p>
+        ):klijenti.length===0?(
+          <div style={{background:C.bgCard,borderRadius:18,border:`1px solid ${C.border}`,padding:"24px 18px",textAlign:"center"}}>
+            <p style={{fontSize:14,color:C.textMid,fontWeight:600}}>Još nemaš povezanih klijenata.</p>
+            <p style={{fontSize:12,color:C.textLight,marginTop:6}}>Podeli svoj kod sa klijentom da se poveže iz svog profila.</p>
+          </div>
+        ):klijenti.map(c=>(
+          <div key={c.id} style={{background:C.bgCard,borderRadius:18,border:`1px solid ${C.border}`,padding:"15px 18px",display:"flex",alignItems:"center",gap:14}}>
+            <div style={{width:42,height:42,borderRadius:14,background:C.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+              <Ico d={I.flame} size={18} stroke={C.primary} sw={1.8}/>
+            </div>
+            <p style={{fontWeight:700,fontSize:14,color:C.text,flex:1}}>{c.ime||"Klijent"}</p>
+            <p style={{fontWeight:800,fontSize:18,color:C.primary}}>{klijentStreak(c)}</p>
+          </div>
+        ))}
+        <button onClick={onLogout} style={{width:"100%",background:C.bgCard,border:`1.5px solid rgba(196,104,120,.25)`,borderRadius:18,padding:"15px 18px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",fontFamily:"inherit",marginTop:10}}>
+          <div style={{width:42,height:42,borderRadius:14,background:"#FFF0F2",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🚪</div>
+          <p style={{fontWeight:700,fontSize:14,color:C.red}}>Odjavi se</p>
+        </button>
+      </div>
     </div>
   );
 }
@@ -2220,6 +2328,24 @@ export default function App(){
     return {};
   }
 
+  async function linkKozmeticarka(kod){
+    if(!kor?.id) return {error:"Nema korisnika."};
+    if(!kod.trim()) return {error:"Unesi kod."};
+    const {error}=await supabase.rpc("link_to_kozmeticarka",{p_kod:kod.trim()});
+    if(error) return {error:error.message.includes("Kod nije")?"Kod nije pronađen.":error.message};
+    const {data}=await supabase.from("profiles").select("kozmeticarka_id").eq("id",kor.id).single();
+    setKor(prev=>({...prev,kozmeticarka_id:data?.kozmeticarka_id||null}));
+    return {};
+  }
+
+  async function unlinkKozmeticarka(){
+    if(!kor?.id) return {error:"Nema korisnika."};
+    const {error}=await supabase.from("profiles").update({kozmeticarka_id:null}).eq("id",kor.id);
+    if(error) return {error:error.message};
+    setKor(prev=>({...prev,kozmeticarka_id:null}));
+    return {};
+  }
+
   async function resolveSession(session){
     const uid=session.user.id;
     const imePrivremeno=session.user.user_metadata?.name||session.user.email||"";
@@ -2231,8 +2357,8 @@ export default function App(){
     document.getElementById("root").style.visibility="visible";
     hideSplash();
     loadJournalEntries(uid);
-    supabase.from("profiles").select("ime").eq("id",uid).single().then(({data,error})=>{
-      if(data?.ime){setKor(prev=>({...prev,ime:data.ime}));}
+    supabase.from("profiles").select("ime,role,kod,kozmeticarka_id").eq("id",uid).single().then(({data,error})=>{
+      if(data){setKor(prev=>({...prev,ime:data.ime||prev.ime,role:data.role||"user",kod:data.kod||null,kozmeticarka_id:data.kozmeticarka_id||null}));}
       else if(error){
         // profile row missing (registered before trigger fix) — create it now
         supabase.from("profiles").upsert({id:uid,ime:imePrivremeno}).then(null,()=>{});
@@ -2346,7 +2472,9 @@ export default function App(){
         </div>
       )}
       {faza==="app"&&(
-        priSOS?(
+        kor?.role==="kozmeticarka"?(
+          <KozmeticarkaPanel kor={kor} onLogout={handleLogout}/>
+        ):priSOS?(
           <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto",flex:isDesk?1:undefined}} className="fi"><SOS onZatvori={()=>setPriSOS(false)}/></div>
         ):priUnos?(
           <div style={{minHeight:"100vh",background:C.bg,overflowY:"auto",flex:isDesk?1:undefined}} className="fi"><NoviUnos onSacuvaj={handleSacuvajUnos} onOtkazi={()=>{setPriUnos(false);setEditUnos(null);}} editData={editUnos}/></div>
@@ -2383,7 +2511,7 @@ export default function App(){
                 {ekran==="dnv"&&<Dnevnik noviUnosi={noviUnosi} onDodaj={()=>setPriUnos(true)} onIzmeni={u=>{setEditUnos(u);setPriUnos(true);}} onObrisi={handleObrisiUnos}/>}
                 {ekran==="nap"&&<Napredak unosi={noviUnosi} niz={calcStreak(noviUnosi,kor?.registeredAt)} registeredAt={kor?.registeredAt}/>}
                 {ekran==="bib"&&<Biblioteka/>}
-                {ekran==="profil"&&<Profil kor={kor} onLogout={handleLogout} onNotif={enableNotifications} notifStatus={notifStatus} onUpdateIme={updateIme}/>}
+                {ekran==="profil"&&<Profil kor={kor} onLogout={handleLogout} onNotif={enableNotifications} notifStatus={notifStatus} onUpdateIme={updateIme} onLinkKozmeticarka={linkKozmeticarka} onUnlinkKozmeticarka={unlinkKozmeticarka}/>}
               </div>
               <div style={{display:ekran==="chat"?"flex":"none",flexDirection:"column",flex:1,minHeight:0,overflow:"hidden",paddingBottom:isDesk||kbOpen?0:"63px"}}>
                 <AIChat ime={kor?.ime||""} niz={calcStreak(noviUnosi,kor?.registeredAt)} unosi={noviUnosi} userId={kor?.id} onSOS={()=>setPriSOS(true)} isVisible={ekran==="chat"}/>
