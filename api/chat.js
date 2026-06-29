@@ -10,7 +10,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
       },
-      body: JSON.stringify({ model: "llama-3.3-70b-versatile", max_tokens: 500, messages }),
+      body: JSON.stringify({ model: "openai/gpt-oss-120b", max_tokens: 500, messages }),
     });
     const data = await response.json();
     if (data.error) return res.status(500).json({ error: data.error.message });
